@@ -1,4 +1,4 @@
-package top.abeille.common.service;
+package top.abeille.common.basic;
 
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;

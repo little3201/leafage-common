@@ -1,4 +1,4 @@
-package top.abeille.common.controller;
+package top.abeille.common.basic;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
