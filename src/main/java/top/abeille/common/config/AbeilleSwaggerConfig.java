@@ -29,14 +29,9 @@ public class AbeilleSwaggerConfig {
     @Bean
     public Docket createRestApi() {
         // 添加请求参数，我们这里把token作为请求头部参数传入后端
-        ParameterBuilder parameterBuilder = new ParameterBuilder();
-        List<Parameter> parameters = new ArrayList<>();
-        parameterBuilder.name("Authorization").description("tokenKey").modelRef(new ModelRef("string"))
-                .parameterType("header").required(false).build();
-        parameters.add(parameterBuilder.build());
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage("top.abeille.*.data.controller"))
-                .paths(PathSelectors.any()).build().globalOperationParameters(parameters);
+                .paths(PathSelectors.any()).build();
     }
 
     private ApiInfo apiInfo() {
