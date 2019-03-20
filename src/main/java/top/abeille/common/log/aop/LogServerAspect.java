@@ -1,10 +1,14 @@
-package top.abeille.common.log;
+package top.abeille.common.log.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.abeille.common.log.model.LogModel;
+import top.abeille.common.log.service.LogService;
 
 /**
  * 日志切面
@@ -18,8 +22,14 @@ public class LogServerAspect {
     protected static final Log log = LogFactory.getLog(LogServerAspect.class);
 
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
+    private final LogService logService;
 
-    @Pointcut("@annotation(top.abeille.common.log.LogServer)")
+    @Autowired
+    public LogServerAspect(LogService logService) {
+        this.logService = logService;
+    }
+
+    @Pointcut("@annotation(top.abeille.common.log.aop.LogServer)")
     public void invokeAim() {
     }
 
@@ -29,6 +39,11 @@ public class LogServerAspect {
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         /*  */
+    }
+
+    @Around(value = "invokeAim()")
+    public Object invokeExecute(ProceedingJoinPoint pjp) {
+        return logService.save(new LogModel());
     }
 
     @AfterReturning(returning = "ret", pointcut = "invokeAim()")
@@ -53,7 +68,7 @@ public class LogServerAspect {
                 param.append(p).append(",");
             }
             /* 去掉最后一个逗号 */
-            param.toString().substring(0, param.lastIndexOf(","));
+            String substring = param.toString().substring(0, param.lastIndexOf(","));
         }
         log.error("[Exception]:[" + className + "]" + methodName + ":" + ex);
     }
