@@ -1,5 +1,6 @@
 package top.abeille.common.log.aop;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
@@ -7,8 +8,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import top.abeille.common.log.model.LogModel;
 import top.abeille.common.log.service.LogService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 日志切面
@@ -22,6 +27,9 @@ public class LogServerAspect {
     protected static final Log log = LogFactory.getLog(LogServerAspect.class);
 
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     private final LogService logService;
 
     @Autowired
@@ -35,10 +43,23 @@ public class LogServerAspect {
 
     @Before("invokeAim()")
     public void invokeBefore(JoinPoint joinPoint) {
-        startTime.set(System.currentTimeMillis());
-        String className = joinPoint.getTarget().getClass().getName();
-        String methodName = joinPoint.getSignature().getName();
-        /*  */
+        for (Object object : joinPoint.getArgs()) {
+            if (object instanceof MultipartFile
+                    || object instanceof HttpServletRequest
+                    || object instanceof HttpServletResponse) {
+                continue;
+            }
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()
+                                    + " : request parameter : " + objectMapper.writeValueAsString(object)
+                    );
+                }
+            } catch (Exception e) {
+                log.error("invokeBefore occurred error: {}", e);
+            }
+        }
     }
 
     @Around(value = "invokeAim()")
