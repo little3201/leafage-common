@@ -5,7 +5,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +16,10 @@ import top.abeille.common.log.service.LogService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 /**
- * 日志切面
+ * 日志服务切面
  *
  * @author liwenqiang 2019/3/18 21:00
  **/
@@ -38,11 +41,12 @@ public class LogServerAspect {
     }
 
     @Pointcut("@annotation(top.abeille.common.log.aop.LogServer)")
-    public void invokeAim() {
+    public void aspectAim() {
     }
 
-    @Before("invokeAim()")
-    public void invokeBefore(JoinPoint joinPoint) {
+    @Before("aspectAim()")
+    public void aspectBefore(JoinPoint joinPoint) {
+        System.err.println("进入日志操作——before");
         for (Object object : joinPoint.getArgs()) {
             if (object instanceof MultipartFile
                     || object instanceof HttpServletRequest
@@ -62,20 +66,27 @@ public class LogServerAspect {
         }
     }
 
-    @Around(value = "invokeAim()")
-    public Object invokeExecute(ProceedingJoinPoint pjp) {
+    @Around(value = "aspectAim()")
+    public Object aspectExecute(ProceedingJoinPoint pjp) throws Throwable {
+        System.err.println("进入日志操作——around");
+        Object proceed = pjp.proceed();
+        String s = objectMapper.writeValueAsString(proceed);
+        System.err.println("执行结果：" + s);
+        MethodSignature signature = (MethodSignature)pjp.getSignature();
+        Method method = signature.getMethod();
+        method.getAnnotation(LogServer.class);
         return logService.save(new LogModel());
     }
 
-    @AfterReturning(returning = "ret", pointcut = "invokeAim()")
-    public void invokeAfterReturning(Object ret) {
+    @AfterReturning(returning = "ret", pointcut = "aspectAim()")
+    public void aspectAfterReturning(Object ret) {
         /* 处理完请求，返回内容 */
         log.info("RESPONSE : " + ret);
         log.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
     }
 
-    @AfterThrowing(throwing = "ex", pointcut = "invokeAim()")
-    public void invokeException(JoinPoint joinPoint, Throwable ex) {
+    @AfterThrowing(throwing = "ex", pointcut = "aspectAim()")
+    public void aspectException(JoinPoint joinPoint, Throwable ex) {
         /* 切入方法所属类名 */
         String className = joinPoint.getTarget().getClass().getName();
         /* 切入方法名 */
