@@ -89,7 +89,8 @@ public class LogServerAspect {
                 param.append(p).append(",");
             }
             /* 去掉最后一个逗号 */
-            String substring = param.toString().substring(0, param.lastIndexOf(","));
+            String result = param.toString().substring(0, param.lastIndexOf(","));
+            log.info("请求入参为：" + result);
         }
         log.error("[Exception]:[" + className + "]" + methodName + ":" + ex);
     }
