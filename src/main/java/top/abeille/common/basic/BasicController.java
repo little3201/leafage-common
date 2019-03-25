@@ -1,7 +1,7 @@
 package top.abeille.common.basic;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BasicController
@@ -13,6 +13,6 @@ public abstract class BasicController {
     /**
      * 开启日志
      */
-    protected static final Log log = LogFactory.getLog(BasicController.class);
+    protected static final Logger log = LoggerFactory.getLogger(BasicController.class);
 
 }
