@@ -1,11 +1,10 @@
-package top.abeille.common.test;
+package top.abeille.common.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,8 +19,7 @@ import org.springframework.util.MultiValueMap;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest
-public abstract class BasicControllerTest<T> {
+public abstract class BasicControllerMock<T> {
 
     private MockMvc mockMvc;
 

@@ -1,10 +1,9 @@
-package top.abeille.common.test;
+package top.abeille.common.mock;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
 
 
 /**
@@ -13,8 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest
-public abstract class BasicServiceTest {
+public abstract class BasicServiceMock {
 
     @Before
     public void setupMock() {

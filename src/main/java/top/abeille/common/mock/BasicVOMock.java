@@ -1,11 +1,10 @@
-package top.abeille.common.test;
+package top.abeille.common.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -18,9 +17,8 @@ import java.lang.reflect.Method;
  *
  * @author liwenqiang 2018/12/28 14:40
  **/
-@SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BasicVOTest<T> {
+public abstract class BasicVOMock<T> {
 
     protected abstract T setVO();
 
