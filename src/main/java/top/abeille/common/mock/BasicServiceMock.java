@@ -1,8 +1,6 @@
 package top.abeille.common.mock;
 
-import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 
@@ -14,9 +12,5 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class BasicServiceMock {
 
-    @Before
-    public void setupMock() {
-        MockitoAnnotations.initMocks(this);
-    }
 }
 
