@@ -1,4 +1,6 @@
-package top.abeille.common.config.datasource;
+package top.abeille.common.datasource;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 动态数据源操作
@@ -17,13 +19,18 @@ public final class DataSourceHolder {
      */
     public static final String SLAVE = "slave";
 
+    /**
+     * 本地线程
+     */
     private static final ThreadLocal<String> holder = new ThreadLocal<>();
 
     public DataSourceHolder() {
     }
 
-    public static void putDataSource(String key) {
-        holder.set(key);
+    public static void setDataSource(String key) {
+        if (StringUtils.isNotBlank(key)) {
+            holder.set(key);
+        }
     }
 
     public static String getDataSource() {
