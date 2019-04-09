@@ -1,12 +1,12 @@
 package top.abeille.common.log.aop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
 @Component
 public class LogServerAspect {
 
-    protected static final Log log = LogFactory.getLog(LogServerAspect.class);
+    protected static final Logger log = LoggerFactory.getLogger(LogServerAspect.class);
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

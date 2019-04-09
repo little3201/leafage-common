@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +20,7 @@ import org.springframework.util.MultiValueMap;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public abstract class BasicControllerMock<T> {
 
     private MockMvc mockMvc;
@@ -32,8 +34,8 @@ public abstract class BasicControllerMock<T> {
     @Before
     public void setupMock() {
         /* initialize mock object */
-        MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.getController()).build();
+        MockitoAnnotations.initMocks(this);
     }
 
     /* ====================  POST 重载 添加参数到request body ====================*/
