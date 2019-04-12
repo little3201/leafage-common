@@ -1,14 +1,14 @@
 package top.abeille.common.datasource;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -25,12 +25,6 @@ import java.util.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DataSourceConfig {
 
-    @Value("${datasource.sql.type}")
-    private String SQL_TYPE;
-
-    @Value("${mybatis.mapperLocations}")
-    private String MAPPER_LOCATIONS;
-
     /**
      * 主数据源
      *
@@ -38,9 +32,9 @@ public class DataSourceConfig {
      */
     @Primary
     @Bean(name = "masterDataSource")
-    @ConfigurationProperties("spring.datasource.druid.master")
+    @ConfigurationProperties("spring.datasource.master")
     public DataSource masterDataSource() {
-        return new DruidDataSource();
+        return DataSourceBuilder.create().build();
     }
 
     /**
@@ -49,9 +43,9 @@ public class DataSourceConfig {
      * @return Druid数据源
      */
     @Bean(name = "slaveDataSource")
-    @ConfigurationProperties("spring.datasource.druid.slave")
+    @ConfigurationProperties("spring.datasource.slave")
     public DataSource slaveDataSource() {
-        return new DruidDataSource();
+        return DataSourceBuilder.create().build();
     }
 
 
@@ -82,31 +76,53 @@ public class DataSourceConfig {
 
     }
 
-
-    @Bean
-    public SqlSessionFactoryBean sqlSessionFactory(@Qualifier("dynamicDataSource") DynamicDataSource dynamicDataSource) throws Exception {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dynamicDataSource);
-        //需要设置mapper.xml扫描路径配置
-        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATIONS));
+    @Bean(name = "masterEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean mssqlEntityManagerFactory(EntityManagerFactoryBuilder builder) {
+        LocalContainerEntityManagerFactoryBean em = builder
+                .dataSource(masterDataSource())
+//                .packages(OldBuy.class)
+                .persistenceUnit(DataSourceHolder.MASTER)
+                .build();
         Properties properties = new Properties();
-        properties.setProperty("sqlType", SQL_TYPE);
-        sqlSessionFactoryBean.setConfigurationProperties(properties);
-        return sqlSessionFactoryBean;
+        properties.setProperty("hibernate.physical_naming_strategy", "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl");
+        em.setJpaProperties(properties);
+        return em;
     }
 
-    /**
-     * 事务管理
-     *
-     * @param dataSource 动态数据源
-     * @return 事务管理器
-     */
-    @Bean
-    public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource") DynamicDataSource dataSource) {
-        DynamicTransactionManager dynamicDataSourceTransactionManager = new DynamicTransactionManager();
-        dynamicDataSourceTransactionManager.setDataSource(dataSource);
-        return dynamicDataSourceTransactionManager;
+    @Bean(name = "slaveEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean mysqlEntityManagerFactory(
+            EntityManagerFactoryBuilder builder) {
+        LocalContainerEntityManagerFactoryBean em = builder
+                .dataSource(slaveDataSource())
+//                .packages(Buy.class)
+                .persistenceUnit(DataSourceHolder.SLAVE)
+                .build();
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.physical_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
+        em.setJpaProperties(properties);
+        return em;
+    }
+
+    @Primary
+    @Bean(name = "dynamicEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean mysqlEntityManagerFactory() {
+
+        return null;
     }
 
 
+    @Bean(name = "masterTransactionManager")
+    PlatformTransactionManager masterTransactionManager(EntityManagerFactoryBuilder builder) {
+        return new JpaTransactionManager(mssqlEntityManagerFactory(builder).getObject());
+    }
+
+    @Bean(name = "slaveTransactionManager")
+    PlatformTransactionManager slaveTransactionManager(EntityManagerFactoryBuilder builder) {
+        return new JpaTransactionManager(mysqlEntityManagerFactory(builder).getObject());
+    }
+
+    @Bean(name = "dynamicTransactionManager")
+    PlatformTransactionManager dynamicTransactionManager(EntityManagerFactoryBuilder builder) {
+        return null;
+    }
 }
