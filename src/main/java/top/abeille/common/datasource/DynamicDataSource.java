@@ -21,9 +21,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
 
-    @Value("${datasource.slave.is-poll-read}")
-    private boolean IS_POLL_READ;
-
     /**
      * 从数据源
      */
@@ -54,7 +51,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         if (DataSourceHolder.isMaster()) {
             key = DataSourceHolder.MASTER;
         } else {
-            key = this.getSlaveKey(IS_POLL_READ);
+            key = this.getSlaveKey(false);
         }
         log.info("============== current datasource key: {} ==================", key);
         return key;

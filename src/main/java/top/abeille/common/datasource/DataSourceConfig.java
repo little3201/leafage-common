@@ -1,7 +1,6 @@
 package top.abeille.common.datasource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,12 +24,6 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DataSourceConfig {
-
-    @Value("${datasource.sql.type}")
-    private String SQL_TYPE;
-
-    @Value("${mybatis.mapperLocations}")
-    private String MAPPER_LOCATIONS;
 
     /**
      * 主数据源
@@ -95,6 +88,4 @@ public class DataSourceConfig {
         dynamicDataSourceTransactionManager.setDataSource(dataSource);
         return dynamicDataSourceTransactionManager;
     }
-
-
 }
