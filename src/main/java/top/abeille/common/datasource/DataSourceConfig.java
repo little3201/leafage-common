@@ -1,19 +1,20 @@
 package top.abeille.common.datasource;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -38,9 +39,9 @@ public class DataSourceConfig {
      */
     @Primary
     @Bean(name = "masterDataSource")
-    @ConfigurationProperties("spring.datasource.druid.master")
+    @ConfigurationProperties("spring.datasource.master")
     public DataSource masterDataSource() {
-        return new DruidDataSource();
+        return DataSourceBuilder.create().build();
     }
 
     /**
@@ -49,9 +50,9 @@ public class DataSourceConfig {
      * @return Druid数据源
      */
     @Bean(name = "slaveDataSource")
-    @ConfigurationProperties("spring.datasource.druid.slave")
+    @ConfigurationProperties("spring.datasource.slave")
     public DataSource slaveDataSource() {
-        return new DruidDataSource();
+        return DataSourceBuilder.create().build();
     }
 
 
@@ -80,19 +81,6 @@ public class DataSourceConfig {
 
         return dynamicDataSource;
 
-    }
-
-
-    @Bean
-    public SqlSessionFactoryBean sqlSessionFactory(@Qualifier("dynamicDataSource") DynamicDataSource dynamicDataSource) throws Exception {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dynamicDataSource);
-        //需要设置mapper.xml扫描路径配置
-        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATIONS));
-        Properties properties = new Properties();
-        properties.setProperty("sqlType", SQL_TYPE);
-        sqlSessionFactoryBean.setConfigurationProperties(properties);
-        return sqlSessionFactoryBean;
     }
 
     /**
