@@ -32,12 +32,10 @@ public class LogInfoModel {
     /**
      * 操作用户ID
      */
-    @NotNull
     private Long modifierId;
     /**
      * 操作时间
      */
-    @NotNull
     private Date modifyTime;
 
     @Column(name = "id")
