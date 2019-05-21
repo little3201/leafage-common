@@ -2,7 +2,6 @@ package top.abeille.common.datasource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import java.util.ArrayList;
@@ -19,27 +18,23 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
-    private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
-
-    /**
-     * 从数据源
-     */
-    private List<Object> slaveDataSources = new ArrayList<>();
-
-    /**
-     * 轮询计数
-     */
-    private AtomicInteger squence = new AtomicInteger(0);
-
     /**
      * 连接池最大限度
      */
     private static final Long MAX_POOL = Long.MAX_VALUE;
-
     /**
      * 锁定义
      */
     private final Lock lock = new ReentrantLock();
+    private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
+    /**
+     * 从数据源
+     */
+    private List<Object> slaveDataSources = new ArrayList<>();
+    /**
+     * 轮询计数
+     */
+    private AtomicInteger squence = new AtomicInteger(0);
 
     public void setSlaveDataSources(List<Object> slaveDataSources) {
         this.slaveDataSources = slaveDataSources;

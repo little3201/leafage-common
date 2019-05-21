@@ -27,14 +27,14 @@ public final class DataSourceHolder {
     public DataSourceHolder() {
     }
 
+    public static String getDataSource() {
+        return holder.get();
+    }
+
     public static void setDataSource(String key) {
         if (StringUtils.isNotBlank(key)) {
             holder.set(key);
         }
-    }
-
-    public static String getDataSource() {
-        return holder.get();
     }
 
     public static void clearDataSource() {
