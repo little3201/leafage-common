@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2019. Abeille All Right Reserved.
+ */
 package top.abeille.common.mock;
 
 import org.junit.runner.RunWith;

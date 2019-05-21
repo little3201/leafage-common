@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2019. Abeille All Right Reserved.
+ */
 package top.abeille.common.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

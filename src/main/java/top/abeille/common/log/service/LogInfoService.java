@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2019. Abeille All Right Reserved.
+ */
 package top.abeille.common.log.service;
 
 import top.abeille.common.basic.BasicService;
