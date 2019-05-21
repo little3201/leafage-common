@@ -1,7 +1,6 @@
 package top.abeille.common.log.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**

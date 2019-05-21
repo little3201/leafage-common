@@ -29,10 +29,8 @@ import java.lang.reflect.Method;
 public class LogServerAspect {
 
     protected static final Logger log = LoggerFactory.getLogger(LogServerAspect.class);
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private final LogInfoService logInfoService;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public LogServerAspect(LogInfoService logInfoService) {
@@ -57,7 +55,7 @@ public class LogServerAspect {
                             + " : request parameter : " + objectMapper.writeValueAsString(object));
                 }
             } catch (Exception e) {
-                log.error("invokeBefore occurred error: {}", e);
+                log.error("invokeBefore occurred error: ", e);
             }
         }
     }
