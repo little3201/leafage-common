@@ -68,11 +68,11 @@ public interface BasicService<T> {
     /**
      * 分页获取所有entities
      *
-     * @param curPage  当前页
+     * @param pageNum  当前页
      * @param pageSize 当前页数据量
      * @return Page<T>
      */
-    default Page<T> findAllByPage(Integer curPage, Integer pageSize) {
+    default Page<T> findAllByPage(Integer pageNum, Integer pageSize) {
         return null;
     }
 
