@@ -62,6 +62,7 @@ public interface BasicService<T> {
      * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
      *
      * @param t 实例
+     * @param exampleMatcher 匹配条件
      * @return List<T>
      */
     default List<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {

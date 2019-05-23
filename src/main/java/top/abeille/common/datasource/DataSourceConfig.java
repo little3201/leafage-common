@@ -63,7 +63,7 @@ public class DataSourceConfig {
     public DynamicDataSource dynamicDataSource(@Qualifier("masterDataSource") DataSource masterDataSource,
                                                @Qualifier("slaveDataSource") DataSource slaveDataSource) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        Map<Object, Object> targetDataSources = new HashMap<>();
+        Map<Object, Object> targetDataSources = new HashMap<>(16);
 
         targetDataSources.put("master", masterDataSource);
         targetDataSources.put("slave", slaveDataSource);

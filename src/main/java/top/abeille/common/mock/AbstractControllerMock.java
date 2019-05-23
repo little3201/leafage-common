@@ -24,10 +24,15 @@ import org.springframework.util.MultiValueMap;
  **/
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-public abstract class BasicControllerMock<T> {
+public abstract class AbstractControllerMock<T> {
 
     private MockMvc mockMvc;
 
+    /**
+     * 设置要测试的controller
+     *
+     * @return T
+     */
     protected abstract T getController();
 
     public MockMvc getMockMvc() {
@@ -41,42 +46,42 @@ public abstract class BasicControllerMock<T> {
         MockitoAnnotations.initMocks(this);
     }
 
-    /* ====================  POST 重载 添加参数到request body ====================*/
+    /** ====================  POST 重载 添加参数到request body ====================*/
     public MockHttpServletResponse postTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
         return resultActions.andReturn().getResponse();
     }
 
-    /* ====================  POST 重载 添加Map类型参数到请求中 ====================*/
+    /** ====================  POST 重载 添加Map类型参数到请求中 ====================*/
     public MockHttpServletResponse postTest(String url, MultiValueMap<String, String> params) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).params(params).accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON_UTF8));
         return resultActions.andReturn().getResponse();
     }
 
-    /* ====================  GET 重载 添加参数到request body ====================*/
+    /** ====================  GET 重载 添加参数到request body ====================*/
     public MockHttpServletResponse getTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
         return resultActions.andReturn().getResponse();
     }
 
-    /* ====================  GET 重载 添加Map类型参数到请求中 ====================*/
+    /** ====================  GET 重载 添加Map类型参数到请求中 ====================*/
     public MockHttpServletResponse getTest(String url, MultiValueMap<String, String> params) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).params(params).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8));
         return resultActions.andReturn().getResponse();
     }
 
-    /* ====================  PUT  ====================*/
+    /** ====================  PUT  ====================*/
     public MockHttpServletResponse putTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
         return resultActions.andReturn().getResponse();
     }
 
-    /* ====================  DELETE  ====================*/
+    /** ====================  DELETE  ====================*/
     public MockHttpServletResponse deleteTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8).content(new ObjectMapper().writeValueAsString(obj)));

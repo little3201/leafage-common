@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BasicServiceMock {
+public abstract class AbstractServiceMock {
 
 }
 

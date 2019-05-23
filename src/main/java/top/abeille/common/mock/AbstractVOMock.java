@@ -21,8 +21,13 @@ import java.lang.reflect.Method;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BasicVOMock<T> {
+public abstract class AbstractVOMock<T> {
 
+    /**
+     * 设置要测试的VO
+     *
+     * @return T
+     */
     protected abstract T setVO();
 
     @Before

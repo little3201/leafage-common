@@ -25,23 +25,23 @@ public final class DataSourceHolder {
     /**
      * 本地线程
      */
-    private static final ThreadLocal<String> holder = new ThreadLocal<>();
+    private static final ThreadLocal<String> DATASOURCE_HOLDER = new ThreadLocal<>();
 
     public DataSourceHolder() {
     }
 
     public static String getDataSource() {
-        return holder.get();
+        return DATASOURCE_HOLDER.get();
     }
 
     public static void setDataSource(String key) {
         if (StringUtils.isNotBlank(key)) {
-            holder.set(key);
+            DATASOURCE_HOLDER.set(key);
         }
     }
 
     public static void clearDataSource() {
-        holder.remove();
+        DATASOURCE_HOLDER.remove();
     }
 
     public static boolean isMaster() {
