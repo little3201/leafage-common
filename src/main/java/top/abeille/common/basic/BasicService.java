@@ -18,10 +18,10 @@ public interface BasicService<T> {
     /**
      * 根据id获取entity
      *
-     * @param id 主键
+     * @param id 业务ID
      * @return T
      */
-    default T getById(Long id) {
+    default T getById(String id) {
         return null;
     }
 
