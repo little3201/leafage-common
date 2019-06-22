@@ -61,7 +61,7 @@ public interface BasicService<T> {
      * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
      * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
      *
-     * @param t 实例
+     * @param t              实例
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
@@ -91,11 +91,11 @@ public interface BasicService<T> {
 
 
     /**
-     * 根据pkId删除entity
+     * 根据业务ID删除entity
      *
-     * @param id 主键
+     * @param id 业务ID
      */
-    void removeById(Long id);
+    void removeById(String id);
 
     /**
      * 批量删除
