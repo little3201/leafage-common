@@ -18,10 +18,10 @@ public interface BasicService<T> {
     /**
      * 根据id获取entity
      *
-     * @param id 业务ID
+     * @param id 主键
      * @return T
      */
-    default T getById(String id) {
+    default T getById(Long id) {
         return null;
     }
 
@@ -91,11 +91,11 @@ public interface BasicService<T> {
 
 
     /**
-     * 根据业务ID删除entity
+     * 根据主键ID删除entity
      *
-     * @param id 业务ID
+     * @param id 主键ID
      */
-    void removeById(String id);
+    void removeById(Long id);
 
     /**
      * 批量删除
