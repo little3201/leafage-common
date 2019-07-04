@@ -33,14 +33,14 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     /**
      * 从数据源
      */
-    private List<Object> slaveDataSources = new ArrayList<>();
+    private List<Object> slaverDataSources = new ArrayList<>();
     /**
      * 轮询计数
      */
-    private AtomicInteger squence = new AtomicInteger(0);
+    private AtomicInteger sequence = new AtomicInteger(0);
 
-    public void setSlaveDataSources(List<Object> slaveDataSources) {
-        this.slaveDataSources = slaveDataSources;
+    protected void setSlaveDataSources(List<Object> slaverDataSources) {
+        this.slaverDataSources = slaverDataSources;
     }
 
     @Override
@@ -49,9 +49,9 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         if (DataSourceHolder.isMaster()) {
             key = DataSourceHolder.MASTER;
         } else {
-            key = this.getSlaveKey(false);
+            key = this.getSlaverKey(false);
         }
-        log.info("============== current datasource key: {} ==================", key);
+        log.info("============== current datasource key: {} ==============", key);
         return key;
     }
 
@@ -61,25 +61,25 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * @param isPollRead 是否轮询获取数据源，默认随机，false：随机，true：轮询
      * @return slave key
      */
-    private Object getSlaveKey(boolean isPollRead) {
+    private Object getSlaverKey(boolean isPollRead) {
         int index;
         if (isPollRead) {
-            long currValue = squence.incrementAndGet();
-            if ((currValue + 1) >= MAX_POOL) {
+            long currValue = sequence.incrementAndGet();
+            if (MAX_POOL <= (currValue + 1)) {
                 try {
                     lock.lock();
-                    if ((currValue + 1) >= MAX_POOL) {
-                        squence.set(0);
+                    if (MAX_POOL <= (currValue + 1)) {
+                        sequence.set(0);
                     }
                 } finally {
                     lock.unlock();
                 }
             }
-            index = (int) (currValue % slaveDataSources.size());
+            index = (int) (currValue % slaverDataSources.size());
         } else {
-            index = ThreadLocalRandom.current().nextInt(0, slaveDataSources.size());
+            index = ThreadLocalRandom.current().nextInt(0, slaverDataSources.size());
         }
-        return slaveDataSources.get(index);
+        return slaverDataSources.get(index);
     }
 
 }

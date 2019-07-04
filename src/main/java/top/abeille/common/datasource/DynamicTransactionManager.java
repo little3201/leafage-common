@@ -23,7 +23,7 @@ public class DynamicTransactionManager extends DataSourceTransactionManager {
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         boolean readOnly = definition.isReadOnly();
         if (readOnly) {
-            DataSourceHolder.setDataSource(DataSourceHolder.SLAVE);
+            DataSourceHolder.setDataSource(DataSourceHolder.SLAVER);
         } else {
             DataSourceHolder.setDataSource(DataSourceHolder.MASTER);
         }

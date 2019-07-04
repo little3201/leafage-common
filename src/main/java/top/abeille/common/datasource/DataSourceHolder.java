@@ -20,7 +20,7 @@ public final class DataSourceHolder {
     /**
      * 从数据库标识
      */
-    public static final String SLAVE = "slave";
+    public static final String SLAVER = "slaver";
 
     /**
      * 本地线程

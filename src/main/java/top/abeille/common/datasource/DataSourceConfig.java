@@ -20,7 +20,7 @@ import java.util.Map;
 
 
 /**
- * description
+ * 数据源配置
  *
  * @author liwenqiang 2019/4/1 15:53
  **/
@@ -45,8 +45,8 @@ public class DataSourceConfig {
      *
      * @return Druid数据源
      */
-    @Bean(name = "slaveDataSource")
-    @ConfigurationProperties("spring.datasource.slave")
+    @Bean(name = "slaverDataSource")
+    @ConfigurationProperties("spring.datasource.slaver")
     public DataSource slaveDataSource() {
         return DataSourceBuilder.create().build();
     }
@@ -61,16 +61,16 @@ public class DataSourceConfig {
      */
     @Bean(name = "dynamicDataSource")
     public DynamicDataSource dynamicDataSource(@Qualifier("masterDataSource") DataSource masterDataSource,
-                                               @Qualifier("slaveDataSource") DataSource slaveDataSource) {
+                                               @Qualifier("slaverDataSource") DataSource slaveDataSource) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> targetDataSources = new HashMap<>(16);
 
         targetDataSources.put("master", masterDataSource);
-        targetDataSources.put("slave", slaveDataSource);
+        targetDataSources.put("slaver", slaveDataSource);
         dynamicDataSource.setTargetDataSources(targetDataSources);
 
         List<Object> slaveDataSources = new ArrayList<>();
-        slaveDataSources.add("slave");
+        slaveDataSources.add("slaver");
 
         dynamicDataSource.setDefaultTargetDataSource(masterDataSource);
         dynamicDataSource.setSlaveDataSources(slaveDataSources);
