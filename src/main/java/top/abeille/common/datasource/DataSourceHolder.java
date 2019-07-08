@@ -3,7 +3,7 @@
  */
 package top.abeille.common.datasource;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * 动态数据源操作
@@ -35,7 +35,7 @@ public final class DataSourceHolder {
     }
 
     public static void setDataSource(String key) {
-        if (StringUtils.isNotBlank(key)) {
+        if (!StringUtils.isEmpty(key)) {
             DATASOURCE_HOLDER.set(key);
         }
     }
