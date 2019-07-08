@@ -26,6 +26,8 @@ import org.springframework.util.MultiValueMap;
 @SpringBootTest
 public abstract class AbstractControllerMock<T> {
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     private MockMvc mockMvc;
 
     /**
@@ -51,7 +53,7 @@ public abstract class AbstractControllerMock<T> {
      */
     public MvcResult postTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).accept(MediaType.APPLICATION_JSON_UTF8)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
+                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -69,7 +71,7 @@ public abstract class AbstractControllerMock<T> {
      */
     public MvcResult getTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
+                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -87,7 +89,7 @@ public abstract class AbstractControllerMock<T> {
      */
     public MvcResult putTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).accept(MediaType.APPLICATION_JSON_UTF8)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj)));
+                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -96,7 +98,7 @@ public abstract class AbstractControllerMock<T> {
      */
     public MvcResult deleteTest(String url, Object obj) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(new ObjectMapper().writeValueAsString(obj)));
+                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 }
