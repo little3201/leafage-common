@@ -24,7 +24,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     /**
      * 连接池最大限度
      */
-    private static final Long MAX_POOL = Long.MAX_VALUE;
+    private static final Long MAX_POOL = 8L;
     /**
      * 锁定义
      */
@@ -39,7 +39,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      */
     private AtomicInteger sequence = new AtomicInteger(0);
 
-    protected void setSlaveDataSources(List<Object> slaverDataSources) {
+    void setSlaveDataSources(List<Object> slaverDataSources) {
         this.slaverDataSources = slaverDataSources;
     }
 
