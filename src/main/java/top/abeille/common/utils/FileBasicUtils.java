@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * description
+ * 文件操作工具类
  *
  * @author liwenqiang 2019/3/25 14:43
  **/

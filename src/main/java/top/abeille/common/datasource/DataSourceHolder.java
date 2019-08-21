@@ -15,12 +15,12 @@ public final class DataSourceHolder {
     /**
      * 主数据库标识
      */
-    public static final String MASTER = "master";
+    static final String MASTER = "master";
 
     /**
      * 从数据库标识
      */
-    public static final String SLAVER = "slaver";
+    static final String SLAVER = "slaver";
 
     /**
      * 本地线程
@@ -30,21 +30,21 @@ public final class DataSourceHolder {
     public DataSourceHolder() {
     }
 
-    public static String getDataSource() {
+    private static String getDataSource() {
         return DATASOURCE_HOLDER.get();
     }
 
-    public static void setDataSource(String key) {
+    static void setDataSource(String key) {
         if (!StringUtils.isEmpty(key)) {
             DATASOURCE_HOLDER.set(key);
         }
     }
 
-    public static void clearDataSource() {
+    static void clearDataSource() {
         DATASOURCE_HOLDER.remove();
     }
 
-    public static boolean isMaster() {
+    static boolean isMaster() {
         return getDataSource().equals(MASTER);
     }
 }
