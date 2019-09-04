@@ -18,4 +18,17 @@ public abstract class AbstractController {
      */
     protected static final Logger log = LoggerFactory.getLogger(AbstractController.class);
 
+    /**
+     * 初始化分页参数
+     * @param pageNum 当前页码
+     * @param pageSize 分页大小
+     */
+    protected void initPageParam(Integer pageNum, Integer pageSize){
+        if(null == pageNum){
+            pageNum = 0;
+        }
+        if(null == pageSize){
+            pageSize = 10;
+        }
+    }
 }
