@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,6 +26,11 @@ import org.springframework.util.MultiValueMap;
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public abstract class AbstractControllerMock<T> {
+
+    /**
+     * 开启日志
+     */
+    private static final Logger log = LoggerFactory.getLogger(AbstractControllerMock.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String APPLICATION_JSON_UTF8 = "application/json;charset=UTF-8";
