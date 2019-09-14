@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -26,7 +25,7 @@ import org.springframework.util.MultiValueMap;
 @SpringBootTest
 public abstract class AbstractControllerMock<T> {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private MockMvc mockMvc;
 
@@ -52,8 +51,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  POST 重载 添加参数到request body ====================
      */
     public MvcResult postTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).accept(MediaType.APPLICATION_JSON_UTF8)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).accept("application/json;charset=UTF-8")
+                .contentType("application/json;charset=UTF-8").content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -61,8 +60,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  POST 重载 添加Map类型参数到请求中 ====================
      */
     public MvcResult postTest(String url, MultiValueMap<String, String> params) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).params(params).accept(MediaType.APPLICATION_JSON_UTF8)
-                .contentType(MediaType.APPLICATION_JSON_UTF8));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).params(params).accept("application/json;charset=UTF-8")
+                .contentType("application/json;charset=UTF-8"));
         return resultActions.andReturn();
     }
 
@@ -70,8 +69,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  GET 重载 添加参数到request body ====================
      */
     public MvcResult getTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).accept("application/x-www-form-urlencoded")
+                .contentType("application/json;charset=UTF-8").content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -79,8 +78,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  GET 重载 添加Map类型参数到请求中 ====================
      */
     public MvcResult getTest(String url, MultiValueMap<String, String> params) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).params(params).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).params(params).accept("application/x-www-form-urlencoded")
+                .contentType("application/json;charset=UTF-8"));
         return resultActions.andReturn();
     }
 
@@ -88,8 +87,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  PUT  ====================
      */
     public MvcResult putTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).accept(MediaType.APPLICATION_JSON_UTF8)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).accept("application/json;charset=UTF-8")
+                .contentType("application/json;charset=UTF-8").content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -97,8 +96,8 @@ public abstract class AbstractControllerMock<T> {
      * ====================  DELETE  ====================
      */
     public MvcResult deleteTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).accept(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).accept("application/x-www-form-urlencoded")
+                .contentType("application/json;charset=UTF-8").content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 }
