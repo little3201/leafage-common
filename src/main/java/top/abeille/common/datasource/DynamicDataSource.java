@@ -41,7 +41,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * 轮询计数
      */
     private AtomicInteger sequence = new AtomicInteger(0);
-    private boolean isPollRead = false;
+    private Boolean isPollRead = false;
 
     void setSlaveDataSources(List<Object> slaverDataSources) {
         this.slaverDataSources = slaverDataSources;
@@ -53,7 +53,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         if (DataSourceHolder.isMaster()) {
             key = DataSourceHolder.MASTER;
         } else {
-            key = this.getSlaverKey(isPollRead);
+            setPollRead(true);
+            key = this.getSlaverKey(isPollRead());
         }
         log.info("============== current datasource key: {} ==============", key);
         return key;
