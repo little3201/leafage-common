@@ -22,6 +22,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
     /**
+     * 开启日志
+     */
+    private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
+    /**
      * 连接池最大限度
      */
     private static final Long MAX_POOL = 8L;
@@ -29,7 +33,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * 锁定义
      */
     private final Lock lock = new ReentrantLock();
-    private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
     /**
      * 从数据源
      */
@@ -38,6 +41,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * 轮询计数
      */
     private AtomicInteger sequence = new AtomicInteger(0);
+    private boolean isPollRead = false;
 
     void setSlaveDataSources(List<Object> slaverDataSources) {
         this.slaverDataSources = slaverDataSources;
@@ -49,10 +53,18 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         if (DataSourceHolder.isMaster()) {
             key = DataSourceHolder.MASTER;
         } else {
-            key = this.getSlaverKey(false);
+            key = this.getSlaverKey(isPollRead);
         }
         log.info("============== current datasource key: {} ==============", key);
         return key;
+    }
+
+    public boolean isPollRead() {
+        return isPollRead;
+    }
+
+    public void setPollRead(boolean pollRead) {
+        isPollRead = pollRead;
     }
 
     /**
