@@ -24,7 +24,7 @@ import org.springframework.util.MultiValueMap;
  * @author liwenqiang 2018/12/28 14:40
  **/
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractControllerMock<T> {
 
     /**
@@ -33,8 +33,6 @@ public abstract class AbstractControllerMock<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractControllerMock.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String APPLICATION_JSON_UTF8 = "application/json;charset=UTF-8";
-    private final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private MockMvc mockMvc;
 
     /**
@@ -59,8 +57,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  POST 重载 添加参数到request body ====================
      */
     public MvcResult postTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).accept(APPLICATION_JSON_UTF8)
-                .contentType(APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -68,8 +65,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  POST 重载 添加Map类型参数到请求中 ====================
      */
     public MvcResult postTest(String url, MultiValueMap<String, String> params) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).params(params).accept(APPLICATION_JSON_UTF8)
-                .contentType(APPLICATION_JSON_UTF8));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url));
         return resultActions.andReturn();
     }
 
@@ -77,8 +73,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  GET 重载 添加参数到request body ====================
      */
     public MvcResult getTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).accept(APPLICATION_FORM_URLENCODED)
-                .contentType(APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -86,8 +81,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  GET 重载 添加Map类型参数到请求中 ====================
      */
     public MvcResult getTest(String url, MultiValueMap<String, String> params) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url).params(params).accept(APPLICATION_FORM_URLENCODED)
-                .contentType(APPLICATION_JSON_UTF8));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url));
         return resultActions.andReturn();
     }
 
@@ -95,8 +89,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  PUT  ====================
      */
     public MvcResult putTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).accept(APPLICATION_JSON_UTF8)
-                .contentType(APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(url).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 
@@ -104,8 +97,7 @@ public abstract class AbstractControllerMock<T> {
      * ====================  DELETE  ====================
      */
     public MvcResult deleteTest(String url, Object obj) throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).accept(APPLICATION_FORM_URLENCODED)
-                .contentType(APPLICATION_JSON_UTF8).content(objectMapper.writeValueAsString(obj)));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete(url).content(objectMapper.writeValueAsString(obj)));
         return resultActions.andReturn();
     }
 }
