@@ -22,11 +22,6 @@
     </properties>
 
     <dependencies>
-        <!-- mock -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
         <!-- jdbc -->
         <dependency>
             <groupId>org.springframework</groupId>
