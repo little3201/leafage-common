@@ -4,8 +4,9 @@
 package top.abeille.common.basic;
 
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public interface BasicService<T> {
      * @param id 主键
      * @return T
      */
-    default T getById(Long id) {
-        return null;
+    default Mono<T> getById(Long id) {
+        return Mono.empty();
     }
 
     /**
@@ -31,8 +32,8 @@ public interface BasicService<T> {
      * @param t 实例
      * @return T
      */
-    default T getByExample(T t) {
-        return null;
+    default Mono<T> getByExample(T t) {
+        return Mono.empty();
     }
 
     /**
@@ -40,8 +41,8 @@ public interface BasicService<T> {
      *
      * @return List<T>
      */
-    default List<T> findAll() {
-        return null;
+    default Flux<T> findAll() {
+        return Flux.empty();
     }
 
     /**
@@ -50,8 +51,8 @@ public interface BasicService<T> {
      * @param sort 排序
      * @return List<T>
      */
-    default List<T> findAll(Sort sort) {
-        return null;
+    default Flux<T> findAll(Sort sort) {
+        return Flux.empty();
     }
 
     /**
@@ -65,19 +66,8 @@ public interface BasicService<T> {
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default List<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {
-        return null;
-    }
-
-    /**
-     * 分页获取所有entities
-     *
-     * @param pageNum  当前页
-     * @param pageSize 当前页数据量
-     * @return Page<T>
-     */
-    default Page<T> findAllByPage(Integer pageNum, Integer pageSize) {
-        return null;
+    default Flux<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {
+        return Flux.empty();
     }
 
     /**
@@ -85,24 +75,27 @@ public interface BasicService<T> {
      *
      * @return long type result
      */
-    default long getCount() {
-        return 0;
+    default Mono<Long> getCount() {
+        return Mono.empty();
     }
-
 
     /**
      * 根据主键ID删除entity
      *
      * @param id 主键ID
      */
-    void removeById(Long id);
+    default Mono<Void> removeById(Long id) {
+        return Mono.empty();
+    }
 
     /**
      * 批量删除
      *
      * @param entities 实例集合
      */
-    void removeInBatch(List<T> entities);
+    default Mono<Void> removeInBatch(List<T> entities) {
+        return Mono.empty();
+    }
 
     /**
      * 保存entity
@@ -110,8 +103,8 @@ public interface BasicService<T> {
      * @param entity 实例
      * @return T
      */
-    default T save(T entity) {
-        return null;
+    default Mono<T> save(T entity) {
+        return Mono.empty();
     }
 
     /**
@@ -120,7 +113,7 @@ public interface BasicService<T> {
      * @param entities 实例集合
      * @return 实例类型
      */
-    default List<T> saveAll(List<T> entities) {
-        return null;
+    default Flux<T> saveAll(List<T> entities) {
+        return Flux.empty();
     }
 }
