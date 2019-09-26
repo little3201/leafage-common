@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
  *
  * @author liwenqiang 2019/4/1 16:44
  **/
-public final class DataSourceHolder {
+final class DataSourceHolder {
 
     /**
      * 主数据库标识
@@ -27,7 +27,7 @@ public final class DataSourceHolder {
      */
     private static final ThreadLocal<String> DATASOURCE_HOLDER = new ThreadLocal<>();
 
-    public DataSourceHolder() {
+    private DataSourceHolder() {
     }
 
     private static String getDataSource() {

@@ -20,6 +20,8 @@ public class FileBasicUtils {
 
     protected static final Logger log = LoggerFactory.getLogger(FileBasicUtils.class);
 
+    private FileBasicUtils() {
+    }
 
     /**
      * 根据路径，后缀，获取指定路径下的文件
@@ -38,7 +40,7 @@ public class FileBasicUtils {
         }
         String[] suffixes = suffix.split(",");
         for (String curSuffix : suffixes) {
-            log.info("获取后缀为：{} 的目标文件", "." + curSuffix);
+            log.info("获取后缀为：{} 的目标文件", curSuffix);
             for (File file : files) {
                 if (file.getName().endsWith("." + curSuffix)) {
                     list.add(file);

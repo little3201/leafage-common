@@ -8,15 +8,12 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.MultiValueMap;
 
 /**
  * Controller Parent
@@ -26,11 +23,6 @@ import org.springframework.util.MultiValueMap;
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractControllerMock<T> {
-
-    /**
-     * 开启日志
-     */
-    private static final Logger log = LoggerFactory.getLogger(AbstractControllerMock.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private MockMvc mockMvc;
@@ -64,7 +56,7 @@ public abstract class AbstractControllerMock<T> {
     /**
      * ====================  POST 重载 添加Map类型参数到请求中 ====================
      */
-    public MvcResult postTest(String url, MultiValueMap<String, String> params) throws Exception {
+    public MvcResult postTest(String url) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url));
         return resultActions.andReturn();
     }
@@ -80,7 +72,7 @@ public abstract class AbstractControllerMock<T> {
     /**
      * ====================  GET 重载 添加Map类型参数到请求中 ====================
      */
-    public MvcResult getTest(String url, MultiValueMap<String, String> params) throws Exception {
+    public MvcResult getTest(String url) throws Exception {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url));
         return resultActions.andReturn();
     }

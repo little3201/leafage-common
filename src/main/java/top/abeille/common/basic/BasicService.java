@@ -7,6 +7,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public interface BasicService<T> {
      * @return List<T>
      */
     default List<T> findAll() {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -51,7 +52,7 @@ public interface BasicService<T> {
      * @return List<T>
      */
     default List<T> findAll(Sort sort) {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -66,7 +67,7 @@ public interface BasicService<T> {
      * @return List<T>
      */
     default List<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -121,6 +122,6 @@ public interface BasicService<T> {
      * @return 实例类型
      */
     default List<T> saveAll(List<T> entities) {
-        return null;
+        return Collections.emptyList();
     }
 }
