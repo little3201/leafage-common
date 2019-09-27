@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2019. Abeille All Right Reserved.
+ */
 package top.abeille.common.basic;
 
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +42,7 @@ public interface BasicService<T> {
      * @return List<T>
      */
     default List<T> findAll() {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -48,7 +52,7 @@ public interface BasicService<T> {
      * @return List<T>
      */
     default List<T> findAll(Sort sort) {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -58,21 +62,22 @@ public interface BasicService<T> {
      * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
      * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
      *
-     * @param t 实例
+     * @param t              实例
+     * @param exampleMatcher 匹配条件
      * @return List<T>
      */
     default List<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
      * 分页获取所有entities
      *
-     * @param curPage  当前页
+     * @param pageNum  当前页
      * @param pageSize 当前页数据量
      * @return Page<T>
      */
-    default Page<T> findAllByPage(Integer curPage, Integer pageSize) {
+    default Page<T> findAllByPage(Integer pageNum, Integer pageSize) {
         return null;
     }
 
@@ -87,9 +92,9 @@ public interface BasicService<T> {
 
 
     /**
-     * 根据pkId删除entity
+     * 根据主键ID删除entity
      *
-     * @param id 主键
+     * @param id 主键ID
      */
     void removeById(Long id);
 
@@ -117,6 +122,6 @@ public interface BasicService<T> {
      * @return 实例类型
      */
     default List<T> saveAll(List<T> entities) {
-        return null;
+        return Collections.emptyList();
     }
 }
