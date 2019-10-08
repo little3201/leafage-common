@@ -92,6 +92,7 @@ public interface BasicService<S, T> {
      * 批量删除
      *
      * @param entities 实例集合
+     * @return 删除结果
      */
     default Mono<Void> removeInBatch(List<T> entities) {
         return Mono.empty();
@@ -101,7 +102,7 @@ public interface BasicService<S, T> {
      * 保存entity
      *
      * @param s 实例
-     * @return T
+     * @return 保存结果
      */
     default Mono<T> save(S s) {
         return Mono.empty();
