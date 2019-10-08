@@ -19,10 +19,10 @@ public interface BasicService<S, T> {
     /**
      * 根据id获取entity
      *
-     * @param id 主键
+     * @param id 业务主键
      * @return T
      */
-    default Mono<T> getById(String id) {
+    default Mono<T> getById(Long id) {
         return Mono.empty();
     }
 
@@ -82,9 +82,9 @@ public interface BasicService<S, T> {
     /**
      * 根据主键ID删除entity
      *
-     * @param id 主键ID
+     * @param id 业务主键
      */
-    default Mono<Void> removeById(String id) {
+    default Mono<Void> removeById(Long id) {
         return Mono.empty();
     }
 
@@ -101,10 +101,11 @@ public interface BasicService<S, T> {
     /**
      * 保存entity
      *
-     * @param s 实例
+     * @param id 业务主键
+     * @param s  实例
      * @return 保存结果
      */
-    default Mono<T> save(S s) {
+    default Mono<T> save(Long id, S s) {
         return Mono.empty();
     }
 
