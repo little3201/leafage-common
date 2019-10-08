@@ -15,24 +15,24 @@ import java.util.List;
  *
  * @author liwenqiang 2018/7/27 23:14
  **/
-public interface BasicService<T> {
+public interface BasicService<S, T> {
     /**
      * 根据id获取entity
      *
      * @param id 主键
      * @return T
      */
-    default Mono<T> getById(Long id) {
+    default Mono<T> getById(String id) {
         return Mono.empty();
     }
 
     /**
      * 根据条件模版获取entity
      *
-     * @param t 实例
+     * @param s 实例
      * @return T
      */
-    default Mono<T> getByExample(T t) {
+    default Mono<T> getByExample(S s) {
         return Mono.empty();
     }
 
@@ -62,11 +62,11 @@ public interface BasicService<T> {
      * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
      * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
      *
-     * @param t              实例
+     * @param s              实例
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default Flux<T> findAllByExample(T t, ExampleMatcher exampleMatcher) {
+    default Flux<T> findAllByExample(S s, ExampleMatcher exampleMatcher) {
         return Flux.empty();
     }
 
@@ -84,7 +84,7 @@ public interface BasicService<T> {
      *
      * @param id 主键ID
      */
-    default Mono<Void> removeById(Long id) {
+    default Mono<Void> removeById(String id) {
         return Mono.empty();
     }
 
@@ -100,10 +100,10 @@ public interface BasicService<T> {
     /**
      * 保存entity
      *
-     * @param entity 实例
+     * @param s 实例
      * @return T
      */
-    default Mono<T> save(T entity) {
+    default Mono<T> save(S s) {
         return Mono.empty();
     }
 
@@ -113,7 +113,7 @@ public interface BasicService<T> {
      * @param entities 实例集合
      * @return 实例类型
      */
-    default Flux<T> saveAll(List<T> entities) {
+    default Flux<T> saveAll(List<S> entities) {
         return Flux.empty();
     }
 }
