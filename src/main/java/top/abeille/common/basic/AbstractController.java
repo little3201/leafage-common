@@ -16,5 +16,5 @@ public abstract class AbstractController {
     /**
      * 开启日志
      */
-    protected static final Logger log = LoggerFactory.getLogger(AbstractController.class);
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class);
 }
