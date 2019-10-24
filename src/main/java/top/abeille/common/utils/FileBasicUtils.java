@@ -18,7 +18,7 @@ import java.util.List;
  **/
 public class FileBasicUtils {
 
-    protected static final Logger log = LoggerFactory.getLogger(FileBasicUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(FileBasicUtils.class);
 
 
     /**
