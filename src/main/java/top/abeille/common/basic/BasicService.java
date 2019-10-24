@@ -41,7 +41,7 @@ public interface BasicService<D, V> {
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default List<V> fetchAllByExample(D d, ExampleMatcher exampleMatcher) {
+    default List<V> fetchByExample(D d, ExampleMatcher exampleMatcher) {
         return Collections.emptyList();
     }
 
@@ -51,7 +51,7 @@ public interface BasicService<D, V> {
      * @param pageable 分页参数
      * @return Page<T>
      */
-    default Page<V> fetchAllByPage(Pageable pageable) {
+    default Page<V> fetchByPage(Pageable pageable) {
         return null;
     }
 
