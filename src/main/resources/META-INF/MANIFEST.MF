@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Implementation-Title: abeille-common
+Automatic-Module-Name: abeille.common
+Implementation-Version: 0.0.1-SNAPSHOT
+Created-By: 1.8.0_212 (Oracle Corporation)
+
