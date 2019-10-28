@@ -66,16 +66,6 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 获取行
-     *
-     * @return long type result
-     */
-    default long queryCount() {
-        return 0;
-    }
-
-
-    /**
      * 根据主键ID删除entity
      *
      * @param id 主键ID
@@ -90,12 +80,23 @@ public interface BasicService<D, V> {
     void removeInBatch(List<D> dList);
 
     /**
-     * 保存对象
+     * 添加对象
      *
      * @param d 入参
      * @return T
      */
-    default V save(D d) {
+    default V create(D d) {
+        return null;
+    }
+
+    /**
+     * 修改对象
+     *
+     * @param businessId 业务主键
+     * @param d          入参
+     * @return T
+     */
+    default V modify(Long businessId, D d) {
         return null;
     }
 
