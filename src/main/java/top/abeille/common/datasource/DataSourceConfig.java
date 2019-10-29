@@ -5,6 +5,7 @@ package top.abeille.common.datasource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -89,9 +90,10 @@ class DataSourceConfig {
      * @return 事务管理器
      */
     @Bean
+    @ConditionalOnMissingBean
     public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource") DynamicDataSource dataSource) {
-        DynamicTransactionManager dynamicDataSourceTransactionManager = new DynamicTransactionManager();
-        dynamicDataSourceTransactionManager.setDataSource(dataSource);
-        return dynamicDataSourceTransactionManager;
+        DynamicTransactionManager dynamicTransactionManager = new DynamicTransactionManager();
+        dynamicTransactionManager.setDataSource(dataSource);
+        return dynamicTransactionManager;
     }
 }
