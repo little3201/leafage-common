@@ -50,15 +50,6 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 获取行
-     *
-     * @return long type result
-     */
-    default Mono<Long> queryCount() {
-        return Mono.empty();
-    }
-
-    /**
      * 根据主键ID删除entity
      *
      * @param id 业务主键
@@ -80,11 +71,21 @@ public interface BasicService<D, V> {
     /**
      * 保存entity
      *
+     * @param s 实例
+     * @return 保存结果
+     */
+    default Mono<V> create(D s) {
+        return Mono.empty();
+    }
+
+    /**
+     * 修改entity
+     *
      * @param id 业务主键
      * @param s  实例
      * @return 保存结果
      */
-    default Mono<V> save(Long id, D s) {
+    default Mono<V> modify(Long id, D s) {
         return Mono.empty();
     }
 
