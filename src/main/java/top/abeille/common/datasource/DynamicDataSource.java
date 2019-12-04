@@ -3,8 +3,6 @@
  */
 package top.abeille.common.datasource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import java.util.ArrayList;
@@ -21,10 +19,6 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
-    /**
-     * 开启日志
-     */
-    private Logger log = LoggerFactory.getLogger(DynamicDataSource.class);
     /**
      * 连接池最大限度
      */
@@ -56,7 +50,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
             setPollRead(true);
             key = this.getSlaverKey(isPollRead());
         }
-        log.info("============== current datasource key: {} ==============", key);
         return key;
     }
 
