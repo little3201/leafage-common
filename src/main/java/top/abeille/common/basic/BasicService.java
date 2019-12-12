@@ -4,6 +4,7 @@
 package top.abeille.common.basic;
 
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -15,22 +16,13 @@ import java.util.List;
  * @author liwenqiang 2018/7/27 23:14
  **/
 public interface BasicService<D, V> {
-    /**
-     * 根据id获取entity
-     *
-     * @param id 业务主键
-     * @return T
-     */
-    default Mono<V> queryById(Long id) {
-        return Mono.empty();
-    }
 
     /**
      * 获取所有entities并排序
      *
      * @return List<T>
      */
-    default Flux<V> fetchAll() {
+    default Flux<V> fetchAll(Sort sort) {
         return Flux.empty();
     }
 
@@ -47,6 +39,16 @@ public interface BasicService<D, V> {
      */
     default Flux<V> fetchByExample(D d, ExampleMatcher exampleMatcher) {
         return Flux.empty();
+    }
+
+    /**
+     * 根据id获取entity
+     *
+     * @param id 业务主键
+     * @return T
+     */
+    default Mono<V> queryById(Long id) {
+        return Mono.empty();
     }
 
     /**
@@ -69,9 +71,9 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 保存entity
+     * 新增entity
      *
-     * @param s 实例
+     * @param s  实例
      * @return 保存结果
      */
     default Mono<V> create(D s) {
@@ -79,7 +81,7 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 修改entity
+     * 编辑entity
      *
      * @param id 业务主键
      * @param s  实例
@@ -95,7 +97,7 @@ public interface BasicService<D, V> {
      * @param dList 实例集合
      * @return 实例类型
      */
-    default Flux<V> saveInBatch(List<D> dList) {
+    default Flux<V> saveAll(List<D> dList) {
         return Flux.empty();
     }
 }
