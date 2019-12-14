@@ -73,7 +73,7 @@ public interface BasicService<D, V> {
     /**
      * 新增entity
      *
-     * @param s  实例
+     * @param s 实例
      * @return 保存结果
      */
     default Mono<V> create(D s) {
