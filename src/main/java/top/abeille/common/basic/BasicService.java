@@ -26,7 +26,7 @@ public interface BasicService<D, V> {
      * @param sort 排序
      * @return List<V>
      */
-    default List<V> fetchAll(Sort sort) {
+    default List<V> retrieveAll(Sort sort) {
         return Collections.emptyList();
     }
 
@@ -41,7 +41,7 @@ public interface BasicService<D, V> {
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default List<V> fetchByExample(D d, ExampleMatcher exampleMatcher) {
+    default List<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
         return Collections.emptyList();
     }
 
@@ -51,7 +51,7 @@ public interface BasicService<D, V> {
      * @param pageable 分页参数
      * @return Page<T>
      */
-    default Page<V> fetchByPage(Pageable pageable) {
+    default Page<V> retrieveByPage(Pageable pageable) {
         return null;
     }
 
@@ -61,7 +61,7 @@ public interface BasicService<D, V> {
      * @param businessId 业务主键
      * @return T
      */
-    default V queryById(Long businessId) {
+    default V fetchById(Long businessId) {
         return null;
     }
 
