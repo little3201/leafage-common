@@ -22,7 +22,7 @@ public interface BasicService<D, V> {
      *
      * @return List<T>
      */
-    default Flux<V> fetchAll(Sort sort) {
+    default Flux<V> retrieveAll(Sort sort) {
         return Flux.empty();
     }
 
@@ -37,7 +37,7 @@ public interface BasicService<D, V> {
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default Flux<V> fetchByExample(D d, ExampleMatcher exampleMatcher) {
+    default Flux<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
         return Flux.empty();
     }
 
@@ -47,7 +47,7 @@ public interface BasicService<D, V> {
      * @param id 业务主键
      * @return T
      */
-    default Mono<V> queryById(Long id) {
+    default Mono<V> fetchById(Long id) {
         return Mono.empty();
     }
 
