@@ -73,10 +73,10 @@ public interface BasicService<D, V> {
     /**
      * 新增entity
      *
-     * @param s 实例
+     * @param d 实例
      * @return 保存结果
      */
-    default Mono<V> create(D s) {
+    default Mono<V> create(D d) {
         return Mono.empty();
     }
 
@@ -84,10 +84,10 @@ public interface BasicService<D, V> {
      * 编辑entity
      *
      * @param id 业务主键
-     * @param s  实例
+     * @param d  实例
      * @return 保存结果
      */
-    default Mono<V> modify(Long id, D s) {
+    default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
