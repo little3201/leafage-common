@@ -44,19 +44,19 @@ public interface BasicService<D, V> {
     /**
      * 根据id获取entity
      *
-     * @param id 业务主键
+     * @param businessId 业务主键
      * @return T
      */
-    default Mono<V> fetchById(Long id) {
+    default Mono<V> fetchById(String businessId) {
         return Mono.empty();
     }
 
     /**
      * 根据主键ID删除entity
      *
-     * @param id 业务主键
+     * @param businessId 业务主键
      */
-    default Mono<Void> removeById(Long id) {
+    default Mono<Void> removeById(String businessId) {
         return Mono.empty();
     }
 
@@ -83,11 +83,11 @@ public interface BasicService<D, V> {
     /**
      * 编辑entity
      *
-     * @param id 业务主键
-     * @param d  实例
+     * @param businessId 业务主键
+     * @param d          实例
      * @return 保存结果
      */
-    default Mono<V> modify(Long id, D d) {
+    default Mono<V> modify(String businessId, D d) {
         return Mono.empty();
     }
 
