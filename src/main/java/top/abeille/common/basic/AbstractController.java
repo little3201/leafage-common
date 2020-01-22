@@ -29,8 +29,8 @@ public abstract class AbstractController {
     protected Sort initSortProperties(String... properties) {
         if (StringUtils.isEmpty(properties)) {
             logger.info("Sort by pk_id and direction is desc");
-            return new Sort(Sort.Direction.DESC, "id");
+            return Sort.by(Sort.Direction.DESC, "id");
         }
-        return new Sort(Sort.Direction.DESC, properties);
+        return Sort.by(Sort.Direction.DESC, properties);
     }
 }
