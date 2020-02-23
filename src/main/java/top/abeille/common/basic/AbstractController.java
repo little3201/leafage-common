@@ -6,7 +6,8 @@ package top.abeille.common.basic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 /**
  * 接口基类
@@ -27,10 +28,10 @@ public abstract class AbstractController {
      * @return Sort 排序规则配置
      */
     protected Sort initSortProperties(String... properties) {
-        if (StringUtils.isEmpty(properties)) {
-            logger.info("Sort by pk_id and direction is desc");
-            return Sort.by(Sort.Direction.DESC, "id");
+        if (Objects.nonNull(properties) && properties.length > 0) {
+            return Sort.by(Sort.Direction.DESC, properties);
         }
-        return Sort.by(Sort.Direction.DESC, properties);
+        logger.info("Sort by pk_id and direction is desc");
+        return Sort.by(Sort.Direction.DESC, "id");
     }
 }
