@@ -37,7 +37,7 @@ public abstract class AbstractController {
         if (Objects.isNull(pageSize) || pageSize < 0) {
             pageSize = 10;
         }
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
         return PageRequest.of(pageNum, pageSize, sort);
     }
 }
