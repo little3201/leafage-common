@@ -12,22 +12,20 @@ import java.util.List;
 public class AbstractBasicService {
 
     /**
-     * 获取当前日期的月份和日期，将月份转换为十六进制
+     * 获取当前日期的月份和日期，将月份转换为十六进制，拼接日期和四位随机码
      *
-     * @return 拼接的日期，例如：20200213
+     * @return 拼接的日期，例如：A2103JA
      */
     protected String generateId() {
         LocalDate localDate = LocalDate.now();
-        String month = Integer.toHexString(localDate.getMonthValue()).toUpperCase();
-        int day = localDate.getDayOfMonth();
-        generateRandom();
-        return month + day + generateRandom();
+        // 月份转换为十六进制
+        return Integer.toHexString(localDate.getMonthValue()).toUpperCase() + localDate.getDayOfMonth() + generateRandom();
     }
 
     /**
      * 生成四位随机码
      *
-     * @return 拼接的日期，例如：20200213
+     * @return 组合的四位码，例如：03JA
      */
     private String generateRandom() {
         String[] beforeShuffle = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
