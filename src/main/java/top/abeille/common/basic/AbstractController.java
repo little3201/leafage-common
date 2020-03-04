@@ -3,8 +3,6 @@
  */
 package top.abeille.common.basic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
 import java.util.Objects;
@@ -17,11 +15,6 @@ import java.util.Objects;
 public abstract class AbstractController {
 
     /**
-     * 开启日志
-     */
-    protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class);
-
-    /**
      * 初始化查询排序规则, 默认以主键倒序排列
      *
      * @param properties 排序字段
@@ -31,7 +24,6 @@ public abstract class AbstractController {
         if (Objects.nonNull(properties) && properties.length > 0) {
             return Sort.by(Sort.Direction.DESC, properties);
         }
-        logger.info("Sort by pk_id and direction is desc");
         return Sort.by(Sort.Direction.DESC, "id");
     }
 }
