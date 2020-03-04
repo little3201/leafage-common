@@ -47,7 +47,7 @@ public interface BasicService<D, V> {
      * @param businessId 业务主键
      * @return T
      */
-    default Mono<V> fetchById(String businessId) {
+    default Mono<V> fetchByBusinessId(String businessId) {
         return Mono.empty();
     }
 
