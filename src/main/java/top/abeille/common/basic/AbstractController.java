@@ -3,9 +3,8 @@
  */
 package top.abeille.common.basic;
 
-import org.springframework.data.domain.Sort;
-
-import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 接口基类
@@ -15,15 +14,7 @@ import java.util.Objects;
 public abstract class AbstractController {
 
     /**
-     * 初始化查询排序规则, 默认以主键倒序排列
-     *
-     * @param properties 排序字段
-     * @return Sort 排序规则配置
+     * 日志
      */
-    protected Sort initSortProperties(String... properties) {
-        if (Objects.nonNull(properties) && properties.length > 0) {
-            return Sort.by(Sort.Direction.DESC, properties);
-        }
-        return Sort.by(Sort.Direction.DESC, "id");
-    }
+    protected static final Logger log = LoggerFactory.getLogger(AbstractController.class);
 }
