@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  **/
 public class AbstractTest implements BeforeEachCallback {
 
-
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
 
