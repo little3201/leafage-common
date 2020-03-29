@@ -3,8 +3,6 @@
  */
 package top.abeille.common.basic;
 
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,26 +16,11 @@ import java.util.List;
 public interface BasicService<D, V> {
 
     /**
-     * 获取所有entities并排序
+     * 获取所有entities
      *
      * @return List<T>
      */
-    default Flux<V> retrieveAll(Sort sort) {
-        return Flux.empty();
-    }
-
-    /**
-     * 根据条件查询所有——设置匹配条件，如例所示：
-     * Type one: ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnorePaths("oneVar","twoVar");
-     * Type two: ExampleMatcher exampleMatcher = ExampleMatcher.matching()
-     * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
-     * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
-     *
-     * @param d              实例
-     * @param exampleMatcher 匹配条件
-     * @return List<T>
-     */
-    default Flux<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
+    default Flux<V> retrieveAll() {
         return Flux.empty();
     }
 
