@@ -4,6 +4,9 @@
 package top.abeille.common.datasource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +28,14 @@ import java.util.Map;
  * @author liwenqiang 2019/4/1 15:53
  **/
 @Configuration
+@AutoConfigureBefore(DataSourceAutoConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class DataSourceConfig {
+class DataSourceConfig {
 
     /**
      * 主数据源
      *
-     * @return Druid数据源
+     * @return 主数据源
      */
     @Primary
     @Bean(name = "masterDataSource")
@@ -43,7 +47,7 @@ public class DataSourceConfig {
     /**
      * 从数据源
      *
-     * @return Druid数据源
+     * @return 从数据源
      */
     @Bean(name = "slaverDataSource")
     @ConfigurationProperties("spring.datasource.slaver")
@@ -86,9 +90,10 @@ public class DataSourceConfig {
      * @return 事务管理器
      */
     @Bean
+    @ConditionalOnMissingBean
     public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource") DynamicDataSource dataSource) {
-        DynamicTransactionManager dynamicDataSourceTransactionManager = new DynamicTransactionManager();
-        dynamicDataSourceTransactionManager.setDataSource(dataSource);
-        return dynamicDataSourceTransactionManager;
+        DynamicTransactionManager dynamicTransactionManager = new DynamicTransactionManager();
+        dynamicTransactionManager.setDataSource(dataSource);
+        return dynamicTransactionManager;
     }
 }

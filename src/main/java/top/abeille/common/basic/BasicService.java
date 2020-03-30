@@ -26,7 +26,7 @@ public interface BasicService<D, V> {
      * @param sort 排序
      * @return List<V>
      */
-    default List<V> fetchAll(Sort sort) {
+    default List<V> retrieveAll(Sort sort) {
         return Collections.emptyList();
     }
 
@@ -41,7 +41,7 @@ public interface BasicService<D, V> {
      * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default List<V> fetchByExample(D d, ExampleMatcher exampleMatcher) {
+    default List<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
         return Collections.emptyList();
     }
 
@@ -51,36 +51,26 @@ public interface BasicService<D, V> {
      * @param pageable 分页参数
      * @return Page<T>
      */
-    default Page<V> fetchByPage(Pageable pageable) {
+    default Page<V> retrieveByPage(Pageable pageable) {
         return null;
     }
 
     /**
      * 根据业务id获取
      *
-     * @param businessId 业务主键
+     * @param businessId 业务ID
      * @return T
      */
-    default V queryById(Long businessId) {
+    default V fetchByBusinessId(String businessId) {
         return null;
     }
 
     /**
-     * 获取行
-     *
-     * @return long type result
-     */
-    default long queryCount() {
-        return 0;
-    }
-
-
-    /**
      * 根据主键ID删除entity
      *
-     * @param id 主键ID
+     * @param businessId 业务ID
      */
-    void removeById(Long id);
+    void removeById(String businessId);
 
     /**
      * 批量删除
@@ -90,12 +80,23 @@ public interface BasicService<D, V> {
     void removeInBatch(List<D> dList);
 
     /**
-     * 保存对象
+     * 添加对象
      *
      * @param d 入参
      * @return T
      */
-    default V save(D d) {
+    default V create(D d) {
+        return null;
+    }
+
+    /**
+     * 修改对象
+     *
+     * @param businessId 业务主键
+     * @param d          入参
+     * @return T
+     */
+    default V modify(String businessId, D d) {
         return null;
     }
 
