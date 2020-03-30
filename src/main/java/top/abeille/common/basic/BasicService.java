@@ -58,19 +58,19 @@ public interface BasicService<D, V> {
     /**
      * 根据业务id获取
      *
-     * @param businessId 业务主键
+     * @param businessId 业务ID
      * @return T
      */
-    default V fetchById(Long businessId) {
+    default V fetchByBusinessId(String businessId) {
         return null;
     }
 
     /**
      * 根据主键ID删除entity
      *
-     * @param id 主键ID
+     * @param businessId 业务ID
      */
-    void removeById(Long id);
+    void removeById(String businessId);
 
     /**
      * 批量删除
@@ -96,7 +96,7 @@ public interface BasicService<D, V> {
      * @param d          入参
      * @return T
      */
-    default V modify(Long businessId, D d) {
+    default V modify(String businessId, D d) {
         return null;
     }
 
