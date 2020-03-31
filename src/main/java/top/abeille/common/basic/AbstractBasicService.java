@@ -33,9 +33,10 @@ public abstract class AbstractBasicService {
     private String generateRandom() {
         Collections.shuffle(list);
         StringBuilder sb = new StringBuilder();
-        for (String s : list) {
-            sb.append(s);
+        for (int i = 0; i < 4; i++) {
+            int nextInt = new SecureRandom().nextInt(list.size());
+            sb.append(list.get(nextInt));
         }
-        return sb.toString().substring(5, 9);
+        return sb.toString();
     }
 }
