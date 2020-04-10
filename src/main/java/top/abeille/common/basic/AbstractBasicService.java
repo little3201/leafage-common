@@ -1,12 +1,14 @@
 package top.abeille.common.basic;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractBasicService {
 
-    private static List<String> list = List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    private static List<String> list = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
             "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
@@ -29,9 +31,10 @@ public abstract class AbstractBasicService {
     private String generateRandom() {
         Collections.shuffle(list);
         StringBuilder sb = new StringBuilder();
-        for (String s : list) {
-            sb.append(s);
+        for (int i = 0; i < 4; i++) {
+            int nextInt = new SecureRandom().nextInt(list.size());
+            sb.append(list.get(nextInt));
         }
-        return sb.toString().substring(5, 9);
+        return sb.toString();
     }
 }
