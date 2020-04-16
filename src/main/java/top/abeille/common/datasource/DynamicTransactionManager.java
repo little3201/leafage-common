@@ -38,6 +38,7 @@ public class DynamicTransactionManager extends DataSourceTransactionManager {
     @Override
     protected void doCleanupAfterCompletion(Object transaction) {
         super.doCleanupAfterCompletion(transaction);
+        // 执行完成之后清除线程副本信息，避免内存泄漏
         DataSourceHolder.clearDataSource();
     }
 
