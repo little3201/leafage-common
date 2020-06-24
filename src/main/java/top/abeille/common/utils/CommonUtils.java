@@ -16,9 +16,9 @@ import java.util.List;
  *
  * @author liwenqiang 2019/3/25 14:43
  **/
-public class FileBasicUtils {
+public class CommonUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(FileBasicUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(CommonUtils.class);
 
     /**
      * 根据路径，后缀，获取指定路径下的文件
