@@ -55,7 +55,7 @@ public class CommonUtils {
     /**
      * 获取字符串中第一个指定字符类型的位置
      * <p>
-     * eg: 获取第一个中文的位置, splitChar("001目标", Character.UnicodeScript.HAN), return 3
+     * eg: 获取第一个中文的位置, scriptIndex("001目标", Character.UnicodeScript.HAN), return 3
      *
      * @param splitStr 要截取的字符串
      * @return 一个指定字符类型在字符串中的位置
