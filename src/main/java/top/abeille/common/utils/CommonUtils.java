@@ -27,7 +27,7 @@ public class CommonUtils {
      * @param suffix   文件后缀，可传入多类型，逗号分隔
      * @return List<File>
      */
-    public static List<File> readSuffixFilesUnderPath(String filePath, String suffix) {
+    public static List<File> readTargetFiles(String filePath, String suffix) {
         File curPath = new File(filePath);
         File[] files = curPath.listFiles();
         if (files == null || files.length == 0) {
@@ -45,7 +45,7 @@ public class CommonUtils {
                     }
                 }
             } else if (file.isDirectory()) {
-                List<File> list = readSuffixFilesUnderPath(file.getPath(), suffix);
+                List<File> list = readTargetFiles(file.getPath(), suffix);
                 fileList.addAll(list);
             }
         }
@@ -55,12 +55,12 @@ public class CommonUtils {
     /**
      * 获取字符串中第一个指定字符类型的位置
      * <p>
-     * eg: 获取第一个中文的位置, splitFirstScript("001目标", Character.UnicodeScript.HAN), return 3
+     * eg: 获取第一个中文的位置, splitChar("001目标", Character.UnicodeScript.HAN), return 3
      *
      * @param splitStr 要截取的字符串
      * @return 一个指定字符类型在字符串中的位置
      */
-    private static int splitFirstScript(String splitStr, Character.UnicodeScript unicodeScript) {
+    private static int splitChar(String splitStr, Character.UnicodeScript unicodeScript) {
         char[] chars = splitStr.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             Character.UnicodeScript sc = Character.UnicodeScript.of(chars[i]);
