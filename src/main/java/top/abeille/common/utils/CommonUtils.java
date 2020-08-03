@@ -60,7 +60,7 @@ public class CommonUtils {
      * @param splitStr 要截取的字符串
      * @return 一个指定字符类型在字符串中的位置
      */
-    private static int splitChar(String splitStr, Character.UnicodeScript unicodeScript) {
+    private static int scriptIndex(String splitStr, Character.UnicodeScript unicodeScript) {
         char[] chars = splitStr.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             Character.UnicodeScript sc = Character.UnicodeScript.of(chars[i]);
