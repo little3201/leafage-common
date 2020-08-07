@@ -17,10 +17,6 @@
     <name>abeille-common</name>
     <description>common for abeille</description>
 
-    <properties>
-        <java.version>11</java.version>
-    </properties>
-
     <dependencies>
         <!-- mock -->
         <dependency>
