@@ -50,7 +50,7 @@ public abstract class AbstractBasicService {
      * @param localDate 指定日期
      * @return 最后一天的日期
      */
-    protected static LocalDate lastDayOfWeek(LocalDate localDate) {
+    protected LocalDate lastDayOfWeek(LocalDate localDate) {
         if (null == localDate) {
             localDate = LocalDate.now();
         }
