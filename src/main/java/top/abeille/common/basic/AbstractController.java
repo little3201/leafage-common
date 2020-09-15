@@ -12,14 +12,14 @@ import org.springframework.data.domain.Sort;
 import java.util.Objects;
 
 /**
- * AbstractController
+ * 接口基类
  *
  * @author liwenqiang 2018/12/20 9:51
  **/
 public abstract class AbstractController {
 
     /**
-     * 开启日志
+     * 日志
      */
     protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class);
 

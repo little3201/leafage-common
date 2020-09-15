@@ -3,101 +3,75 @@
  */
 package top.abeille.common.basic;
 
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
  * service基础接口
- * D —— DTO
- * V —— VO
  *
  * @author liwenqiang 2018/7/27 23:14
  **/
 public interface BasicService<D, V> {
 
     /**
-     * 获取所有entities并排序
+     * 获取所有entities
      *
-     * @param sort 排序
-     * @return List<V>
-     */
-    default List<V> retrieveAll(Sort sort) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * 根据条件查询所有——设置匹配条件，如例所示：
-     * Type one: ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnorePaths("oneVar","twoVar");
-     * Type two: ExampleMatcher exampleMatcher = ExampleMatcher.matching()
-     * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
-     * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
-     *
-     * @param d              实例
-     * @param exampleMatcher 匹配条件
      * @return List<T>
      */
-    default List<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
-        return Collections.emptyList();
+    default Flux<V> retrieveAll() {
+        return Flux.empty();
     }
 
     /**
-     * 分页获取所有entities
+     * 根据id获取entity
      *
-     * @param pageable 分页参数
-     * @return Page<T>
-     */
-    default Page<V> retrieveByPage(Pageable pageable) {
-        return null;
-    }
-
-    /**
-     * 根据业务id获取
-     *
-     * @param businessId 业务ID
+     * @param businessId 业务主键
      * @return T
      */
-    default V fetchByBusinessId(String businessId) {
-        return null;
+    default Mono<V> fetchByBusinessId(String businessId) {
+        return Mono.empty();
     }
 
     /**
      * 根据主键ID删除entity
      *
-     * @param businessId 业务ID
+     * @param businessId 业务主键
      */
-    void removeById(String businessId);
+    default Mono<Void> removeById(String businessId) {
+        return Mono.empty();
+    }
 
     /**
      * 批量删除
      *
      * @param dList 实例集合
+     * @return 删除结果
      */
-    void removeInBatch(List<D> dList);
-
-    /**
-     * 添加对象
-     *
-     * @param d 入参
-     * @return T
-     */
-    default V create(D d) {
-        return null;
+    default Mono<Void> removeInBatch(List<D> dList) {
+        return Mono.empty();
     }
 
     /**
-     * 修改对象
+     * 新增entity
+     *
+     * @param d 实例
+     * @return 保存结果
+     */
+    default Mono<V> create(D d) {
+        return Mono.empty();
+    }
+
+    /**
+     * 编辑entity
      *
      * @param businessId 业务主键
-     * @param d          入参
-     * @return T
+     * @param d          实例
+     * @return 保存结果
      */
-    default V modify(String businessId, D d) {
-        return null;
+    default Mono<V> modify(String businessId, D d) {
+        return Mono.empty();
     }
 
     /**
@@ -106,7 +80,7 @@ public interface BasicService<D, V> {
      * @param dList 实例集合
      * @return 实例类型
      */
-    default List<V> saveAll(List<D> dList) {
-        return Collections.emptyList();
+    default Flux<V> saveAll(List<D> dList) {
+        return Flux.empty();
     }
 }
