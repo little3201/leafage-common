@@ -25,21 +25,21 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 根据id获取entity
+     * 根据code获取entity
      *
-     * @param businessId 业务主键
+     * @param code 代码
      * @return T
      */
-    default Mono<V> fetchByBusinessId(String businessId) {
+    default Mono<V> fetchByCode(String code) {
         return Mono.empty();
     }
 
     /**
-     * 根据主键ID删除entity
+     * 根据code删除entity
      *
-     * @param businessId 业务主键
+     * @param code 代码
      */
-    default Mono<Void> removeById(String businessId) {
+    default Mono<Void> remove(String code) {
         return Mono.empty();
     }
 
@@ -49,7 +49,7 @@ public interface BasicService<D, V> {
      * @param dList 实例集合
      * @return 删除结果
      */
-    default Mono<Void> removeInBatch(List<D> dList) {
+    default Mono<Void> removeAll(List<D> dList) {
         return Mono.empty();
     }
 
@@ -66,11 +66,11 @@ public interface BasicService<D, V> {
     /**
      * 编辑entity
      *
-     * @param businessId 业务主键
-     * @param d          实例
+     * @param code 代码
+     * @param d    实例
      * @return 保存结果
      */
-    default Mono<V> modify(String businessId, D d) {
+    default Mono<V> modify(String code, D d) {
         return Mono.empty();
     }
 
