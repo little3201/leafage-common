@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class AbstractBasicService {
 
-    private static final List<String> list = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    private static final List<String> SEED_LIST = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
             "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
@@ -35,11 +35,11 @@ public abstract class AbstractBasicService {
      * @return 组合的四位码，例如：03JA
      */
     private String generateRandom() {
-        Collections.shuffle(list);
+        Collections.shuffle(SEED_LIST);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 4; i++) {
-            int nextInt = new SecureRandom().nextInt(list.size());
-            sb.append(list.get(nextInt));
+            int nextInt = new SecureRandom().nextInt(SEED_LIST.size());
+            sb.append(SEED_LIST.get(nextInt));
         }
         return sb.toString();
     }
