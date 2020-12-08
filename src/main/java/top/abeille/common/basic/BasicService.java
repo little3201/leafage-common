@@ -20,7 +20,7 @@ public interface BasicService<D, V> {
      *
      * @return List<T>
      */
-    default Flux<V> retrieveAll() {
+    default Flux<V> retrieveAll(int page, int size) {
         return Flux.empty();
     }
 
