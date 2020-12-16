@@ -41,8 +41,7 @@ public interface BasicService<D, V> {
      *
      * @param code 代码
      */
-    default boolean remove(String code) {
-        return false;
+    default void remove(String code) {
     }
 
     /**
@@ -50,8 +49,7 @@ public interface BasicService<D, V> {
      *
      * @param dList 实例集合
      */
-    default boolean removeAll(List<D> dList) {
-        return false;
+    default void removeAll(List<D> dList) {
     }
 
     /**
