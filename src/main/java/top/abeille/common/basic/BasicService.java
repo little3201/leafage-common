@@ -3,11 +3,6 @@
  */
 package top.abeille.common.basic;
 
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -23,61 +18,41 @@ public interface BasicService<D, V> {
     /**
      * 获取所有entities并排序
      *
-     * @param sort 排序
+     * @param page 页码
+     * @param size 大小
      * @return List<V>
      */
-    default List<V> retrieveAll(Sort sort) {
+    default List<V> retrieve(int page, int size) {
         return Collections.emptyList();
     }
 
     /**
-     * 根据条件查询所有——设置匹配条件，如例所示：
-     * Type one: ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnorePaths("oneVar","twoVar");
-     * Type two: ExampleMatcher exampleMatcher = ExampleMatcher.matching()
-     * .withMatcher(roleInfoModel.getRoleName(), startsWith().ignoreCase())
-     * .withMatcher(String.valueOf(roleInfoModel.getRoleId()), ExampleMatcher.GenericPropertyMatchers.contains());
+     * 根据代码获取
      *
-     * @param d              实例
-     * @param exampleMatcher 匹配条件
-     * @return List<T>
-     */
-    default List<V> retrieveByExample(D d, ExampleMatcher exampleMatcher) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * 分页获取所有entities
-     *
-     * @param pageable 分页参数
-     * @return Page<T>
-     */
-    default Page<V> retrieveByPage(Pageable pageable) {
-        return null;
-    }
-
-    /**
-     * 根据业务id获取
-     *
-     * @param businessId 业务ID
+     * @param code 代码
      * @return T
      */
-    default V fetchByBusinessId(String businessId) {
+    default V fetch(String code) {
         return null;
     }
 
     /**
-     * 根据主键ID删除entity
+     * 根据代码删除entity
      *
-     * @param businessId 业务ID
+     * @param code 代码
      */
-    void removeById(String businessId);
+    default boolean remove(String code) {
+        return false;
+    }
 
     /**
      * 批量删除
      *
      * @param dList 实例集合
      */
-    void removeInBatch(List<D> dList);
+    default boolean removeAll(List<D> dList) {
+        return false;
+    }
 
     /**
      * 添加对象
@@ -92,11 +67,11 @@ public interface BasicService<D, V> {
     /**
      * 修改对象
      *
-     * @param businessId 业务主键
-     * @param d          入参
+     * @param code 代码
+     * @param d    入参
      * @return T
      */
-    default V modify(String businessId, D d) {
+    default V modify(String code, D d) {
         return null;
     }
 

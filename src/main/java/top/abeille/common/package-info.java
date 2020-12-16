@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010-2019 Everyday Chain. All rights reserved.
+ * Copyright © 2010-2020 Abeille. All rights reserved.
  */
 
 /**
