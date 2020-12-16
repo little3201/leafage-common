@@ -20,7 +20,7 @@ public interface BasicService<D, V> {
      *
      * @return List<T>
      */
-    default Flux<V> retrieveAll(int page, int size) {
+    default Flux<V> retrieve(int page, int size) {
         return Flux.empty();
     }
 
@@ -30,7 +30,7 @@ public interface BasicService<D, V> {
      * @param code 代码
      * @return T
      */
-    default Mono<V> fetchByCode(String code) {
+    default Mono<V> fetch(String code) {
         return Mono.empty();
     }
 
