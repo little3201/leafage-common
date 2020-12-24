@@ -25,6 +25,15 @@ public interface BasicService<D, V> {
     }
 
     /**
+     * 获取所有entities
+     *
+     * @return List<T>
+     */
+    default Flux<V> retrieve(int page, int size, String order) {
+        return Flux.empty();
+    }
+
+    /**
      * 根据code获取entity
      *
      * @param code 代码
