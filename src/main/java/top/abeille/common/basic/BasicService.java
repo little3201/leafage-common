@@ -16,7 +16,7 @@ import java.util.List;
 public interface BasicService<D, V> {
 
     /**
-     * 获取所有entities并排序
+     * 分页查询
      *
      * @param page 页码
      * @param size 大小
@@ -27,7 +27,19 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 根据代码获取
+     * 分页查询并排序
+     *
+     * @param page  页码
+     * @param size  大小
+     * @param order 排序
+     * @return List<V>
+     */
+    default List<V> retrieve(int page, int size, String order) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * 根据唯一标识获取
      *
      * @param code 代码
      * @return T
@@ -37,7 +49,7 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 根据代码删除entity
+     * 根据唯一标识删除entity
      *
      * @param code 代码
      */
@@ -65,7 +77,7 @@ public interface BasicService<D, V> {
     /**
      * 修改对象
      *
-     * @param code 代码
+     * @param code 唯一标识
      * @param d    入参
      * @return T
      */

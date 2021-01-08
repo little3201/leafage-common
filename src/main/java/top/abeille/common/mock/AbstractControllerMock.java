@@ -4,11 +4,9 @@
 package top.abeille.common.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,7 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  *
  * @author liwenqiang 2018/12/28 14:40
  **/
-@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractControllerMock<T> {
 
@@ -38,11 +35,11 @@ public abstract class AbstractControllerMock<T> {
         return mockMvc;
     }
 
-    @Before
+    @BeforeTestMethod
     public void setupMock() {
         /* initialize mock object */
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.getController()).build();
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     /**
