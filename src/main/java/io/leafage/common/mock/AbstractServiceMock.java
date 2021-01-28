@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019. Abeille All Right Reserved.
  */
-package top.abeille.common.mock;
+package io.leafage.common.mock;
 
 /**
  * ServiceTest Parent

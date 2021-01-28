@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019. Abeille All Right Reserved.
  */
-package top.abeille.common.basic;
+package io.leafage.common.basic;
 
 import java.util.Collections;
 import java.util.List;

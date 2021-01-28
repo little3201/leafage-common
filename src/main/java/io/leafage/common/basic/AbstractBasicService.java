@@ -1,4 +1,4 @@
-package top.abeille.common.basic;
+package io.leafage.common.basic;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;

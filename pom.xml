@@ -3,19 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>top.abeille</groupId>
-        <artifactId>abeille-start-parent</artifactId>
+        <groupId>io.leafage</groupId>
+        <artifactId>leafage-starter-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>top.abeille.common</groupId>
-    <artifactId>abeille-common</artifactId>
+    <artifactId>leafage-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>abeille-common</name>
-    <description>common for abeille</description>
+    <name>leafage-common</name>
+    <description>common for leafage</description>
 
     <dependencies>
         <!-- mock -->
