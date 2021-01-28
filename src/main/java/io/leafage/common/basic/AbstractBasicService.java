@@ -2,7 +2,7 @@
  * Copyright © 2010-2019 Abeille All rights reserved.
  */
 
-package top.abeille.common.basic;
+package io.leafage.common.basic;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
