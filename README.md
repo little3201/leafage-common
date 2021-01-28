@@ -1,2 +1,2 @@
-# abeille-common
-common config, utils and etc.. of abeille
+# leafage-common
+common config, utils and etc.. of leafage
