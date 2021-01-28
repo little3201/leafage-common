@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019. Abeille All Right Reserved.
  */
-package top.abeille.common.utils;
+package io.leafage.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

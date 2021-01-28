@@ -7,4 +7,4 @@
  *
  * @author liwenqiang 2019/10/23 9:51
  **/
-package top.abeille.common;
+package io.leafage.common;

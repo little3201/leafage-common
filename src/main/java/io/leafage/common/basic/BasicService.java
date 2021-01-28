@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019. Abeille All Right Reserved.
  */
-package top.abeille.common.basic;
+package io.leafage.common.basic;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
