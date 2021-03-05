@@ -53,6 +53,15 @@ public interface BasicService<D, V> {
     }
 
     /**
+     * 统计记录数
+     *
+     * @return T
+     */
+    default Mono<Long> count(String code) {
+        return Mono.empty();
+    }
+
+    /**
      * 根据code删除entity
      *
      * @param code 代码
