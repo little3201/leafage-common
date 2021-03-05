@@ -57,7 +57,7 @@ public interface BasicService<D, V> {
      *
      * @return T
      */
-    default Mono<Long> count(String code) {
+    default Mono<Long> count() {
         return Mono.empty();
     }
 
