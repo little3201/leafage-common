@@ -20,12 +20,21 @@ public interface BasicService<D, V> {
      *
      * @return List<T>
      */
+    default Flux<V> retrieve() {
+        return Flux.empty();
+    }
+
+    /**
+     * 分页获取entities
+     *
+     * @return List<T>
+     */
     default Flux<V> retrieve(int page, int size) {
         return Flux.empty();
     }
 
     /**
-     * 获取所有entities
+     * 分页获取排序后的entities
      *
      * @return List<T>
      */
@@ -40,6 +49,15 @@ public interface BasicService<D, V> {
      * @return T
      */
     default Mono<V> fetch(String code) {
+        return Mono.empty();
+    }
+
+    /**
+     * 统计记录数
+     *
+     * @return T
+     */
+    default Mono<Long> count() {
         return Mono.empty();
     }
 
