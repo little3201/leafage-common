@@ -16,13 +16,11 @@ import java.util.List;
 public interface BasicService<D, V> {
 
     /**
-     * 分页查询
+     * 查询
      *
-     * @param page 页码
-     * @param size 大小
      * @return List<V>
      */
-    default List<V> retrieve(int page, int size) {
+    default List<V> retrieve() {
         return Collections.emptyList();
     }
 
