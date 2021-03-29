@@ -25,18 +25,6 @@ public interface BasicService<D, V> {
     }
 
     /**
-     * 分页查询并排序
-     *
-     * @param page  页码
-     * @param size  大小
-     * @param order 排序
-     * @return List<V>
-     */
-    default List<V> retrieve(int page, int size, String order) {
-        return Collections.emptyList();
-    }
-
-    /**
      * 根据唯一标识获取
      *
      * @param code 代码
