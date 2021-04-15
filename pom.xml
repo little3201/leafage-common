@@ -10,17 +10,23 @@
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
     <description>common for leafage</description>
-
+    
     <properties>
         <java.version>11</java.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
         <!-- reactor -->
         <dependency>
             <groupId>io.projectreactor</groupId>
