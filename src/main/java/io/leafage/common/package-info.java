@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010-2020 Abeille. All rights reserved.
+ * Copyright © 2018-2021 Leafage. All rights reserved.
  */
 
 /**
