@@ -16,6 +16,10 @@
     <name>leafage-common</name>
     <description>common for leafage</description>
 
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
