@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021. Leafage All Right Reserved.
  */
-package io.leafage.common.utils;
+package top.leafage.common.utils;
 
 import java.io.File;
 import java.util.ArrayList;
