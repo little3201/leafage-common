@@ -1,4 +1,4 @@
-package io.leafage.common.basic;
+package top.leafage.common.basic;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
