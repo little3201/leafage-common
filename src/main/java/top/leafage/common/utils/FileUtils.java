@@ -23,7 +23,7 @@ public class FileUtils {
      *
      * @param filePath 读取路径
      * @param suffix   文件后缀，可传入多类型，逗号分隔
-     * @return List<File>
+     * @return an array containing the elements of this list
      */
     public static List<File> read(String filePath, String suffix) {
         File curPath = new File(filePath);

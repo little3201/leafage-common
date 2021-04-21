@@ -18,7 +18,7 @@ public interface BasicService<D, V> {
     /**
      * 查询
      *
-     * @return List<V>
+     * @return an array containing the elements of this list
      */
     default List<V> retrieve() {
         return Collections.emptyList();
@@ -28,7 +28,7 @@ public interface BasicService<D, V> {
      * 根据唯一标识获取
      *
      * @param code 代码
-     * @return T
+     * @return a element instanceof vo
      */
     default V fetch(String code) {
         return null;
@@ -54,7 +54,7 @@ public interface BasicService<D, V> {
      * 添加对象
      *
      * @param d 入参
-     * @return T
+     * @return a element instanceof vo
      */
     default V create(D d) {
         return null;
@@ -65,7 +65,7 @@ public interface BasicService<D, V> {
      *
      * @param code 唯一标识
      * @param d    入参
-     * @return T
+     * @return a element instanceof vo
      */
     default V modify(String code, D d) {
         return null;
@@ -75,7 +75,7 @@ public interface BasicService<D, V> {
      * 批量保存
      *
      * @param dList 实例集合
-     * @return 实例类型
+     * @return an array containing the elements of this list
      */
     default List<V> saveAll(List<D> dList) {
         return Collections.emptyList();
