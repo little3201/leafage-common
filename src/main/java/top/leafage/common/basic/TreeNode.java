@@ -29,6 +29,26 @@ public class TreeNode {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSuperior() {
+        return superior;
+    }
+
+    public Map<String, String> getExpand() {
+        return expand;
+    }
+
+    public List<TreeNode> getChildren() {
+        return children;
+    }
+
     public void setCode(String code) {
         this.code = code;
     }
