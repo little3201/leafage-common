@@ -2,7 +2,6 @@ package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.List;
 
 public interface ReactiveBasicService<D, V> {
@@ -62,6 +61,7 @@ public interface ReactiveBasicService<D, V> {
      * 根据code删除entity
      *
      * @param code 代码
+     * @return Void no return
      */
     default Mono<Void> remove(String code) {
         return Mono.empty().then();
@@ -71,6 +71,7 @@ public interface ReactiveBasicService<D, V> {
      * 批量删除
      *
      * @param dList 实例集合
+     * @return Void no return
      */
     default Mono<Void> removeAll(List<D> dList) {
         return Mono.empty().then();
