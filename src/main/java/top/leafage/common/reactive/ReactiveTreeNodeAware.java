@@ -33,34 +33,31 @@ public interface ReactiveTreeNodeAware<T> extends TreeNodeAware<T> {
         try {
             Object superiorId = aClass.getSuperclass().getMethod("getId").invoke(superior);
             Object superiorName = aClass.getMethod("getName").invoke(superior);
-
             return children.filter(child -> this.check(superiorId, child)).flatMap(child -> {
                 Class<?> childClass = child.getClass();
                 try {
-                    String code = childClass.getMethod("getCode").invoke(child).toString();
+                    Object code = childClass.getMethod("getCode").invoke(child);
                     Object name = childClass.getMethod("getName").invoke(child);
 
-                    TreeNode treeNode = new TreeNode(code, name != null ? name.toString() : null);
+                    TreeNode treeNode = new TreeNode(code != null ? code.toString() : null,
+                            name != null ? name.toString() : null);
                     treeNode.setSuperior(superiorName != null ? superiorName.toString() : null);
-
-                    this.children(child, children, expand).collectList().map(treeNodes -> {
-                        treeNode.setChildren(treeNodes);
-                        return treeNode;
-                    });
 
                     // deal expand
                     this.expand(treeNode, childClass, child, expand);
 
-                    return Mono.just(treeNode);
+                    return this.children(child, children, expand).collectList().map(treeNodes -> {
+                        treeNode.setChildren(treeNodes);
+                        return treeNode;
+                    });
+
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    return Mono.empty();
                 }
-                return Mono.empty();
             });
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
+            return Flux.empty();
         }
-        return Flux.empty();
     }
 
     /**

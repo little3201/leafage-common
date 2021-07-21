@@ -33,32 +33,33 @@ public interface ServletTreeNodeAware<T> extends TreeNodeAware<T> {
         Class<?> aClass = superior.getClass();
         try {
             Long superiorId = (Long) aClass.getSuperclass().getMethod("getId").invoke(superior);
-            String superiorName = aClass.getMethod("getName").invoke(superior).toString();
+            Object superiorName = aClass.getMethod("getName").invoke(superior);
 
-            return children.stream().filter(child -> this.check(superiorId, child))
-                    .map(child -> {
-                        Class<?> childClass = child.getClass();
-                        try {
-                            String name = childClass.getMethod("getName").invoke(child).toString();
-                            String code = childClass.getMethod("getCode").invoke(child).toString();
+            return children.stream().filter(child -> this.check(superiorId, child)).map(child -> {
+                Class<?> childClass = child.getClass();
+                try {
+                    Object name = childClass.getMethod("getName").invoke(child);
+                    Object code = childClass.getMethod("getCode").invoke(child);
 
-                            TreeNode servletTreeNode = new TreeNode(code, name);
-                            servletTreeNode.setSuperior(superiorName);
-                            servletTreeNode.setChildren(this.children(child, children));
+                    TreeNode treeNode = new TreeNode(code == null ? null : code.toString(),
+                            name == null ? null : name.toString());
+                    treeNode.setSuperior(superiorName == null ? null : superiorName.toString());
 
-                            // deal expand
-                            this.expand(servletTreeNode, childClass, child, expand);
+                    // deal expand
+                    this.expand(treeNode, childClass, child, expand);
 
-                            return servletTreeNode;
-                        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }).collect(Collectors.toList());
+                    treeNode.setChildren(this.children(child, children, expand));
+
+                    return treeNode;
+                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }).collect(Collectors.toList());
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
     }
 
     /**
