@@ -35,6 +35,16 @@ public interface BasicService<D, V> {
     }
 
     /**
+     * 名称是否存在
+     *
+     * @param name 名称
+     * @return true-exist, false-not exist
+     */
+    default boolean exist(String name) {
+        return false;
+    }
+
+    /**
      * 根据唯一标识删除entity
      *
      * @param code 代码

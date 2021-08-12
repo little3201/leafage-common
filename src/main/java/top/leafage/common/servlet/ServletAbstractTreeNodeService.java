@@ -1,14 +1,14 @@
 package top.leafage.common.servlet;
 
+import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
-import top.leafage.common.basic.TreeNodeAware;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface ServletTreeNodeAware<T> extends TreeNodeAware<T> {
+public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
 
     /**
      * 处理子节点
@@ -17,7 +17,7 @@ public interface ServletTreeNodeAware<T> extends TreeNodeAware<T> {
      * @param children 子节点
      * @return 树节点数据集
      */
-    default List<TreeNode> children(T superior, List<T> children) {
+    protected List<TreeNode> children(T superior, List<T> children) {
         return this.children(superior, children, null);
     }
 
@@ -29,7 +29,7 @@ public interface ServletTreeNodeAware<T> extends TreeNodeAware<T> {
      * @param expand   扩展属性
      * @return 树节点数据集
      */
-    default List<TreeNode> children(T superior, List<T> children, Set<String> expand) {
+    protected List<TreeNode> children(T superior, List<T> children, Set<String> expand) {
         Class<?> aClass = superior.getClass();
         try {
             Long superiorId = (Long) aClass.getSuperclass().getMethod("getId").invoke(superior);
@@ -69,7 +69,7 @@ public interface ServletTreeNodeAware<T> extends TreeNodeAware<T> {
      * @param child      对象实例
      * @return true-是，false-否
      */
-    default boolean check(Long superiorId, T child) {
+    private boolean check(Long superiorId, T child) {
         Class<?> childClass = child.getClass();
         try {
             Long superior = (Long) childClass.getMethod("getSuperior").invoke(child);

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public interface TreeNodeAware<T> {
+public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
 
     /**
      * 处理扩展数据
@@ -15,7 +15,7 @@ public interface TreeNodeAware<T> {
      * @param t        数据实例
      * @param expand   扩展字段
      */
-    default void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
+    protected void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
             Map<String, String> map = new HashMap<>(expand.size());
             expand.forEach(filed -> {

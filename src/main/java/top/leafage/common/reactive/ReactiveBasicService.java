@@ -39,6 +39,16 @@ public interface ReactiveBasicService<D, V> {
     }
 
     /**
+     * 名称是否存在
+     *
+     * @param name 名称
+     * @return true-exist, false-not exist
+     */
+    default Mono<Boolean> exist(String name) {
+        return Mono.empty();
+    }
+
+    /**
      * 根据code获取entity
      *
      * @param code 代码
