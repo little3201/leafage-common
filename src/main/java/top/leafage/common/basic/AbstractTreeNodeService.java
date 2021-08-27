@@ -1,5 +1,7 @@
 package top.leafage.common.basic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,8 +16,10 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     private static final String CODE = "code";
     private static final String SUPERIOR = "superior";
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractTreeNodeService.class);
+
     /**
-     * 处理扩展数据
+     * 扩展数据
      *
      * @param treeNode 当前节点
      * @param clazz    数据类型
@@ -27,11 +31,12 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
             Map<String, String> map = new HashMap<>(expand.size());
             expand.forEach(filed -> {
                 try {
-                    String methodSuffix = filed.substring(0, 1).toUpperCase() + filed.substring(1);
-                    Object value = clazz.getMethod("get" + methodSuffix).invoke(t);
+                    PropertyDescriptor superIdDescriptor = new PropertyDescriptor(filed, clazz);
+                    Object value = superIdDescriptor.getReadMethod().invoke(t);
+
                     map.put(filed, value != null ? value.toString() : null);
-                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
+                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                    log.error("expand data error.", e);
                 }
             });
             treeNode.setExpand(map);
@@ -41,18 +46,18 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取ID
      *
-     * @param t      对象
-     * @param aClass 类型
+     * @param t     对象
+     * @param clazz 类型
      * @return ID
      */
-    protected Object getId(T t, Class<?> aClass) {
+    protected Object getId(T t, Class<?> clazz) {
         Object superiorId = null;
         try {
             // ID是集成基础父类的，所以要通过superClass获取
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, aClass.getSuperclass());
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, clazz.getSuperclass());
             superiorId = superIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("get id error.", e);
         }
         return superiorId;
     }
@@ -60,17 +65,17 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取name
      *
-     * @param t      对象
-     * @param aClass 类型
+     * @param t     对象
+     * @param clazz 类型
      * @return name
      */
-    protected Object getName(T t, Class<?> aClass) {
+    protected Object getName(T t, Class<?> clazz) {
         Object name = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(NAME, aClass);
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(NAME, clazz);
             name = superIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("get name error.", e);
         }
         return name;
     }
@@ -78,17 +83,17 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取code
      *
-     * @param t      对象
-     * @param aClass 类型
+     * @param t     对象
+     * @param clazz 类型
      * @return code
      */
-    protected Object getCode(T t, Class<?> aClass) {
+    protected Object getCode(T t, Class<?> clazz) {
         Object code = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(CODE, aClass);
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(CODE, clazz);
             code = superIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("get code error.", e);
         }
         return code;
     }
@@ -96,17 +101,17 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取superior
      *
-     * @param t      对象
-     * @param aClass 类型
+     * @param t     对象
+     * @param clazz 类型
      * @return superior
      */
-    protected Object getSuperior(T t, Class<?> aClass) {
+    private Object getSuperior(T t, Class<?> clazz) {
         Object superior = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(SUPERIOR, aClass);
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
             superior = superIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("get superior error.", e);
         }
         return superior;
     }
