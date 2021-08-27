@@ -30,7 +30,7 @@ public interface BasicService<D, V> {
      * @param code 代码
      * @return a element instanceof vo
      */
-    default V fetch(String code) {
+    default V fetch(Object code) {
         return null;
     }
 
@@ -49,7 +49,7 @@ public interface BasicService<D, V> {
      *
      * @param code 代码
      */
-    default void remove(String code) {
+    default void remove(Object code) {
     }
 
     /**
@@ -77,7 +77,7 @@ public interface BasicService<D, V> {
      * @param d    入参
      * @return a element instanceof vo
      */
-    default V modify(String code, D d) {
+    default V modify(Object code, D d) {
         return null;
     }
 

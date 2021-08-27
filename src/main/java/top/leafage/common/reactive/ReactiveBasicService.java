@@ -31,10 +31,10 @@ public interface ReactiveBasicService<D, V> {
      *
      * @param page  页码
      * @param size  分页大小
-     * @param order 排序字段
+     * @param sort 排序字段
      * @return a flux containing the elements of this list
      */
-    default Flux<V> retrieve(int page, int size, String order) {
+    default Flux<V> retrieve(int page, int size, String sort) {
         return Flux.empty();
     }
 
@@ -54,7 +54,7 @@ public interface ReactiveBasicService<D, V> {
      * @param code 代码
      * @return a element instanceof vo
      */
-    default Mono<V> fetch(String code) {
+    default Mono<V> fetch(Object code) {
         return Mono.empty();
     }
 
@@ -73,7 +73,7 @@ public interface ReactiveBasicService<D, V> {
      * @param code 代码
      * @return Void no return
      */
-    default Mono<Void> remove(String code) {
+    default Mono<Void> remove(Object code) {
         return Mono.empty().then();
     }
 
@@ -104,7 +104,7 @@ public interface ReactiveBasicService<D, V> {
      * @param d    实例
      * @return a element instanceof vo
      */
-    default Mono<V> modify(String code, D d) {
+    default Mono<V> modify(Object code, D d) {
         return Mono.empty();
     }
 
