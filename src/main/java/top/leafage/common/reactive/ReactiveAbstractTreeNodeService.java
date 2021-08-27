@@ -1,10 +1,8 @@
 package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
@@ -30,50 +28,27 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      */
     protected Flux<TreeNode> children(T superior, Flux<T> children, Set<String> expand) {
         Class<?> aClass = superior.getClass();
-        try {
-            Object superiorId = aClass.getSuperclass().getMethod("getId").invoke(superior);
-            Object superiorName = aClass.getMethod("getName").invoke(superior);
-            return children.filter(child -> this.check(superiorId, child)).flatMap(child -> {
-                Class<?> childClass = child.getClass();
-                try {
-                    Object code = childClass.getMethod("getCode").invoke(child);
-                    Object name = childClass.getMethod("getName").invoke(child);
+        // ID是集成基础父类的，所以要通过superClass获取
+        Object superiorId = this.getId(superior, aClass);
+        Object superiorName = this.getName(superior, aClass);
 
-                    TreeNode treeNode = new TreeNode(code != null ? code.toString() : null,
-                            name != null ? name.toString() : null);
-                    treeNode.setSuperior(superiorName != null ? superiorName.toString() : null);
+        return children.filter(child -> this.check(superiorId, child)).flatMap(child -> {
+            Class<?> childClass = child.getClass();
+            Object code = this.getCode(child, childClass);
+            Object name = this.getName(child, childClass);
 
-                    // deal expand
-                    this.expand(treeNode, childClass, child, expand);
+            TreeNode treeNode = new TreeNode(code != null ? code.toString() : null,
+                    name != null ? name.toString() : null);
+            treeNode.setSuperior(superiorName != null ? superiorName.toString() : null);
 
-                    return this.children(child, children, expand).collectList().map(treeNodes -> {
-                        treeNode.setChildren(treeNodes);
-                        return treeNode;
-                    });
+            // deal expand
+            this.expand(treeNode, childClass, child, expand);
 
-                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    return Mono.empty();
-                }
+            return this.children(child, children, expand).collectList().map(treeNodes -> {
+                treeNode.setChildren(treeNodes);
+                return treeNode;
             });
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            return Flux.empty();
-        }
+        });
     }
 
-    /**
-     * 检查是否上下级节点
-     *
-     * @param superiorId 上级节点ID
-     * @param child      对象实例
-     * @return true-是，false-否
-     */
-    private boolean check(Object superiorId, T child) {
-        Class<?> childClass = child.getClass();
-        try {
-            Object superior = childClass.getMethod("getSuperior").invoke(child);
-            return superiorId.equals(superior);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            return false;
-        }
-    }
 }

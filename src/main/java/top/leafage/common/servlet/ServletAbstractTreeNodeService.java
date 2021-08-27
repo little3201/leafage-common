@@ -2,8 +2,6 @@ package top.leafage.common.servlet;
 
 import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,51 +29,25 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      */
     protected List<TreeNode> children(T superior, List<T> children, Set<String> expand) {
         Class<?> aClass = superior.getClass();
-        try {
-            Long superiorId = (Long) aClass.getSuperclass().getMethod("getId").invoke(superior);
-            Object superiorName = aClass.getMethod("getName").invoke(superior);
+        Object superiorId = this.getId(superior, aClass);
+        Object superiorName = this.getName(superior, aClass);
 
-            return children.stream().filter(child -> this.check(superiorId, child)).map(child -> {
-                Class<?> childClass = child.getClass();
-                try {
-                    Object name = childClass.getMethod("getName").invoke(child);
-                    Object code = childClass.getMethod("getCode").invoke(child);
+        return children.stream().filter(child -> this.check(superiorId, child)).map(child -> {
+            Class<?> childClass = child.getClass();
+            Object code = this.getCode(child, childClass);
+            Object name = this.getName(child, childClass);
 
-                    TreeNode treeNode = new TreeNode(code == null ? null : code.toString(),
-                            name == null ? null : name.toString());
-                    treeNode.setSuperior(superiorName == null ? null : superiorName.toString());
+            TreeNode treeNode = new TreeNode(code == null ? null : code.toString(),
+                    name == null ? null : name.toString());
+            treeNode.setSuperior(superiorName == null ? null : superiorName.toString());
 
-                    // deal expand
-                    this.expand(treeNode, childClass, child, expand);
+            // deal expand
+            this.expand(treeNode, childClass, child, expand);
 
-                    treeNode.setChildren(this.children(child, children, expand));
+            treeNode.setChildren(this.children(child, children, expand));
 
-                    return treeNode;
-                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }).collect(Collectors.toList());
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+            return treeNode;
+        }).collect(Collectors.toList());
     }
 
-    /**
-     * 检查是否上下级节点
-     *
-     * @param superiorId 上级节点ID
-     * @param child      对象实例
-     * @return true-是，false-否
-     */
-    private boolean check(Long superiorId, T child) {
-        Class<?> childClass = child.getClass();
-        try {
-            Long superior = (Long) childClass.getMethod("getSuperior").invoke(child);
-            return superiorId.equals(superior);
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            return false;
-        }
-    }
 }
