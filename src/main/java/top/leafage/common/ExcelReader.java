@@ -62,18 +62,14 @@ public class ExcelReader {
     /**
      * 读取
      *
-     * @param path  文件路径
-     * @param clazz 实体类型
+     * @param file  文件
+     * @param clazz Class
+     * @param <T>   实例类型
      * @return 读取结果列表，失败时返回 null
      */
-    public static <T> List<T> read(String path, Class<T> clazz) {
-        // 获取Excel文件
-        File file = new File(path);
-        if (!file.exists()) {
-            log.warn("文件不存在！");
-            return Collections.emptyList();
-        }
-        String type = path.substring(path.lastIndexOf("."));
+    public static <T> List<T> read(File file, Class<T> clazz) {
+        String filename = file.getName();
+        String type = filename.substring(filename.lastIndexOf("."));
 
         try (FileInputStream inputStream = new FileInputStream(file);
              Workbook workbook = getWorkbook(inputStream, type)
@@ -81,7 +77,7 @@ public class ExcelReader {
             // 读取excel中的数据
             return parse(workbook, clazz);
         } catch (NullPointerException | SecurityException | IOException e) {
-            log.error("文件：{} 读取异常！", path, e);
+            log.error("文件：{} 读取异常！", filename, e);
             return Collections.emptyList();
         }
     }
@@ -90,7 +86,8 @@ public class ExcelReader {
      * 解析
      *
      * @param workbook Excel工作簿对象
-     * @param clazz    实体类型
+     * @param clazz    Class
+     * @param <T>      实例类型
      * @return 解析结果
      */
     private static <T> List<T> parse(Workbook workbook, Class<T> clazz) {
@@ -129,7 +126,8 @@ public class ExcelReader {
      * 映射
      *
      * @param row   行数据
-     * @param clazz 实体类型
+     * @param clazz Class
+     * @param <T>   实例类型
      * @return 数据对象
      */
     private static <T> T mapping(Row row, Class<T> clazz) {
@@ -164,6 +162,7 @@ public class ExcelReader {
      * @param t          实例
      * @param cell       列数据
      * @param descriptor 操作属性
+     * @param <T>        实例类型
      */
     private static <T> void writeData(T t, Cell cell, PropertyDescriptor descriptor) {
         try {
