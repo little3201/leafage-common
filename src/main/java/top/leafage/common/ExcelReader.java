@@ -64,7 +64,7 @@ public class ExcelReader {
      *
      * @param path  文件路径
      * @param clazz 实体类型
-     * @return 读取结果列表，读取失败时返回null
+     * @return 读取结果列表，失败时返回 null
      */
     public static <T> List<T> read(String path, Class<T> clazz) {
         // 获取Excel文件
@@ -90,6 +90,7 @@ public class ExcelReader {
      * 解析
      *
      * @param workbook Excel工作簿对象
+     * @param clazz    实体类型
      * @return 解析结果
      */
     private static <T> List<T> parse(Workbook workbook, Class<T> clazz) {
@@ -127,12 +128,13 @@ public class ExcelReader {
     /**
      * 映射
      *
-     * @param row 行数据
+     * @param row   行数据
+     * @param clazz 实体类型
      * @return 数据对象
      */
     private static <T> T mapping(Row row, Class<T> clazz) {
         if (clazz.isInterface()) {
-            throw new UnsupportedOperationException("Specified class is an interface！");
+            throw new UnsupportedOperationException("目标对象为接口，无法进行！");
         }
         T t;
         try {
@@ -159,6 +161,7 @@ public class ExcelReader {
     /**
      * 填值
      *
+     * @param t          实例
      * @param cell       列数据
      * @param descriptor 操作属性
      */
@@ -178,7 +181,7 @@ public class ExcelReader {
                     descriptor.getWriteMethod().invoke(t, cell.getCellFormula());
                     break;
                 default:
-                    break;
+                    descriptor.getWriteMethod().invoke(t, cell.getErrorCellValue());
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("设置数据时发生异常：", e);

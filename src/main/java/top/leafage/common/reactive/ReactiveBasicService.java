@@ -4,7 +4,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
 
-public interface ReactiveBasicService<D, V> {
+/**
+ * service基础接口
+ * D —— DTO
+ * V —— VO
+ * C —— code type
+ *
+ * @author liwenqiang 2021/7/27 23:14
+ **/
+public interface ReactiveBasicService<D, V, C> {
 
     /**
      * 获取所有entities
@@ -29,8 +37,8 @@ public interface ReactiveBasicService<D, V> {
     /**
      * 分页获取排序后的entities
      *
-     * @param page  页码
-     * @param size  分页大小
+     * @param page 页码
+     * @param size 分页大小
      * @param sort 排序字段
      * @return a flux containing the elements of this list
      */
@@ -54,7 +62,7 @@ public interface ReactiveBasicService<D, V> {
      * @param code 代码
      * @return a element instanceof vo
      */
-    default Mono<V> fetch(Object code) {
+    default Mono<V> fetch(C code) {
         return Mono.empty();
     }
 
@@ -73,7 +81,7 @@ public interface ReactiveBasicService<D, V> {
      * @param code 代码
      * @return Void no return
      */
-    default Mono<Void> remove(Object code) {
+    default Mono<Void> remove(C code) {
         return Mono.empty().then();
     }
 
@@ -104,7 +112,7 @@ public interface ReactiveBasicService<D, V> {
      * @param d    实例
      * @return a element instanceof vo
      */
-    default Mono<V> modify(Object code, D d) {
+    default Mono<V> modify(C code, D d) {
         return Mono.empty();
     }
 
