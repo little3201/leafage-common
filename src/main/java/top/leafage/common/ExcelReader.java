@@ -168,7 +168,7 @@ public class ExcelReader {
         try {
             switch (cell.getCellType()) {
                 case NUMERIC: // 数字
-                    descriptor.getWriteMethod().invoke(t, (long) cell.getNumericCellValue());
+                    descriptor.getWriteMethod().invoke(t, cell.getNumericCellValue());
                     break;
                 case STRING: // 字符串
                     descriptor.getWriteMethod().invoke(t, cell.getStringCellValue());
