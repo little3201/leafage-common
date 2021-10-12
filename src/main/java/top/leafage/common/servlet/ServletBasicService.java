@@ -10,10 +10,11 @@ import java.util.List;
  * service基础接口
  * D —— DTO
  * V —— VO
+ * C —— code type
  *
  * @author liwenqiang 2018/7/27 23:14
  **/
-public interface BasicService<D, V> {
+public interface ServletBasicService<D, V, C> {
 
     /**
      * 查询
@@ -30,7 +31,7 @@ public interface BasicService<D, V> {
      * @param code 代码
      * @return a element instanceof vo
      */
-    default V fetch(Object code) {
+    default V fetch(C code) {
         return null;
     }
 
@@ -49,7 +50,7 @@ public interface BasicService<D, V> {
      *
      * @param code 代码
      */
-    default void remove(Object code) {
+    default void remove(C code) {
     }
 
     /**
@@ -77,7 +78,7 @@ public interface BasicService<D, V> {
      * @param d    入参
      * @return a element instanceof vo
      */
-    default V modify(Object code, D d) {
+    default V modify(C code, D d) {
         return null;
     }
 
