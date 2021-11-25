@@ -28,13 +28,13 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      */
     protected void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
-            Map<String, String> map = new HashMap<>(expand.size());
+            Map<String, Object> map = new HashMap<>(expand.size());
             expand.forEach(filed -> {
                 try {
                     PropertyDescriptor superIdDescriptor = new PropertyDescriptor(filed, clazz);
                     Object value = superIdDescriptor.getReadMethod().invoke(t);
 
-                    map.put(filed, value != null ? value.toString() : null);
+                    map.put(filed, value);
                 } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
                     log.error("expand data error.", e);
                 }

@@ -10,14 +10,13 @@
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.1.5</version>
+    <version>0.1.6</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
     <description>common for leafage</description>
 
     <properties>
-        <java.version>11</java.version>
         <poi.version>5.0.0</poi.version>
     </properties>
 

@@ -167,6 +167,9 @@ public class ExcelReader {
     private static <T> void writeData(T t, Cell cell, PropertyDescriptor descriptor) {
         try {
             switch (cell.getCellType()) {
+                case BLANK: // 空字符串
+                case _NONE: // null
+                    break;
                 case NUMERIC: // 数字
                     descriptor.getWriteMethod().invoke(t, cell.getNumericCellValue());
                     break;
