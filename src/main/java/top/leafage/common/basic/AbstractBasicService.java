@@ -6,6 +6,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Product random code
+ *
+ * @author liwenqiang 2020-10-06 22:09
+ * @since 0.1.0
+ */
 public abstract class AbstractBasicService {
 
     private static final List<String> SEED_LIST = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",

@@ -9,6 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Construct tree
+ *
+ * @param <T>
+ * @author liwenqiang 2021-07-21 20:08
+ * @since 0.1.3
+ */
 public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
 
     private static final String ID = "id";

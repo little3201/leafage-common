@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Tree node
+ *
+ * @author liwenqiang 2021-07-02 17:18
+ */
 public class TreeNode implements Serializable {
 
     private static final long serialVersionUID = 3977470984616592112L;

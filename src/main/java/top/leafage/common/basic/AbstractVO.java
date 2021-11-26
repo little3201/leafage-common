@@ -6,9 +6,10 @@ package top.leafage.common.basic;
 import java.time.LocalDateTime;
 
 /**
- * abstract vo
+ * Abstract vo
  *
  * @author liwenqiang 2020-10-06 22:09
+ * @since 0.1.6
  */
 public abstract class AbstractVO<C> {
 

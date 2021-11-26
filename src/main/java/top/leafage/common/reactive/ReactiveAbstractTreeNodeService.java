@@ -5,6 +5,13 @@ import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
 import java.util.Set;
 
+/**
+ * For reactive to construct tree
+ *
+ * @param <T>
+ * @author liwenqiang 2021-07-21 20:08
+ * @since 0.1.3
+ */
 public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
 
     /**

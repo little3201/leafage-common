@@ -12,7 +12,8 @@ import java.util.List;
  * V —— VO
  * C —— code type
  *
- * @author liwenqiang 2018/7/27 23:14
+ * @author liwenqiang 2021/7/20 23:14
+ * @since 0.1.2
  **/
 public interface ServletBasicService<D, V, C> {
 
