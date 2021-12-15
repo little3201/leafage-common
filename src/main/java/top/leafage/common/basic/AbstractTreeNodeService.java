@@ -8,6 +8,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,6 +27,29 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     private static final Logger log = StatusLogger.getLogger();
 
     /**
+     * 构造 TreeNode 对象
+     *
+     * @param superiorCode superior code
+     * @param t            实例数据
+     * @param expand       扩展字段
+     * @return TreeNode 对象
+     * @since 0.1.7
+     */
+    protected TreeNode construct(Object superiorCode, T t, Set<String> expand) {
+        Class<?> childClass = t.getClass();
+        Object code = this.getCode(t, childClass);
+        Object name = this.getName(t, childClass);
+
+        TreeNode treeNode = new TreeNode(Objects.nonNull(code) ? String.valueOf(code) : null,
+                Objects.nonNull(name) ? String.valueOf(name) : null);
+        treeNode.setSuperior(Objects.nonNull(superiorCode) ? String.valueOf(superiorCode) : null);
+
+        // deal expand
+        this.expand(treeNode, childClass, t, expand);
+        return treeNode;
+    }
+
+    /**
      * 扩展数据
      *
      * @param treeNode 当前节点
@@ -33,7 +57,7 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @param t        数据实例
      * @param expand   扩展字段
      */
-    protected void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
+    private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
             Map<String, Object> map = new HashMap<>(expand.size());
             expand.forEach(filed -> {

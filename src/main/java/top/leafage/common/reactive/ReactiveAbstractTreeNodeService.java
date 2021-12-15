@@ -36,19 +36,10 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
         Class<?> aClass = superior.getClass();
         // ID是集成基础父类的，所以要通过superClass获取
         Object superiorId = this.getId(superior, aClass);
-        Object superiorName = this.getName(superior, aClass);
+        Object superiorCode = this.getCode(superior, aClass);
 
         return children.filter(child -> this.check(superiorId, child)).flatMap(child -> {
-            Class<?> childClass = child.getClass();
-            Object code = this.getCode(child, childClass);
-            Object name = this.getName(child, childClass);
-
-            TreeNode treeNode = new TreeNode(code != null ? code.toString() : null,
-                    name != null ? name.toString() : null);
-            treeNode.setSuperior(superiorName != null ? superiorName.toString() : null);
-
-            // deal expand
-            this.expand(treeNode, childClass, child, expand);
+            TreeNode treeNode = this.construct(superiorCode, child, expand);
 
             return this.children(child, children, expand).collectList().map(treeNodes -> {
                 treeNode.setChildren(treeNodes);
