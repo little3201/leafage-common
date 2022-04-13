@@ -25,40 +25,7 @@ public interface ReactiveBasicService<D, V, C> {
     }
 
     /**
-     * 分页获取entities
-     *
-     * @param page 页码
-     * @param size 分页大小
-     * @return a flux containing the elements of this list
-     */
-    default Flux<V> retrieve(int page, int size) {
-        return Flux.empty();
-    }
-
-    /**
-     * 分页获取排序后的entities
-     *
-     * @param page 页码
-     * @param size 分页大小
-     * @param sort 排序字段
-     * @return a flux containing the elements of this list
-     */
-    default Flux<V> retrieve(int page, int size, String sort) {
-        return Flux.empty();
-    }
-
-    /**
-     * 名称是否存在
-     *
-     * @param name 名称
-     * @return true-exist, false-not exist
-     */
-    default Mono<Boolean> exist(String name) {
-        return Mono.empty();
-    }
-
-    /**
-     * 根据code获取entity
+     * 根据code查询
      *
      * @param code 代码
      * @return a element instanceof vo
@@ -68,16 +35,17 @@ public interface ReactiveBasicService<D, V, C> {
     }
 
     /**
-     * 统计记录数
+     * 是否存在
      *
-     * @return the count of elements
+     * @param param 属性
+     * @return true-exist, false-not exist
      */
-    default Mono<Long> count() {
+    default Mono<Boolean> exist(String param) {
         return Mono.empty();
     }
 
     /**
-     * 根据code删除entity
+     * 删除
      *
      * @param code 代码
      * @return Void no return
@@ -97,7 +65,7 @@ public interface ReactiveBasicService<D, V, C> {
     }
 
     /**
-     * 新增entity
+     * 添加
      *
      * @param d 实例
      * @return a element instanceof vo
@@ -107,7 +75,7 @@ public interface ReactiveBasicService<D, V, C> {
     }
 
     /**
-     * 编辑entity
+     * 修改
      *
      * @param code 代码
      * @param d    实例
