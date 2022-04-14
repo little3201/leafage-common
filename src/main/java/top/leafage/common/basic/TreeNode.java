@@ -1,9 +1,17 @@
 package top.leafage.common.basic;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class TreeNode {
+/**
+ * Tree node
+ *
+ * @author liwenqiang 2021-07-02 17:18
+ */
+public class TreeNode implements Serializable {
+
+    private static final long serialVersionUID = 3977470984616592112L;
 
     /**
      * 代码
@@ -20,7 +28,7 @@ public class TreeNode {
     /**
      * 扩展属性
      */
-    private Map<String, String> expand;
+    private Map<String, Object> expand;
 
     private List<TreeNode> children;
 
@@ -41,7 +49,7 @@ public class TreeNode {
         return superior;
     }
 
-    public Map<String, String> getExpand() {
+    public Map<String, Object> getExpand() {
         return expand;
     }
 
@@ -61,7 +69,7 @@ public class TreeNode {
         this.superior = superior;
     }
 
-    public void setExpand(Map<String, String> expand) {
+    public void setExpand(Map<String, Object> expand) {
         this.expand = expand;
     }
 

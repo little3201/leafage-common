@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * For servlet to construct tree
+ *
+ * @author liwenqiang 2021-07-21 20:08
+ * @since 0.1.3
+ */
 public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
 
     /**
@@ -30,19 +36,10 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
     protected List<TreeNode> children(T superior, List<T> children, Set<String> expand) {
         Class<?> aClass = superior.getClass();
         Object superiorId = this.getId(superior, aClass);
-        Object superiorName = this.getName(superior, aClass);
+        Object superiorCode = this.getCode(superior, aClass);
 
         return children.stream().filter(child -> this.check(superiorId, child)).map(child -> {
-            Class<?> childClass = child.getClass();
-            Object code = this.getCode(child, childClass);
-            Object name = this.getName(child, childClass);
-
-            TreeNode treeNode = new TreeNode(code == null ? null : code.toString(),
-                    name == null ? null : name.toString());
-            treeNode.setSuperior(superiorName == null ? null : superiorName.toString());
-
-            // deal expand
-            this.expand(treeNode, childClass, child, expand);
+            TreeNode treeNode = this.construct(superiorCode, child, expand);
 
             treeNode.setChildren(this.children(child, children, expand));
 

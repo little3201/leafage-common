@@ -1,14 +1,14 @@
 package top.leafage.common;
 
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -26,16 +26,17 @@ import java.util.NoSuchElementException;
  * 读取excel文件，并解析为指定类型的对象
  *
  * @author liwenqiang 2021/8/26 9:37
+ * @since 0.1.4
  */
 public class ExcelReader {
 
-    private ExcelReader() {
-    }
-
-    private static final Logger log = LoggerFactory.getLogger(ExcelReader.class);
+    private static final Logger log = StatusLogger.getLogger();
 
     private static final String XLS = ".xls";
     private static final String XLSX = ".xlsx";
+
+    private ExcelReader() {
+    }
 
     /**
      * 根据文件后缀名类型获取对应的工作簿对象
@@ -167,6 +168,9 @@ public class ExcelReader {
     private static <T> void writeData(T t, Cell cell, PropertyDescriptor descriptor) {
         try {
             switch (cell.getCellType()) {
+                case BLANK: // 空字符串
+                case _NONE: // null
+                    break;
                 case NUMERIC: // 数字
                     descriptor.getWriteMethod().invoke(t, cell.getNumericCellValue());
                     break;

@@ -1,14 +1,22 @@
 package top.leafage.common.basic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.status.StatusLogger;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Construct tree
+ *
+ * @author liwenqiang 2021-07-21 20:08
+ * @since 0.1.3
+ */
 public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
 
     private static final String ID = "id";
@@ -16,7 +24,30 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     private static final String CODE = "code";
     private static final String SUPERIOR = "superior";
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractTreeNodeService.class);
+    private static final Logger log = StatusLogger.getLogger();
+
+    /**
+     * 构造 TreeNode 对象
+     *
+     * @param superiorCode superior code
+     * @param t            实例数据
+     * @param expand       扩展字段
+     * @return TreeNode 对象
+     * @since 0.1.7
+     */
+    protected TreeNode construct(Object superiorCode, T t, Set<String> expand) {
+        Class<?> childClass = t.getClass();
+        Object code = this.getCode(t, childClass);
+        Object name = this.getName(t, childClass);
+
+        TreeNode treeNode = new TreeNode(Objects.nonNull(code) ? String.valueOf(code) : null,
+                Objects.nonNull(name) ? String.valueOf(name) : null);
+        treeNode.setSuperior(Objects.nonNull(superiorCode) ? String.valueOf(superiorCode) : null);
+
+        // deal expand
+        this.expand(treeNode, childClass, t, expand);
+        return treeNode;
+    }
 
     /**
      * 扩展数据
@@ -26,15 +57,15 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @param t        数据实例
      * @param expand   扩展字段
      */
-    protected void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
+    private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
-            Map<String, String> map = new HashMap<>(expand.size());
+            Map<String, Object> map = new HashMap<>(expand.size());
             expand.forEach(filed -> {
                 try {
                     PropertyDescriptor superIdDescriptor = new PropertyDescriptor(filed, clazz);
                     Object value = superIdDescriptor.getReadMethod().invoke(t);
 
-                    map.put(filed, value != null ? value.toString() : null);
+                    map.put(filed, value);
                 } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
                     log.error("expand data error.", e);
                 }

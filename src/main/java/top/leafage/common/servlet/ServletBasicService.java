@@ -12,7 +12,8 @@ import java.util.List;
  * V —— VO
  * C —— code type
  *
- * @author liwenqiang 2018/7/27 23:14
+ * @author liwenqiang 2021/7/20 23:14
+ * @since 0.1.2
  **/
 public interface ServletBasicService<D, V, C> {
 
@@ -26,7 +27,7 @@ public interface ServletBasicService<D, V, C> {
     }
 
     /**
-     * 根据唯一标识获取
+     * 根据code查询
      *
      * @param code 代码
      * @return a element instanceof vo
@@ -36,17 +37,17 @@ public interface ServletBasicService<D, V, C> {
     }
 
     /**
-     * 名称是否存在
+     * 是否存在
      *
-     * @param name 名称
+     * @param param 名称
      * @return true-exist, false-not exist
      */
-    default boolean exist(String name) {
+    default boolean exist(String param) {
         return false;
     }
 
     /**
-     * 根据唯一标识删除entity
+     * 删除
      *
      * @param code 代码
      */
@@ -62,7 +63,7 @@ public interface ServletBasicService<D, V, C> {
     }
 
     /**
-     * 添加对象
+     * 添加
      *
      * @param d 入参
      * @return a element instanceof vo
@@ -72,7 +73,7 @@ public interface ServletBasicService<D, V, C> {
     }
 
     /**
-     * 修改对象
+     * 修改
      *
      * @param code 唯一标识
      * @param d    入参
