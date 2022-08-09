@@ -2,9 +2,13 @@ package top.leafage.common.servlet;
 
 import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * For servlet to construct tree
@@ -17,34 +21,31 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
     /**
      * 处理子节点
      *
-     * @param superior 上级数据
      * @param children 子节点
      * @return 树节点数据集
+     * @since 0.1.9
      */
-    protected List<TreeNode> children(T superior, List<T> children) {
-        return this.children(superior, children, null);
+    protected List<TreeNode> convert(List<T> children) {
+        return this.convert(children, null);
     }
 
     /**
      * 处理子节点
      *
-     * @param superior 上级数据
      * @param children 子节点
      * @param expand   扩展属性
      * @return 树节点数据集
+     * @since 0.1.9
      */
-    protected List<TreeNode> children(T superior, List<T> children, Set<String> expand) {
-        Class<?> aClass = superior.getClass();
-        Object superiorId = this.getId(superior, aClass);
-        Object superiorCode = this.getCode(superior, aClass);
+    protected List<TreeNode> convert(List<T> children, Set<String> expand) {
+        Stream<TreeNode> stream = children.stream().map(child -> this.construct(child, expand));
+        Map<String, List<TreeNode>> listMap = stream.filter(node -> Objects.nonNull(node.getSuperior()) &&
+                        !"0".equals(node.getSuperior()))
+                .collect(Collectors.groupingBy(TreeNode::getSuperior));
 
-        return children.stream().filter(child -> this.check(superiorId, child)).map(child -> {
-            TreeNode treeNode = this.construct(superiorCode, child, expand);
-
-            treeNode.setChildren(this.children(child, children, expand));
-
-            return treeNode;
-        }).collect(Collectors.toList());
+        stream.forEach(node -> node.setChildren(listMap.get(node.getCode())));
+        return stream.filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
+                .collect(Collectors.toList());
     }
 
 }

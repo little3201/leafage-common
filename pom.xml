@@ -5,12 +5,12 @@
     <parent>
         <groupId>top.leafage</groupId>
         <artifactId>leafage-starter-parent</artifactId>
-        <version>0.1.3</version>
+        <version>0.1.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
