@@ -3,6 +3,7 @@ package top.leafage.common.basic;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,20 +30,20 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 构造 TreeNode 对象
      *
-     * @param superiorCode superior code
-     * @param t            实例数据
-     * @param expand       扩展字段
+     * @param t      实例数据
+     * @param expand 扩展字段
      * @return TreeNode 对象
      * @since 0.1.7
      */
-    protected TreeNode construct(Object superiorCode, T t, Set<String> expand) {
+    protected TreeNode construct(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
         Object code = this.getCode(t, childClass);
         Object name = this.getName(t, childClass);
+        Object superior = this.getSuperior(t, childClass);
 
         TreeNode treeNode = new TreeNode(Objects.nonNull(code) ? String.valueOf(code) : null,
                 Objects.nonNull(name) ? String.valueOf(name) : null);
-        treeNode.setSuperior(Objects.nonNull(superiorCode) ? String.valueOf(superiorCode) : null);
+        treeNode.setSuperior(Objects.nonNull(superior) ? String.valueOf(superior) : null);
 
         // deal expand
         this.expand(treeNode, childClass, t, expand);

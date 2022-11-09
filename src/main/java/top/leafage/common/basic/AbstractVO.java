@@ -11,31 +11,29 @@ import java.time.LocalDateTime;
  * @author liwenqiang 2020-10-06 22:09
  * @since 0.1.6
  */
-public abstract class AbstractVO<C> {
-
-    /**
-     * 代码
-     */
-    private C code;
+public abstract class AbstractVO<C> extends BasicVO<C> {
 
     /**
      * 修改时间
      */
     private LocalDateTime modifyTime;
 
-    public C getCode() {
-        return code;
-    }
-
-    public void setCode(C code) {
-        this.code = code;
-    }
-
+    /**
+     * modify time getter
+     *
+     * @return modify time
+     */
     public LocalDateTime getModifyTime() {
         return modifyTime;
     }
 
+    /**
+     * modify time setter
+     *
+     * @param modifyTime modify time
+     */
     public void setModifyTime(LocalDateTime modifyTime) {
         this.modifyTime = modifyTime;
     }
+
 }

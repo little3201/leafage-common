@@ -1,5 +1,6 @@
 package top.leafage.common.basic;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ import java.io.Serializable;
  **/
 public class ValidMessage implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3385684846039604779L;
 
     /**

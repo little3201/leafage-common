@@ -1,9 +1,15 @@
 package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import top.leafage.common.basic.AbstractTreeNodeService;
 import top.leafage.common.basic.TreeNode;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * For reactive to construct tree
@@ -16,36 +22,32 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
     /**
      * 处理子节点
      *
-     * @param superior 上级数据
      * @param children 子节点
      * @return 树节点数据集
+     * @since 0.1.9
      */
-    protected Flux<TreeNode> children(T superior, Flux<T> children) {
-        return this.children(superior, children, null);
+    protected Flux<TreeNode> convert(Flux<T> children) {
+        return this.convert(children, null);
     }
 
     /**
      * 处理子节点
      *
-     * @param superior 上级数据
      * @param children 子节点
      * @param expand   扩展属性
      * @return 树节点数据集
+     * @since 0.1.9
      */
-    protected Flux<TreeNode> children(T superior, Flux<T> children, Set<String> expand) {
-        Class<?> aClass = superior.getClass();
-        // ID是集成基础父类的，所以要通过superClass获取
-        Object superiorId = this.getId(superior, aClass);
-        Object superiorCode = this.getCode(superior, aClass);
+    protected Flux<TreeNode> convert(Flux<T> children, Set<String> expand) {
+        Flux<TreeNode> nodesFlux = children.map(child -> this.construct(child, expand));
+        Mono<Map<String, List<TreeNode>>> mapMono = nodesFlux.filter(node -> Objects.nonNull(node.getSuperior()) &&
+                        !"0".equals(node.getSuperior()))
+                .collect(Collectors.groupingBy(TreeNode::getSuperior));
 
-        return children.filter(child -> this.check(superiorId, child)).flatMap(child -> {
-            TreeNode treeNode = this.construct(superiorCode, child, expand);
-
-            return this.children(child, children, expand).collectList().map(treeNodes -> {
-                treeNode.setChildren(treeNodes);
-                return treeNode;
-            });
-        });
+        return nodesFlux.zipWith(mapMono, (node, map) -> {
+            node.setChildren(map.get(node.getCode()));
+            return node;
+        }).filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()));
     }
 
 }
