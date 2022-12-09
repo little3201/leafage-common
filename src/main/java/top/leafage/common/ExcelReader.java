@@ -1,6 +1,5 @@
 package top.leafage.common;
 
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -9,6 +8,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -150,7 +150,7 @@ public class ExcelReader {
                 writeData(t, cell, descriptor);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                IntrospectionException e) {
+                 IntrospectionException e) {
             log.error("对象映射异常!", e);
             return null;
         }

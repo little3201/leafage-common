@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * For servlet to construct tree
@@ -38,13 +37,14 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @since 0.1.9
      */
     protected List<TreeNode> convert(List<T> children, Set<String> expand) {
-        Stream<TreeNode> stream = children.stream().map(child -> this.construct(child, expand));
-        Map<String, List<TreeNode>> listMap = stream.filter(node -> Objects.nonNull(node.getSuperior()) &&
+        List<TreeNode> nodeList = children.stream().map(child -> this.construct(child, expand)).toList();
+        // group by node
+        Map<String, List<TreeNode>> listMap = nodeList.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
                         !"0".equals(node.getSuperior()))
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
-
-        stream.forEach(node -> node.setChildren(listMap.get(node.getCode())));
-        return stream.filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
+        // get children from grouped map
+        nodeList.forEach(node -> node.setChildren(listMap.get(node.getCode())));
+        return nodeList.stream().filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
                 .collect(Collectors.toList());
     }
 

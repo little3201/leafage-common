@@ -5,19 +5,19 @@
     <parent>
         <groupId>top.leafage</groupId>
         <artifactId>leafage-starter-parent</artifactId>
-        <version>0.1.6</version>
+        <version>0.1.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
     <description>common for leafage</description>
 
     <properties>
-        <poi.version>5.2.2</poi.version>
+        <poi.version>5.2.3</poi.version>
     </properties>
 
     <dependencies>

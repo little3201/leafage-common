@@ -20,7 +20,6 @@ import java.util.Set;
  */
 public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
 
-    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String CODE = "code";
     private static final String SUPERIOR = "superior";
@@ -76,25 +75,6 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     }
 
     /**
-     * 获取ID
-     *
-     * @param t     对象
-     * @param clazz 类型
-     * @return ID
-     */
-    protected Object getId(T t, Class<?> clazz) {
-        Object superiorId = null;
-        try {
-            // ID是集成基础父类的，所以要通过superClass获取
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, clazz.getSuperclass());
-            superiorId = superIdDescriptor.getReadMethod().invoke(t);
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get id error.", e);
-        }
-        return superiorId;
-    }
-
-    /**
      * 获取name
      *
      * @param t     对象
@@ -140,8 +120,15 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     private Object getSuperior(T t, Class<?> clazz) {
         Object superior = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
-            superior = superIdDescriptor.getReadMethod().invoke(t);
+            PropertyDescriptor superDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
+            superior = superDescriptor.getReadMethod().invoke(t);
+            // superior code
+            if (Objects.nonNull(superior)) {
+                Class<?> aClass = superior.getClass();
+                PropertyDescriptor superCodeDescriptor = new PropertyDescriptor(CODE, aClass);
+                superior = superCodeDescriptor.getReadMethod().invoke(t);
+            }
+
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get superior error.", e);
         }

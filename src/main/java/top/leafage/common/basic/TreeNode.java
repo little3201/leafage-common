@@ -1,7 +1,5 @@
 package top.leafage.common.basic;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +8,7 @@ import java.util.Map;
  *
  * @author liwenqiang 2021-07-02 17:18
  */
-public class TreeNode implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 3977470984616592112L;
+public class TreeNode {
 
     /**
      * 代码
