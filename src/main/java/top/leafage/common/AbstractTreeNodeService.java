@@ -1,5 +1,21 @@
-package top.leafage.common.basic;
+/*
+ *  Copyright 2018-2022 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 
+package top.leafage.common;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
@@ -133,17 +149,5 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
             log.error("get superior error.", e);
         }
         return superior;
-    }
-
-    /**
-     * 检查是否上下级节点
-     *
-     * @param superiorId 上级节点ID
-     * @param child      对象实例
-     * @return true-是，false-否
-     */
-    protected boolean check(Object superiorId, T child) {
-        Object superior = this.getSuperior(child, child.getClass());
-        return superiorId.equals(superior);
     }
 }
