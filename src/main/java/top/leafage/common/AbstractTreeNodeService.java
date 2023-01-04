@@ -46,7 +46,7 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @param t      实例数据
      * @param expand 扩展字段
      * @return TreeNode 对象
-     * @since 0.1.7
+     * @since 0.2.0
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
@@ -63,6 +63,13 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
         return treeNode;
     }
 
+    /**
+     * 转换并设置 TreeNode
+     *
+     * @param treeNodes TreeNode 对象
+     * @return TreeNode 对象集合
+     * @since 0.2.0
+     */
     protected List<TreeNode> nodes(List<TreeNode> treeNodes) {
         Map<String, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
                         !"0".equals(node.getSuperior()))
