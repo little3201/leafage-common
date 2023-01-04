@@ -126,15 +126,15 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取code
      *
-     * @param t     对象
+     * @param obj   实例
      * @param clazz 类型
      * @return code
      */
-    protected Object getCode(T t, Class<?> clazz) {
+    protected Object getCode(Object obj, Class<?> clazz) {
         Object code = null;
         try {
             PropertyDescriptor superIdDescriptor = new PropertyDescriptor(CODE, clazz);
-            code = superIdDescriptor.getReadMethod().invoke(t);
+            code = superIdDescriptor.getReadMethod().invoke(obj);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get code error.", e);
         }
@@ -155,9 +155,7 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
             superior = superDescriptor.getReadMethod().invoke(t);
             // superior code
             if (Objects.nonNull(superior)) {
-                Class<?> aClass = superior.getClass();
-                PropertyDescriptor superCodeDescriptor = new PropertyDescriptor(CODE, aClass);
-                superior = superCodeDescriptor.getReadMethod().invoke(t);
+                superior = this.getCode(superior, superior.getClass());
             }
 
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
