@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@ import org.apache.logging.log4j.status.StatusLogger;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Construct tree
@@ -50,7 +48,7 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @return TreeNode 对象
      * @since 0.1.7
      */
-    protected TreeNode construct(T t, Set<String> expand) {
+    protected TreeNode node(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
         Object code = this.getCode(t, childClass);
         Object name = this.getName(t, childClass);
@@ -63,6 +61,16 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
         // deal expand
         this.expand(treeNode, childClass, t, expand);
         return treeNode;
+    }
+
+    protected List<TreeNode> nodes(List<TreeNode> treeNodes) {
+        Map<String, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
+                        !"0".equals(node.getSuperior()))
+                .collect(Collectors.groupingBy(TreeNode::getSuperior));
+        // get children from grouped map
+        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getCode())));
+        return treeNodes.stream().filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
+                .collect(Collectors.toList());
     }
 
     /**

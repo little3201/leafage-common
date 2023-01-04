@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,7 @@ import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * For reactive to construct tree
@@ -41,9 +38,9 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      *
      * @param children 子节点
      * @return 树节点数据集
-     * @since 0.1.9
+     * @since 0.2.0
      */
-    protected Flux<TreeNode> convert(Flux<T> children) {
+    protected Mono<List<TreeNode>> convert(Flux<T> children) {
         return this.convert(children, null);
     }
 
@@ -53,18 +50,12 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @param children 子节点
      * @param expand   扩展属性
      * @return 树节点数据集
-     * @since 0.1.9
+     * @since 0.2.0
      */
-    protected Flux<TreeNode> convert(Flux<T> children, Set<String> expand) {
-        Flux<TreeNode> nodesFlux = children.map(child -> this.construct(child, expand));
-        Mono<Map<String, List<TreeNode>>> mapMono = nodesFlux.filter(node -> Objects.nonNull(node.getSuperior()) &&
-                        !"0".equals(node.getSuperior()))
-                .collect(Collectors.groupingBy(TreeNode::getSuperior));
+    protected Mono<List<TreeNode>> convert(Flux<T> children, Set<String> expand) {
+        Flux<TreeNode> nodesFlux = children.map(child -> this.node(child, expand));
 
-        return nodesFlux.zipWith(mapMono, (node, map) -> {
-            node.setChildren(map.get(node.getCode()));
-            return node;
-        }).filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()));
+        return nodesFlux.collectList().map(this::nodes);
     }
 
 }

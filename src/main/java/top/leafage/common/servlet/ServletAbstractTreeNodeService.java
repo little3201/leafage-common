@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * For servlet to construct tree
@@ -39,7 +36,7 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      *
      * @param children 子节点
      * @return 树节点数据集
-     * @since 0.1.9
+     * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children) {
         return this.convert(children, null);
@@ -51,18 +48,11 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @param children 子节点
      * @param expand   扩展属性
      * @return 树节点数据集
-     * @since 0.1.9
+     * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children, Set<String> expand) {
-        List<TreeNode> nodeList = children.stream().map(child -> this.construct(child, expand)).toList();
-        // group by node
-        Map<String, List<TreeNode>> listMap = nodeList.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
-                        !"0".equals(node.getSuperior()))
-                .collect(Collectors.groupingBy(TreeNode::getSuperior));
-        // get children from grouped map
-        nodeList.forEach(node -> node.setChildren(listMap.get(node.getCode())));
-        return nodeList.stream().filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
-                .collect(Collectors.toList());
+        List<TreeNode> treeNodes = children.stream().map(child -> this.node(child, expand)).toList();
+        return this.nodes(treeNodes);
     }
 
 }
