@@ -1,5 +1,21 @@
-package top.leafage.common.basic;
+/*
+ *  Copyright 2018-2023 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 
+package top.leafage.common;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
@@ -7,10 +23,8 @@ import org.apache.logging.log4j.status.StatusLogger;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Construct tree
@@ -20,7 +34,6 @@ import java.util.Set;
  */
 public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
 
-    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String CODE = "code";
     private static final String SUPERIOR = "superior";
@@ -33,9 +46,9 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @param t      实例数据
      * @param expand 扩展字段
      * @return TreeNode 对象
-     * @since 0.1.7
+     * @since 0.2.0
      */
-    protected TreeNode construct(T t, Set<String> expand) {
+    protected TreeNode node(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
         Object code = this.getCode(t, childClass);
         Object name = this.getName(t, childClass);
@@ -48,6 +61,23 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
         // deal expand
         this.expand(treeNode, childClass, t, expand);
         return treeNode;
+    }
+
+    /**
+     * 转换并设置 TreeNode
+     *
+     * @param treeNodes TreeNode 对象
+     * @return TreeNode 对象集合
+     * @since 0.2.0
+     */
+    protected List<TreeNode> nodes(List<TreeNode> treeNodes) {
+        Map<String, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
+                        !"0".equals(node.getSuperior()))
+                .collect(Collectors.groupingBy(TreeNode::getSuperior));
+        // get children from grouped map
+        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getCode())));
+        return treeNodes.stream().filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -76,25 +106,6 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     }
 
     /**
-     * 获取ID
-     *
-     * @param t     对象
-     * @param clazz 类型
-     * @return ID
-     */
-    protected Object getId(T t, Class<?> clazz) {
-        Object superiorId = null;
-        try {
-            // ID是集成基础父类的，所以要通过superClass获取
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, clazz.getSuperclass());
-            superiorId = superIdDescriptor.getReadMethod().invoke(t);
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get id error.", e);
-        }
-        return superiorId;
-    }
-
-    /**
      * 获取name
      *
      * @param t     对象
@@ -115,15 +126,15 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     /**
      * 获取code
      *
-     * @param t     对象
+     * @param obj   实例
      * @param clazz 类型
      * @return code
      */
-    protected Object getCode(T t, Class<?> clazz) {
+    protected Object getCode(Object obj, Class<?> clazz) {
         Object code = null;
         try {
             PropertyDescriptor superIdDescriptor = new PropertyDescriptor(CODE, clazz);
-            code = superIdDescriptor.getReadMethod().invoke(t);
+            code = superIdDescriptor.getReadMethod().invoke(obj);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get code error.", e);
         }
@@ -140,23 +151,16 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     private Object getSuperior(T t, Class<?> clazz) {
         Object superior = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
-            superior = superIdDescriptor.getReadMethod().invoke(t);
+            PropertyDescriptor superDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
+            superior = superDescriptor.getReadMethod().invoke(t);
+            // superior code
+            if (Objects.nonNull(superior)) {
+                superior = this.getCode(superior, superior.getClass());
+            }
+
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get superior error.", e);
         }
         return superior;
-    }
-
-    /**
-     * 检查是否上下级节点
-     *
-     * @param superiorId 上级节点ID
-     * @param child      对象实例
-     * @return true-是，false-否
-     */
-    protected boolean check(Object superiorId, T child) {
-        Object superior = this.getSuperior(child, child.getClass());
-        return superiorId.equals(superior);
     }
 }
