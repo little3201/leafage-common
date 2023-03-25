@@ -58,4 +58,15 @@ public interface ServletBasicService<D, V> {
     default V create(D d) {
         return null;
     }
+
+    /**
+     * 修改
+     *
+     * @param id 主键
+     * @param d  入参
+     * @return a element instanceof vo
+     */
+    default V modify(Long id, D d) {
+        return null;
+    }
 }

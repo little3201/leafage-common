@@ -59,4 +59,14 @@ public interface ReactiveBasicService<D, V> {
         return Mono.empty();
     }
 
+    /**
+     * 修改
+     *
+     * @param id 主键
+     * @param d  实例
+     * @return a element instanceof vo
+     */
+    default Mono<V> modify(Long id, D d) {
+        return Mono.empty();
+    }
 }
