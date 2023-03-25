@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author liwenqiang 2021-07-21 20:08
  * @since 0.1.3
  */
-public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
+public abstract class AbstractTreeNodeService<T> {
 
     private static final String NAME = "name";
     private static final String CODE = "code";
