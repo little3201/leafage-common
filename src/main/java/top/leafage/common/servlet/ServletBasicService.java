@@ -40,6 +40,15 @@ public interface ServletBasicService<D, V> {
     }
 
     /**
+     * 获取
+     *
+     * @return an element instanceof vo
+     */
+    default V fetch(Long id) {
+        return null;
+    }
+
+    /**
      * 是否存在
      *
      * @param name 名称
@@ -68,5 +77,13 @@ public interface ServletBasicService<D, V> {
      */
     default V modify(Long id, D d) {
         return null;
+    }
+
+    /**
+     * 删除
+     *
+     * @param id 主键
+     */
+    default void remove(Long id) {
     }
 }

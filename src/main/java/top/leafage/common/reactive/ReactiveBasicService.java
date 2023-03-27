@@ -40,6 +40,15 @@ public interface ReactiveBasicService<D, V> {
     }
 
     /**
+     * 获取
+     *
+     * @return an element instanceof vo
+     */
+    default Mono<V> fetch(Long id) {
+        return Mono.empty();
+    }
+
+    /**
      * 是否存在
      *
      * @param name 属性
@@ -67,6 +76,16 @@ public interface ReactiveBasicService<D, V> {
      * @return a element instanceof vo
      */
     default Mono<V> modify(Long id, D d) {
+        return Mono.empty();
+    }
+
+    /**
+     * 删除
+     *
+     * @param id 主键
+     * @return Void
+     */
+    default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
 }
