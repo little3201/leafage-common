@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,66 +20,42 @@ package top.leafage.common.reactive;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 /**
  * service基础接口
  * D —— DTO
  * V —— VO
- * C —— code type
  *
  * @author liwenqiang 2021/7/20 23:14
  * @since 0.1.2
  **/
-public interface ReactiveBasicService<D, V, C> {
+public interface ReactiveBasicService<D, V> {
 
     /**
-     * 获取所有entities
+     * 获取所有
      *
-     * @return a flux containing the elements of this list
+     * @return containing the elements of this list
      */
     default Flux<V> retrieve() {
         return Flux.empty();
     }
 
     /**
-     * 根据code查询
+     * 获取
      *
-     * @param code 代码
-     * @return a element instanceof vo
+     * @return an element instanceof vo
      */
-    default Mono<V> fetch(C code) {
+    default Mono<V> fetch(Long id) {
         return Mono.empty();
     }
 
     /**
      * 是否存在
      *
-     * @param param 属性
+     * @param name 属性
      * @return true-exist, false-not exist
      */
-    default Mono<Boolean> exist(String param) {
+    default Mono<Boolean> exist(String name) {
         return Mono.empty();
-    }
-
-    /**
-     * 删除
-     *
-     * @param code 代码
-     * @return Void no return
-     */
-    default Mono<Void> remove(C code) {
-        return Mono.empty().then();
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param dList 实例集合
-     * @return Void no return
-     */
-    default Mono<Void> removeAll(List<D> dList) {
-        return Mono.empty().then();
     }
 
     /**
@@ -95,21 +71,21 @@ public interface ReactiveBasicService<D, V, C> {
     /**
      * 修改
      *
-     * @param code 代码
-     * @param d    实例
+     * @param id 主键
+     * @param d  实例
      * @return a element instanceof vo
      */
-    default Mono<V> modify(C code, D d) {
+    default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
     /**
-     * 批量保存
+     * 删除
      *
-     * @param dList 实例集合
-     * @return a flux containing the elements of this list
+     * @param id 主键
+     * @return Void
      */
-    default Flux<V> saveAll(List<D> dList) {
-        return Flux.empty();
+    default Mono<Void> remove(Long id) {
+        return Mono.empty();
     }
 }

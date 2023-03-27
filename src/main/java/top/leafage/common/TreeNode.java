@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,21 +28,25 @@ import java.util.Map;
 public class TreeNode {
 
     /**
-     * 代码
+     * 主键
      */
-    private String code;
+    private Long id;
+
     /**
      * 名称
      */
     private String name;
+
     /**
      * 上级
      */
-    private String superior;
+    private Long superior;
+
     /**
      * 扩展属性
      */
     private Map<String, Object> expand;
+
     /**
      * 子节点
      */
@@ -51,30 +55,28 @@ public class TreeNode {
     /**
      * 构造方法
      *
-     * @param code code
+     * @param id   主键
      * @param name name
      */
-    public TreeNode(String code, String name) {
-        this.code = code;
+    public TreeNode(Long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
     /**
-     * code getter
+     * id getter
      *
-     * @return code
+     * @return id
      */
-    public String getCode() {
-        return code;
+    public Long getId() {
+        return id;
     }
 
     /**
-     * code setter
-     *
-     * @param code code
+     * id setter
      */
-    public void setCode(String code) {
-        this.code = code;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -100,7 +102,7 @@ public class TreeNode {
      *
      * @return superior
      */
-    public String getSuperior() {
+    public Long getSuperior() {
         return superior;
     }
 
@@ -109,7 +111,7 @@ public class TreeNode {
      *
      * @param superior superior
      */
-    public void setSuperior(String superior) {
+    public void setSuperior(Long superior) {
         this.superior = superior;
     }
 

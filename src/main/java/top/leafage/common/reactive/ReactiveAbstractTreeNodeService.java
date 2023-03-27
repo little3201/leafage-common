@@ -19,6 +19,7 @@ package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.Nullable;
 import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
@@ -52,7 +53,7 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @return 树节点数据集
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convert(Flux<T> children, Set<String> expand) {
+    protected Mono<List<TreeNode>> convert(Flux<T> children, @Nullable Set<String> expand) {
         Flux<TreeNode> nodesFlux = children.map(child -> this.node(child, expand));
 
         return nodesFlux.collectList().map(this::nodes);

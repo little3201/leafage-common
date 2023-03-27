@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,56 +24,38 @@ import java.util.List;
  * service基础接口
  * D —— DTO
  * V —— VO
- * C —— code type
  *
  * @author liwenqiang 2021/7/20 23:14
  * @since 0.1.2
  **/
-public interface ServletBasicService<D, V, C> {
+public interface ServletBasicService<D, V> {
 
     /**
-     * 查询
+     * 查询所有
      *
-     * @return an array containing the elements of this list
+     * @return containing the elements of this list
      */
     default List<V> retrieve() {
         return Collections.emptyList();
     }
 
     /**
-     * 根据code查询
+     * 获取
      *
-     * @param code 代码
-     * @return a element instanceof vo
+     * @return an element instanceof vo
      */
-    default V fetch(C code) {
+    default V fetch(Long id) {
         return null;
     }
 
     /**
      * 是否存在
      *
-     * @param param 名称
+     * @param name 名称
      * @return true-exist, false-not exist
      */
-    default boolean exist(String param) {
+    default boolean exist(String name) {
         return false;
-    }
-
-    /**
-     * 删除
-     *
-     * @param code 代码
-     */
-    default void remove(C code) {
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param dList 实例集合
-     */
-    default void removeAll(List<D> dList) {
     }
 
     /**
@@ -89,21 +71,19 @@ public interface ServletBasicService<D, V, C> {
     /**
      * 修改
      *
-     * @param code 唯一标识
-     * @param d    入参
+     * @param id 主键
+     * @param d  入参
      * @return a element instanceof vo
      */
-    default V modify(C code, D d) {
+    default V modify(Long id, D d) {
         return null;
     }
 
     /**
-     * 批量保存
+     * 删除
      *
-     * @param dList 实例集合
-     * @return an list containing the elements of this list
+     * @param id 主键
      */
-    default List<V> saveAll(List<D> dList) {
-        return Collections.emptyList();
+    default void remove(Long id) {
     }
 }

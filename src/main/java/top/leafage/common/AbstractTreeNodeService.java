@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
  * @author liwenqiang 2021-07-21 20:08
  * @since 0.1.3
  */
-public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
+public abstract class AbstractTreeNodeService<T> {
 
-    private static final String NAME = "name";
-    private static final String CODE = "code";
-    private static final String SUPERIOR = "superior";
+    private static final String ID = "id";
+    private static final String NAME_SUFFIX = "Name";
+    private static final String SUPERIOR_ID = "superiorId";
 
     private static final Logger log = StatusLogger.getLogger();
 
@@ -50,13 +50,13 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
-        Object code = this.getCode(t, childClass);
+        Object id = this.getId(t, childClass.getSuperclass().getSuperclass());
         Object name = this.getName(t, childClass);
-        Object superior = this.getSuperior(t, childClass);
+        Object superiorId = this.getSuperiorId(t, childClass.getSuperclass());
 
-        TreeNode treeNode = new TreeNode(Objects.nonNull(code) ? String.valueOf(code) : null,
+        TreeNode treeNode = new TreeNode(Objects.nonNull(id) ? (Long) id : null,
                 Objects.nonNull(name) ? String.valueOf(name) : null);
-        treeNode.setSuperior(Objects.nonNull(superior) ? String.valueOf(superior) : null);
+        treeNode.setSuperior(Objects.nonNull(superiorId) ? (Long) superiorId : null);
 
         // deal expand
         this.expand(treeNode, childClass, t, expand);
@@ -71,12 +71,12 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @since 0.2.0
      */
     protected List<TreeNode> nodes(List<TreeNode> treeNodes) {
-        Map<String, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
-                        !"0".equals(node.getSuperior()))
+        Map<Long, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
+                        0 == node.getSuperior())
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
         // get children from grouped map
-        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getCode())));
-        return treeNodes.stream().filter(node -> Objects.isNull(node.getSuperior()) || "0".equals(node.getSuperior()))
+        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getId())));
+        return treeNodes.stream().filter(node -> Objects.isNull(node.getSuperior()) || 0 == node.getSuperior())
                 .collect(Collectors.toList());
     }
 
@@ -106,6 +106,24 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
     }
 
     /**
+     * 获取id
+     *
+     * @param obj   实例
+     * @param clazz 类型
+     * @return code
+     */
+    protected Object getId(Object obj, Class<?> clazz) {
+        Object id = null;
+        try {
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, clazz);
+            id = superIdDescriptor.getReadMethod().invoke(obj);
+        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+            log.error("get id error.", e);
+        }
+        return id;
+    }
+
+    /**
      * 获取name
      *
      * @param t     对象
@@ -114,31 +132,17 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      */
     protected Object getName(T t, Class<?> clazz) {
         Object name = null;
+        // field name from class name and name suffix.
+        String className = t.getClass().getName();
+        String fieldName = className.substring(className.lastIndexOf(".") + 1).toLowerCase() + NAME_SUFFIX;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(NAME, clazz);
+            //
+            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(fieldName, clazz);
             name = superIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get name error.", e);
         }
         return name;
-    }
-
-    /**
-     * 获取code
-     *
-     * @param obj   实例
-     * @param clazz 类型
-     * @return code
-     */
-    protected Object getCode(Object obj, Class<?> clazz) {
-        Object code = null;
-        try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(CODE, clazz);
-            code = superIdDescriptor.getReadMethod().invoke(obj);
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get code error.", e);
-        }
-        return code;
     }
 
     /**
@@ -148,19 +152,15 @@ public abstract class AbstractTreeNodeService<T> extends AbstractBasicService {
      * @param clazz 类型
      * @return superior
      */
-    private Object getSuperior(T t, Class<?> clazz) {
-        Object superior = null;
+    private Object getSuperiorId(T t, Class<?> clazz) {
+        Object superiorId = null;
         try {
-            PropertyDescriptor superDescriptor = new PropertyDescriptor(SUPERIOR, clazz);
-            superior = superDescriptor.getReadMethod().invoke(t);
-            // superior code
-            if (Objects.nonNull(superior)) {
-                superior = this.getCode(superior, superior.getClass());
-            }
+            PropertyDescriptor superDescriptor = new PropertyDescriptor(SUPERIOR_ID, clazz);
+            superiorId = superDescriptor.getReadMethod().invoke(t);
 
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get superior error.", e);
+            log.error("get superiorId error.", e);
         }
-        return superior;
+        return superiorId;
     }
 }

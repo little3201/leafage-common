@@ -17,6 +17,7 @@
 
 package top.leafage.common.servlet;
 
+import reactor.util.annotation.Nullable;
 import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
@@ -50,7 +51,7 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @return 树节点数据集
      * @since 0.2.0
      */
-    protected List<TreeNode> convert(List<T> children, Set<String> expand) {
+    protected List<TreeNode> convert(List<T> children, @Nullable Set<String> expand) {
         List<TreeNode> treeNodes = children.stream().map(child -> this.node(child, expand)).toList();
         return this.nodes(treeNodes);
     }
