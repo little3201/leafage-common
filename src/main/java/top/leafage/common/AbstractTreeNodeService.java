@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2023 the original author or authors.
+ *  Copyright 2018-2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractTreeNodeService<T> {
 
     private static final String ID = "id";
+    // field suffix, like groupName, roleName suffix is Name
     private static final String NAME_SUFFIX = "Name";
     private static final String SUPERIOR_ID = "superiorId";
 
@@ -50,12 +51,16 @@ public abstract class AbstractTreeNodeService<T> {
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> childClass = t.getClass();
-        Object id = this.getId(t, childClass.getSuperclass().getSuperclass());
+        // id from class
+        Object id = this.getId(t, childClass);
+        // name form class
         Object name = this.getName(t, childClass);
-        Object superiorId = this.getSuperiorId(t, childClass.getSuperclass());
+        // superiorId from class
+        Object superiorId = this.getSuperiorId(t, childClass);
 
         TreeNode treeNode = new TreeNode(Objects.nonNull(id) ? (Long) id : null,
                 Objects.nonNull(name) ? String.valueOf(name) : null);
+        // set superior
         treeNode.setSuperior(Objects.nonNull(superiorId) ? (Long) superiorId : null);
 
         // deal expand
