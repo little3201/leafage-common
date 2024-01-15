@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Construct tree
+ * Constructs a tree node service.
  *
  * @author liwenqiang 2021-07-21 20:08
  * @since 0.1.3
@@ -36,27 +36,27 @@ public abstract class AbstractTreeNodeService<T> {
 
     private static final String ID = "id";
     // field suffix, like groupName, roleName suffix is Name
-    private static final String NAME_SUFFIX = "Name";
+    private static final String NAME = "name";
     private static final String SUPERIOR_ID = "superiorId";
 
     private static final Logger log = StatusLogger.getLogger();
 
     /**
-     * 构造 TreeNode 对象
+     * Constructs a tree node.
      *
-     * @param t      实例数据
-     * @param expand 扩展字段
-     * @return TreeNode 对象
+     * @param t      Object
+     * @param expand Set of properties to expand
+     * @return TreeNode object
      * @since 0.2.0
      */
     protected TreeNode node(T t, Set<String> expand) {
-        Class<?> childClass = t.getClass();
-        // id from class
-        Object id = this.getId(t, childClass);
+        Class<?> aClass = t.getClass();
+        // id from superior class
+        Object id = this.getId(t, aClass.getSuperclass().getSuperclass());
         // name form class
-        Object name = this.getName(t, childClass);
+        Object name = this.getName(t, aClass);
         // superiorId from class
-        Object superiorId = this.getSuperiorId(t, childClass);
+        Object superiorId = this.getSuperiorId(t, aClass);
 
         TreeNode treeNode = new TreeNode(Objects.nonNull(id) ? (Long) id : null,
                 Objects.nonNull(name) ? String.valueOf(name) : null);
@@ -64,18 +64,18 @@ public abstract class AbstractTreeNodeService<T> {
         treeNode.setSuperior(Objects.nonNull(superiorId) ? (Long) superiorId : null);
 
         // deal expand
-        this.expand(treeNode, childClass, t, expand);
+        this.expand(treeNode, aClass, t, expand);
         return treeNode;
     }
 
     /**
-     * 转换并设置 TreeNode
+     * Gets and sets children.
      *
-     * @param treeNodes TreeNode 对象
-     * @return TreeNode 对象集合
+     * @param treeNodes List of children
+     * @return List of TreeNode objects
      * @since 0.2.0
      */
-    protected List<TreeNode> nodes(List<TreeNode> treeNodes) {
+    protected List<TreeNode> children(List<TreeNode> treeNodes) {
         Map<Long, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
                         0 == node.getSuperior())
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
@@ -86,22 +86,22 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * 扩展数据
+     * Expand data.
      *
-     * @param treeNode 当前节点
-     * @param clazz    数据类型
-     * @param t        数据实例
-     * @param expand   扩展字段
+     * @param treeNode TreeNode object
+     * @param clazz    Class type
+     * @param t        Object
+     * @param expand   Set of properties to expand
      */
     private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
             Map<String, Object> map = new HashMap<>(expand.size());
-            expand.forEach(filed -> {
+            expand.forEach(field -> {
                 try {
-                    PropertyDescriptor superIdDescriptor = new PropertyDescriptor(filed, clazz);
+                    PropertyDescriptor superIdDescriptor = new PropertyDescriptor(field, clazz);
                     Object value = superIdDescriptor.getReadMethod().invoke(t);
 
-                    map.put(filed, value);
+                    map.put(field, value);
                 } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
                     log.error("expand data error.", e);
                 }
@@ -111,17 +111,17 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * 获取id
+     * Gets the ID.
      *
-     * @param obj   实例
-     * @param clazz 类型
-     * @return code
+     * @param obj   Object instance
+     * @param clazz Class type
+     * @return ID value
      */
     protected Object getId(Object obj, Class<?> clazz) {
         Object id = null;
         try {
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(ID, clazz);
-            id = superIdDescriptor.getReadMethod().invoke(obj);
+            PropertyDescriptor idDescriptor = new PropertyDescriptor(ID, clazz);
+            id = idDescriptor.getReadMethod().invoke(obj);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get id error.", e);
         }
@@ -129,21 +129,18 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * 获取name
+     * Gets the name.
      *
-     * @param t     对象
-     * @param clazz 类型
-     * @return name
+     * @param t     Object
+     * @param clazz Class type
+     * @return Name value
      */
     protected Object getName(T t, Class<?> clazz) {
         Object name = null;
-        // field name from class name and name suffix.
-        String className = t.getClass().getName();
-        String fieldName = className.substring(className.lastIndexOf(".") + 1).toLowerCase() + NAME_SUFFIX;
         try {
-            //
-            PropertyDescriptor superIdDescriptor = new PropertyDescriptor(fieldName, clazz);
-            name = superIdDescriptor.getReadMethod().invoke(t);
+            // name
+            PropertyDescriptor nameDescriptor = new PropertyDescriptor(NAME, clazz);
+            name = nameDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get name error.", e);
         }
@@ -151,17 +148,17 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * 获取superior
+     * Gets the superior ID.
      *
-     * @param t     对象
-     * @param clazz 类型
-     * @return superior
+     * @param t     Object
+     * @param clazz Class type
+     * @return Superior ID value
      */
     private Object getSuperiorId(T t, Class<?> clazz) {
         Object superiorId = null;
         try {
-            PropertyDescriptor superDescriptor = new PropertyDescriptor(SUPERIOR_ID, clazz);
-            superiorId = superDescriptor.getReadMethod().invoke(t);
+            PropertyDescriptor superiorIdDescriptor = new PropertyDescriptor(SUPERIOR_ID, clazz);
+            superiorId = superiorIdDescriptor.getReadMethod().invoke(t);
 
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
             log.error("get superiorId error.", e);

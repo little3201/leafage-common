@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2023 the original author or authors.
+ *  Copyright 2018-2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
     protected Mono<List<TreeNode>> convert(Flux<T> children, @Nullable Set<String> expand) {
         Flux<TreeNode> nodesFlux = children.map(child -> this.node(child, expand));
 
-        return nodesFlux.collectList().map(this::nodes);
+        return nodesFlux.collectList().map(this::children);
     }
 
 }
