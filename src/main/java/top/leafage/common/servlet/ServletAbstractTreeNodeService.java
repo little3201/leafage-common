@@ -20,6 +20,7 @@ package top.leafage.common.servlet;
 import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children) {
-        return this.convert(children, null);
+        return this.convert(children, Collections.emptySet());
     }
 
     /**

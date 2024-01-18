@@ -22,6 +22,7 @@ import reactor.core.publisher.Mono;
 import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @since 0.2.0
      */
     protected Mono<List<TreeNode>> convert(Flux<T> children) {
-        return this.convert(children, null);
+        return this.convert(children, Collections.emptySet());
     }
 
     /**
