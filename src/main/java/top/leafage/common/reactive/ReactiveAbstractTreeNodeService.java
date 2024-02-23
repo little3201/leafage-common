@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2023 the original author or authors.
+ *  Copyright 2018-2024 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.annotation.Nullable;
 import top.leafage.common.AbstractTreeNodeService;
 import top.leafage.common.TreeNode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +42,7 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @since 0.2.0
      */
     protected Mono<List<TreeNode>> convert(Flux<T> children) {
-        return this.convert(children, null);
+        return this.convert(children, Collections.emptySet());
     }
 
     /**
@@ -53,10 +53,10 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @return 树节点数据集
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convert(Flux<T> children, @Nullable Set<String> expand) {
+    protected Mono<List<TreeNode>> convert(Flux<T> children, Set<String> expand) {
         Flux<TreeNode> nodesFlux = children.map(child -> this.node(child, expand));
 
-        return nodesFlux.collectList().map(this::nodes);
+        return nodesFlux.collectList().map(this::children);
     }
 
 }

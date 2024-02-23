@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2022 the original author or authors.
+ *  Copyright 2018-2024 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * 读取excel文件，并解析为指定类型的对象
+ * Reads an Excel file and parses it into objects of a specified type.
  *
  * @author liwenqiang 2021/8/26 9:37
  * @since 0.1.4
@@ -56,11 +56,11 @@ public class ExcelReader {
     }
 
     /**
-     * 根据文件后缀名类型获取对应的工作簿对象
+     * Gets the corresponding workbook object based on the file extension type.
      *
-     * @param inputStream 读取文件的输入流
-     * @param type        文件后缀名类型（xls或xlsx）
-     * @return 包含文件数据的工作簿对象
+     * @param inputStream InputStream for reading the file
+     * @param type        File extension type (xls or xlsx)
+     * @return Workbook object containing file data
      */
     private static Workbook getWorkbook(InputStream inputStream, String type) {
         Workbook workbook = null;
@@ -72,18 +72,18 @@ public class ExcelReader {
                 workbook = new XSSFWorkbook(inputStream);
             }
         } catch (IOException e) {
-            log.error("解析异常，文件类型：{}", type, e);
+            log.error("Parsing exception, file type: {}", type, e);
         }
         return workbook;
     }
 
     /**
-     * 读取
+     * Reads an Excel file.
      *
-     * @param file  文件
+     * @param file  File
      * @param clazz Class
-     * @param <T>   实例类型
-     * @return 读取结果列表，失败时返回 null
+     * @param <T>   Instance type
+     * @return List of read results; returns an empty list on failure
      */
     public static <T> List<T> read(File file, Class<T> clazz) {
         String filename = file.getName();
@@ -92,21 +92,21 @@ public class ExcelReader {
         try (FileInputStream inputStream = new FileInputStream(file);
              Workbook workbook = getWorkbook(inputStream, type)
         ) {
-            // 读取excel中的数据
+            // Read data from Excel
             return parse(workbook, clazz);
         } catch (NullPointerException | SecurityException | IOException e) {
-            log.error("文件：{} 读取异常！", filename, e);
+            log.error("File: {} read error!", filename, e);
             return Collections.emptyList();
         }
     }
 
     /**
-     * 解析
+     * Parses Excel workbook data.
      *
-     * @param workbook Excel工作簿对象
+     * @param workbook Excel Workbook object
      * @param clazz    Class
-     * @param <T>      实例类型
-     * @return 解析结果
+     * @param <T>      Instance type
+     * @return Parsing results
      */
     private static <T> List<T> parse(Workbook workbook, Class<T> clazz) {
         List<T> list = new ArrayList<>();
@@ -114,18 +114,19 @@ public class ExcelReader {
         for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
             Sheet sheet = workbook.getSheetAt(sheetNum);
 
-            // 校验sheet是否合法
+            // Check if the sheet is valid
             if (sheet == null) {
+                log.warn("Sheet is not exist!");
                 continue;
             }
 
-            // 获取表头
+            // Get the header
             Row firstRow = sheet.getRow(sheet.getFirstRowNum());
             if (null == firstRow) {
-                throw new NoSuchElementException("未读取到表头信息！");
+                throw new NoSuchElementException("Header information not found!");
             }
 
-            // 解析每一行的数据，构造数据对象
+            // Parse data for each row and construct data objects
             for (int rowNum = 1; rowNum < sheet.getPhysicalNumberOfRows(); rowNum++) {
                 Row row = sheet.getRow(rowNum);
 
@@ -141,16 +142,16 @@ public class ExcelReader {
     }
 
     /**
-     * 映射
+     * Maps row data to an object.
      *
-     * @param row   行数据
+     * @param row   Row data
      * @param clazz Class
-     * @param <T>   实例类型
-     * @return 数据对象
+     * @param <T>   Instance type
+     * @return Data object
      */
     private static <T> T mapping(Row row, Class<T> clazz) {
         if (clazz.isInterface()) {
-            throw new UnsupportedOperationException("目标对象为接口，无法进行！");
+            throw new UnsupportedOperationException("Target object is an interface, cannot execute!");
         }
         T t;
         try {
@@ -168,43 +169,43 @@ public class ExcelReader {
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  IntrospectionException e) {
-            log.error("对象映射异常!", e);
+            log.error("Object mapping error!", e);
             return null;
         }
         return t;
     }
 
     /**
-     * 填值
+     * Writes values to properties.
      *
-     * @param t          实例
-     * @param cell       列数据
-     * @param descriptor 操作属性
-     * @param <T>        实例类型
+     * @param t          Instance
+     * @param cell       Column data
+     * @param descriptor Property descriptor
+     * @param <T>        Instance type
      */
     private static <T> void writeData(T t, Cell cell, PropertyDescriptor descriptor) {
         try {
             switch (cell.getCellType()) {
-                case BLANK: // 空字符串
+                case BLANK: // blank
                 case _NONE: // null
                     break;
-                case NUMERIC: // 数字
+                case NUMERIC: // numeric
                     descriptor.getWriteMethod().invoke(t, cell.getNumericCellValue());
                     break;
-                case STRING: // 字符串
+                case STRING: // string
                     descriptor.getWriteMethod().invoke(t, cell.getStringCellValue());
                     break;
-                case BOOLEAN: // Boolean
+                case BOOLEAN: // boolean
                     descriptor.getWriteMethod().invoke(t, cell.getBooleanCellValue());
                     break;
-                case FORMULA: // 公式
+                case FORMULA: // formula
                     descriptor.getWriteMethod().invoke(t, cell.getCellFormula());
                     break;
                 default:
                     descriptor.getWriteMethod().invoke(t, cell.getErrorCellValue());
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("设置数据时发生异常：", e);
+            log.error("Exception while setting data:", e);
         }
     }
 
