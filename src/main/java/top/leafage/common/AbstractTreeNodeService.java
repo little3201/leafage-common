@@ -96,16 +96,17 @@ public abstract class AbstractTreeNodeService<T> {
     private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
             Map<String, Object> map = new HashMap<>(expand.size());
-            expand.forEach(field -> {
-                try {
-                    PropertyDescriptor superIdDescriptor = new PropertyDescriptor(field, clazz);
-                    Object value = superIdDescriptor.getReadMethod().invoke(t);
 
+            try {
+                PropertyDescriptor descriptor;
+                for (String field : expand) {
+                    descriptor = new PropertyDescriptor(field, clazz);
+                    Object value = descriptor.getReadMethod().invoke(t);
                     map.put(field, value);
-                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
-                    log.error("expand data error.", e);
                 }
-            });
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                log.error("Expand data error.", e);
+            }
             treeNode.setExpand(map);
         }
     }
@@ -123,7 +124,7 @@ public abstract class AbstractTreeNodeService<T> {
             PropertyDescriptor idDescriptor = new PropertyDescriptor(ID, clazz);
             id = idDescriptor.getReadMethod().invoke(obj);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get id error.", e);
+            log.error("Get id error.", e);
         }
         return id;
     }
@@ -142,7 +143,7 @@ public abstract class AbstractTreeNodeService<T> {
             PropertyDescriptor nameDescriptor = new PropertyDescriptor(NAME, clazz);
             name = nameDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get name error.", e);
+            log.error("Get name error.", e);
         }
         return name;
     }
@@ -161,7 +162,7 @@ public abstract class AbstractTreeNodeService<T> {
             superiorId = superiorIdDescriptor.getReadMethod().invoke(t);
 
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get superiorId error.", e);
+            log.error("Get superiorId error.", e);
         }
         return superiorId;
     }
