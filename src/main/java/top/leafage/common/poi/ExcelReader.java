@@ -17,7 +17,6 @@
 
 package top.leafage.common.poi;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.ss.usermodel.*;
@@ -25,127 +24,20 @@ import org.apache.poi.util.StringUtil;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
- * Read and parse given excel file，inputStream, and convert to a specified type.
+ * Read and parse given inputStream, and convert to a specified type.
  *
  * @author liwenqiang 2021/8/26 9:37
- * @since 0.1.4
+ * @since 0.3.0
  */
 public final class ExcelReader {
 
     private static final Logger log = StatusLogger.getLogger();
-
-    /**
-     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given InputStream.
-     *
-     * @param inputStream {@link InputStream}
-     * @return workbook {@link Workbook}
-     */
-    private static Workbook createWorkbook(InputStream inputStream) {
-        Workbook workbook = null;
-        try {
-            workbook = WorkbookFactory.create(inputStream);
-        } catch (IOException e) {
-            log.error("Create workbook error: {}", e.getMessage(), e);
-        }
-        return workbook;
-    }
-
-    /**
-     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given file.
-     *
-     * @param file {@link File}
-     * @return workbook {@link Workbook}
-     */
-    private static Workbook createWorkbook(File file) {
-        assert file != null;
-
-        Workbook workbook = null;
-        try {
-            workbook = WorkbookFactory.create(file);
-        } catch (IOException e) {
-            log.error("Create workbook error: {}", e.getMessage(), e);
-        }
-        return workbook;
-    }
-
-    /**
-     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given file.
-     *
-     * @param file     {@link File}
-     * @param password password
-     * @return workbook {@link Workbook}
-     */
-    private static Workbook createWorkbook(File file, String password) {
-        assert file != null;
-
-        Workbook workbook = null;
-        try {
-            workbook = WorkbookFactory.create(file, password);
-        } catch (IOException e) {
-            log.error("Create workbook error: {}", e.getMessage(), e);
-        }
-        return workbook;
-    }
-
-    /**
-     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given InputStream,
-     * which may be password protected.
-     *
-     * @param inputStream {@link InputStream}
-     * @param password    password
-     * @return workbook {@link Workbook}
-     */
-    private static Workbook createWorkbook(InputStream inputStream, String password) {
-        assert inputStream != null;
-
-        Workbook workbook = null;
-        try {
-            workbook = WorkbookFactory.create(inputStream, password);
-        } catch (IOException e) {
-            log.error("Create workbook error: {}", e.getMessage(), e);
-        }
-        return workbook;
-    }
-
-    /**
-     * Get sheet.
-     * The default sheet name is "sheet1".
-     *
-     * @param workbook {@link Workbook}
-     * @return sheet {@link Sheet}
-     */
-    private static Sheet getSheet(final Workbook workbook) {
-        assert workbook != null;
-
-        return workbook.getSheet("sheet1");
-    }
-
-    /**
-     * Get sheet with the given name.
-     * The sheet name is "sheet1" when given sheet name is blank.
-     *
-     * @param workbook {@link Workbook}
-     * @param sheetName Sheet name
-     * @return sheet {@link Sheet}
-     */
-    private static Sheet getSheet(final Workbook workbook, String sheetName) {
-        assert workbook != null;
-
-        if (StringUtil.isBlank(sheetName)) {
-            sheetName = "sheet1";
-        }
-        return workbook.getSheet(sheetName);
-    }
 
     /**
      * Read from given inputStream.
@@ -157,19 +49,22 @@ public final class ExcelReader {
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
         assert inputStream != null;
 
-        try {
-            Workbook workbook = createWorkbook(inputStream);
-            // Read data from Excel
-            Sheet sheet = getSheet(workbook);
-            if (sheet == null) {
-                workbook.close();
-                return Collections.emptyList();
-            }
-            return read(sheet, clazz);
-        } catch (NullPointerException | SecurityException | IOException e) {
-            log.error("Read from inputStream error!", e);
-            return Collections.emptyList();
-        }
+        return read(inputStream, clazz, null);
+    }
+
+
+    /**
+     * Read from given inputStream.
+     *
+     * @param clazz     {@link Class}
+     * @param <T>       Instance type
+     * @param sheetName sheet name
+     * @return the read data
+     */
+    public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName) {
+        assert inputStream != null;
+
+        return read(inputStream, null, clazz, sheetName);
     }
 
     /**
@@ -183,75 +78,69 @@ public final class ExcelReader {
     public static <T> List<T> read(InputStream inputStream, String password, Class<T> clazz) {
         assert inputStream != null;
 
-        try {
-            Workbook workbook = createWorkbook(inputStream, password);
-            // Read data from Excel
-            Sheet sheet = getSheet(workbook);
+        return read(inputStream, password, clazz, null);
+    }
+
+    /**
+     * Read from given inputStream, with password.
+     *
+     * @param inputStream {@link InputStream}
+     * @param password    password
+     * @param clazz       {@link Class}
+     * @param sheetName   sheet name
+     * @return the read data
+     */
+    public static <T> List<T> read(InputStream inputStream, String password, Class<T> clazz, String sheetName) {
+        assert inputStream != null;
+
+        try (Workbook workbook = createWorkbook(inputStream, password)) {
+//            // Read data from Excel
+            Sheet sheet = getSheet(workbook, sheetName);
             if (sheet == null) {
-                workbook.close();
                 return Collections.emptyList();
             }
-            return read(sheet, clazz);
-        } catch (NullPointerException | SecurityException | IOException e) {
+            return readSheet(sheet, clazz);
+        } catch (IOException e) {
             log.error("Read from inputStream error!", e);
             return Collections.emptyList();
         }
     }
 
     /**
-     * Read from excel file.
+     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given InputStream,
+     * which may be password protected.
      *
-     * @param file  {@link File}
-     * @param clazz {@link Class}
-     * @return the read data
+     * @param inputStream {@link InputStream}
+     * @param password    password
+     * @return workbook {@link Workbook}
      */
-    public static <T> List<T> read(File file, Class<T> clazz) {
-        assert file != null;
-
+    private static Workbook createWorkbook(InputStream inputStream, String password) {
+        Workbook workbook = null;
         try {
-            // create workbook from the given file
-            Workbook workbook = createWorkbook(file);
-            // Get sheet fro workbook
-            Sheet sheet = getSheet(workbook);
-            if (sheet == null) {
-                workbook.close();
-                return Collections.emptyList();
+            if (StringUtil.isBlank(password)) {
+                workbook = WorkbookFactory.create(inputStream);
+            } else {
+                workbook = WorkbookFactory.create(inputStream, password);
             }
-            // read sheet
-            return read(sheet, clazz);
-        } catch (NullPointerException | SecurityException | IOException e) {
-            log.error("Read from file error!", e);
-            return Collections.emptyList();
+        } catch (IOException e) {
+            log.error("Create workbook error: {}", e.getMessage(), e);
         }
+        return workbook;
     }
 
-
     /**
-     * Read from given excel file, with password.
+     * Get sheet with the given name.
+     * The sheet name is "sheet1" when given sheet name is blank.
      *
-     * @param file     {@link File}
-     * @param password file password
-     * @param clazz    {@link Class}
-     * @return the read data
+     * @param workbook {@link Workbook}
+     * @param name     Sheet name
+     * @return sheet {@link Sheet}
      */
-    public static <T> List<T> read(File file, String password, Class<T> clazz) {
-        assert file != null;
-
-        try {
-            // create workbook from the given file
-            Workbook workbook = createWorkbook(file, password);
-            // Get sheet fro workbook
-            Sheet sheet = getSheet(workbook);
-            if (sheet == null) {
-                workbook.close();
-                return Collections.emptyList();
-            }
-            // read sheet
-            return read(sheet, clazz);
-        } catch (NullPointerException | SecurityException | IOException e) {
-            log.error("Read from file error!", e);
-            return Collections.emptyList();
+    private static Sheet getSheet(final Workbook workbook, String name) {
+        if (StringUtil.isBlank(name)) {
+            name = "sheet1";
         }
+        return workbook.getSheet(name);
     }
 
     /**
@@ -262,7 +151,7 @@ public final class ExcelReader {
      * @param <T>   the type of target
      * @return the read data
      */
-    private static <T> List<T> read(Sheet sheet, Class<T> clazz) {
+    private static <T> List<T> readSheet(Sheet sheet, Class<T> clazz) {
         // 边界判断
         final int firstRowNum = sheet.getFirstRowNum();
         final int lastRowNum = sheet.getLastRowNum();
@@ -271,21 +160,27 @@ public final class ExcelReader {
         }
 
         // read header
-//        Row headerRow = sheet.getRow(firstRowNum);
-//        List<String> headerValues = readHeader(headerRow);
+        Row headerRow = sheet.getRow(firstRowNum);
+        List<String> headerList = readHeader(headerRow);
 
-        // read data
-        final List<T> result = new ArrayList<>(lastRowNum - firstRowNum + 1);
-        List<Object> cellValues;
+        // put in map like (index, header)
+        Map<Integer, String> headerMap = new HashMap<>(headerList.size());
+        for (int i = 0; i < headerList.size(); i++) {
+            String header = headerList.get(i);
+            headerMap.put(i, header);
+        }
+
+        List<T> dataList = new ArrayList<>(lastRowNum - firstRowNum + 1);
         for (int i = firstRowNum; i <= lastRowNum; i++) {
             if (i != firstRowNum) {
-                cellValues = readRow(sheet.getRow(i));
-                if (CollectionUtils.isNotEmpty(cellValues)) {
-                    result.add(mapping(cellValues, clazz));
-                }
+                // put in map like (index, cell)
+                Map<Integer, Object> cellValueMap = readRow(sheet.getRow(i));
+                T t = mapping(headerMap, cellValueMap, clazz);
+                dataList.add(t);
             }
         }
-        return result;
+
+        return dataList;
     }
 
     /**
@@ -299,15 +194,15 @@ public final class ExcelReader {
             return Collections.emptyList();
         }
         short cellSize = row.getLastCellNum();
-        List<String> cellValues = new ArrayList<>(cellSize);
+        List<String> headerList = new ArrayList<>(cellSize);
 
         Cell cell;
         for (int cellNum = 0; cellNum < cellSize; cellNum++) {
             cell = row.getCell(cellNum);
             Object cellValue = readCell(cell);
-            cellValues.add(cellValue.toString());
+            headerList.add(cellValue.toString());
         }
-        return cellValues;
+        return headerList;
     }
 
     /**
@@ -316,20 +211,20 @@ public final class ExcelReader {
      * @param row {@link Row}
      * @return the row data
      */
-    private static List<Object> readRow(Row row) {
+    private static Map<Integer, Object> readRow(Row row) {
         if (row == null) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
         short cellSize = row.getLastCellNum();
-        List<Object> cellValues = new ArrayList<>(cellSize);
-
+        // store in map with like (index, cell)
+        Map<Integer, Object> cellValueMap = new HashMap<>(cellSize);
         Cell cell;
-        for (int cellNum = 0; cellNum < cellSize; cellNum++) {
-            cell = row.getCell(cellNum);
+        for (int i = 0; i < cellSize; i++) {
+            cell = row.getCell(i);
             Object cellValue = readCell(cell);
-            cellValues.add(cellValue);
+            cellValueMap.put(i, cellValue);
         }
-        return cellValues;
+        return cellValueMap;
     }
 
     /**
@@ -357,13 +252,31 @@ public final class ExcelReader {
     }
 
     /**
-     * Map row data to an object.
+     * Mapping cell to header and convert to given type instance.
      *
-     * @param cellValues cell values
-     * @param clazz      {@link Class}
+     * @param headerMap    header
+     * @param cellValueMap cell
+     * @param clazz        {@link Class}
      * @return Data object
      */
-    private static <T> T mapping(List<Object> cellValues, Class<T> clazz) {
+    private static <T> T mapping(Map<Integer, String> headerMap, Map<Integer, Object> cellValueMap, Class<T> clazz) {
+        Map<String, Object> valueMap = new HashMap<>(headerMap.size());
+        for (Map.Entry<Integer, String> next : headerMap.entrySet()) {
+            Object object = cellValueMap.get(next.getKey());
+            valueMap.put(next.getValue(), object);
+        }
+        return convert(valueMap, clazz);
+    }
+
+
+    /**
+     * Map row data to an object.
+     *
+     * @param valueMap cell values
+     * @param clazz    {@link Class}
+     * @return Data object
+     */
+    private static <T> T convert(Map<String, Object> valueMap, Class<T> clazz) {
         if (clazz.isInterface()) {
             throw new UnsupportedOperationException("Target object is an interface, cannot execute!");
         }
@@ -371,19 +284,17 @@ public final class ExcelReader {
         try {
             t = clazz.getDeclaredConstructor().newInstance();
 
-            Field[] fields = clazz.getDeclaredFields();
-
             // set value to object
-            for (int i = 0; i <= cellValues.size(); i++) {
-                PropertyDescriptor descriptor = new PropertyDescriptor(fields[i].getName(), clazz);
-                descriptor.getWriteMethod().invoke(t, cellValues.get(i));
+            PropertyDescriptor descriptor;
+            for (Map.Entry<String, Object> next : valueMap.entrySet()) {
+                descriptor = new PropertyDescriptor(next.getKey(), clazz);
+                descriptor.getWriteMethod().invoke(t, next.getValue());
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                 IntrospectionException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException | IntrospectionException e) {
             log.error("Object mapping error!", e);
             return null;
         }
         return t;
     }
-
 }
