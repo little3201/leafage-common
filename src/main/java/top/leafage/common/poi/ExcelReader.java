@@ -284,15 +284,15 @@ public final class ExcelReader {
         try {
             t = clazz.getDeclaredConstructor().newInstance();
 
-            // set value to object
+            // write value to field
             PropertyDescriptor descriptor;
             for (Map.Entry<String, Object> next : valueMap.entrySet()) {
                 descriptor = new PropertyDescriptor(next.getKey(), clazz);
                 descriptor.getWriteMethod().invoke(t, next.getValue());
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException | IntrospectionException e) {
-            log.error("Object mapping error!", e);
+                 NoSuchMethodException | IntrospectionException | SecurityException e) {
+            log.error("write value to field error!", e);
             return null;
         }
         return t;
