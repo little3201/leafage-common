@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * For reactive to construct tree
+ * For reactive to construct tree.
  *
  * @author liwenqiang 2021-07-21 20:08
  * @since 0.1.3

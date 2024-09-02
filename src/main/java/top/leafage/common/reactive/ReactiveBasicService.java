@@ -21,7 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * service基础接口
+ * service interface.
  * D —— DTO
  * V —— VO
  *
@@ -31,58 +31,59 @@ import reactor.core.publisher.Mono;
 public interface ReactiveBasicService<D, V> {
 
     /**
-     * 获取所有
+     * retrieve.
      *
-     * @return containing the elements of this list
+     * @return collect of the given type V
      */
     default Flux<V> retrieve() {
         return Flux.empty();
     }
 
     /**
-     * 获取
+     * fetch with given id.
      *
-     * @return an element instanceof vo
+     * @param id row id
+     * @return the given type V
      */
     default Mono<V> fetch(Long id) {
         return Mono.empty();
     }
 
     /**
-     * 是否存在
+     * is exist with given name.
      *
-     * @param name 属性
-     * @return true-exist, false-not exist
+     * @param name row name
+     * @return the result, if exist return true, else false
      */
     default Mono<Boolean> exist(String name) {
         return Mono.empty();
     }
 
     /**
-     * 添加
+     * create a new row.
      *
-     * @param d 实例
-     * @return a element instanceof vo
+     * @param d row
+     * @return the given type V
      */
     default Mono<V> create(D d) {
         return Mono.empty();
     }
 
     /**
-     * 修改
+     * modify with given id and row.
      *
-     * @param id 主键
-     * @param d  实例
-     * @return a element instanceof vo
+     * @param id row id
+     * @param d  row
+     * @return the given type V
      */
     default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
     /**
-     * 删除
+     * remove with given id.
      *
-     * @param id 主键
+     * @param id row id
      * @return Void
      */
     default Mono<Void> remove(Long id) {

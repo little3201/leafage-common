@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * service基础接口
+ * service interface.
  * D —— DTO
  * V —— VO
  *
@@ -31,58 +31,59 @@ import java.util.List;
 public interface ServletBasicService<D, V> {
 
     /**
-     * 查询所有
+     * retrieve.
      *
-     * @return containing the elements of this list
+     * @return collect of the given type V
      */
     default List<V> retrieve() {
         return Collections.emptyList();
     }
 
     /**
-     * 获取
+     * fetch with given id.
      *
-     * @return an element instanceof vo
+     * @param id row id
+     * @return the given type V
      */
     default V fetch(Long id) {
         return null;
     }
 
     /**
-     * 是否存在
+     * is exist with given name.
      *
-     * @param name 名称
-     * @return true-exist, false-not exist
+     * @param name row name
+     * @return the result, if exist return true, else false
      */
     default boolean exist(String name) {
         return false;
     }
 
     /**
-     * 添加
+     * create a new row.
      *
-     * @param d 入参
-     * @return a element instanceof vo
+     * @param d row
+     * @return the given type V
      */
     default V create(D d) {
         return null;
     }
 
     /**
-     * 修改
+     * modify with given id and row.
      *
-     * @param id 主键
-     * @param d  入参
-     * @return a element instanceof vo
+     * @param id row id
+     * @param d  row
+     * @return the given type V
      */
     default V modify(Long id, D d) {
         return null;
     }
 
     /**
-     * 删除
+     * remove with given id.
      *
-     * @param id 主键
+     * @param id row id
      */
     default void remove(Long id) {
     }
