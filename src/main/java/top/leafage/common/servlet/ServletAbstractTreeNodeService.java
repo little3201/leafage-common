@@ -26,6 +26,7 @@ import java.util.Set;
 
 /**
  * For servlet to construct tree.
+ * T - the type
  *
  * @author liwenqiang 2021-07-21 20:08
  * @since 0.1.3

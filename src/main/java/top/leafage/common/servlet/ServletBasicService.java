@@ -22,8 +22,8 @@ import java.util.List;
 
 /**
  * service interface.
- * D —— DTO
- * V —— VO
+ * D - DTO
+ * V - VO
  *
  * @author liwenqiang 2021/7/20 23:14
  * @since 0.1.2
