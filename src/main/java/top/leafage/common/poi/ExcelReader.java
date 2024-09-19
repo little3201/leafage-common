@@ -22,279 +22,189 @@ import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * Read and parse given inputStream, and convert to a specified type.
+ * Utility to read and parse Excel files from InputStream and map to specified types.
+ * Supports reading from password-protected files and specific sheets.
  *
- * @author liwenqiang 2021/8/26 9:37
+ * @param <T> The target class type for data mapping
  * @since 0.3.0
  */
-public final class ExcelReader {
+public final class ExcelReader<T> {
 
     private static final Logger log = StatusLogger.getLogger();
 
     /**
-     * Read from given inputStream.
+     * Private constructor to prevent instantiation.
+     */
+    private ExcelReader() {
+        // Prevent instantiation
+    }
+
+    /**
+     * Reads data from the given InputStream, assuming the default sheet "sheet1".
      *
-     * @param clazz {@link Class}
-     * @param <T>   Instance type
-     * @return the read data
+     * @param inputStream The input stream of the Excel file
+     * @param clazz       The target class for mapping rows
+     * @param <T>         the type of objects to be created from the Excel data
+     * @return List of mapped objects
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
-        assert inputStream != null;
-
-        return read(inputStream, clazz, null);
-    }
-
-
-    /**
-     * Read from given inputStream.
-     *
-     * @param clazz     {@link Class}
-     * @param <T>       Instance type
-     * @param sheetName sheet name
-     * @return the read data
-     */
-    public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName) {
-        assert inputStream != null;
-
-        return read(inputStream, null, clazz, sheetName);
+        return read(inputStream, clazz, null, null);
     }
 
     /**
-     * Read from given inputStream, with password.
+     * Reads data from the given InputStream with an optional sheet name and password.
      *
-     * @param inputStream {@link InputStream}
-     * @param password    password
-     * @param clazz       {@link Class}
-     * @return the read data
+     * @param inputStream The input stream of the Excel file
+     * @param clazz       The target class for mapping rows
+     * @param sheetName   (Optional) The name of the sheet to read
+     * @param password    (Optional) The password for a protected file
+     * @param <T>         the type of objects to be created from the Excel data
+     * @return List of mapped objects
      */
-    public static <T> List<T> read(InputStream inputStream, String password, Class<T> clazz) {
-        assert inputStream != null;
-
-        return read(inputStream, password, clazz, null);
-    }
-
-    /**
-     * Read from given inputStream, with password.
-     *
-     * @param inputStream {@link InputStream}
-     * @param password    password
-     * @param clazz       {@link Class}
-     * @param sheetName   sheet name
-     * @return the read data
-     */
-    public static <T> List<T> read(InputStream inputStream, String password, Class<T> clazz, String sheetName) {
-        assert inputStream != null;
-
+    public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName, String password) {
         try (Workbook workbook = createWorkbook(inputStream, password)) {
-//            // Read data from Excel
             Sheet sheet = getSheet(workbook, sheetName);
-            if (sheet == null) {
-                return Collections.emptyList();
-            }
+            if (sheet == null) return Collections.emptyList();
             return readSheet(sheet, clazz);
         } catch (IOException e) {
-            log.error("Read from inputStream error!", e);
+            log.error("Error reading from input stream.", e);
             return Collections.emptyList();
         }
     }
 
     /**
-     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from given InputStream,
-     * which may be password protected.
+     * Creates an appropriate Workbook instance based on the input stream and password.
      *
-     * @param inputStream {@link InputStream}
-     * @param password    password
-     * @return workbook {@link Workbook}
+     * @param inputStream Input stream of the Excel file
+     * @param password    Optional password for protected files
+     * @return Workbook instance
      */
-    private static Workbook createWorkbook(InputStream inputStream, String password) {
-        Workbook workbook = null;
-        try {
-            if (StringUtil.isBlank(password)) {
-                workbook = WorkbookFactory.create(inputStream);
-            } else {
-                workbook = WorkbookFactory.create(inputStream, password);
-            }
-        } catch (IOException e) {
-            log.error("Create workbook error: {}", e.getMessage(), e);
-        }
-        return workbook;
+    private static Workbook createWorkbook(InputStream inputStream, String password) throws IOException {
+        return StringUtil.isBlank(password)
+                ? WorkbookFactory.create(inputStream)
+                : WorkbookFactory.create(inputStream, password);
     }
 
     /**
-     * Get sheet with the given name.
-     * The sheet name is "sheet1" when given sheet name is blank.
+     * Fetches the sheet with the specified name or defaults to "sheet1" if the name is null or empty.
      *
-     * @param workbook {@link Workbook}
-     * @param name     Sheet name
-     * @return sheet {@link Sheet}
+     * @param workbook  Workbook instance
+     * @param sheetName Name of the sheet to fetch
+     * @return The corresponding Sheet object
      */
-    private static Sheet getSheet(final Workbook workbook, String name) {
-        if (StringUtil.isBlank(name)) {
-            name = "sheet1";
-        }
-        return workbook.getSheet(name);
+    private static Sheet getSheet(Workbook workbook, String sheetName) {
+        return StringUtil.isBlank(sheetName) ? workbook.getSheetAt(0) : workbook.getSheet(sheetName);
     }
 
     /**
-     * Read sheet
+     * Reads data from a specified sheet and maps each row to an instance of the specified class.
      *
-     * @param sheet {@link Sheet}
-     * @param clazz {@link Class}
-     * @param <T>   the type of target
-     * @return the read data
+     * @param sheet The sheet to read data from
+     * @param clazz The class type to map each row to
+     * @param <T>   the type of objects to be created from the Excel data
+     * @return List of mapped objects
      */
     private static <T> List<T> readSheet(Sheet sheet, Class<T> clazz) {
-        // 边界判断
-        final int firstRowNum = sheet.getFirstRowNum();
-        final int lastRowNum = sheet.getLastRowNum();
-        if (lastRowNum <= firstRowNum) {
-            return Collections.emptyList();
+        int firstRowNum = sheet.getFirstRowNum();
+        int lastRowNum = sheet.getLastRowNum();
+
+        if (lastRowNum <= firstRowNum) return Collections.emptyList();
+
+        List<String> headers = readHeader(sheet.getRow(firstRowNum));
+        List<T> dataList = new ArrayList<>(lastRowNum - firstRowNum);
+
+        for (int i = firstRowNum + 1; i <= lastRowNum; i++) {
+            Row row = sheet.getRow(i);
+            Map<String, Object> rowData = mapRowToHeaders(row, headers);
+            dataList.add(convert(rowData, clazz));
         }
-
-        // read header
-        Row headerRow = sheet.getRow(firstRowNum);
-        List<String> headerList = readHeader(headerRow);
-
-        // put in map like (index, header)
-        Map<Integer, String> headerMap = new HashMap<>(headerList.size());
-        for (int i = 0; i < headerList.size(); i++) {
-            String header = headerList.get(i);
-            headerMap.put(i, header);
-        }
-
-        List<T> dataList = new ArrayList<>(lastRowNum - firstRowNum + 1);
-        for (int i = firstRowNum; i <= lastRowNum; i++) {
-            if (i != firstRowNum) {
-                // put in map like (index, cell)
-                Map<Integer, Object> cellValueMap = readRow(sheet.getRow(i));
-                T t = mapping(headerMap, cellValueMap, clazz);
-                dataList.add(t);
-            }
-        }
-
         return dataList;
     }
 
     /**
-     * Read header
+     * Reads the header row and returns a list of column names.
      *
-     * @param row {@link Row}
-     * @return the header
+     * @param row The header row
+     * @return List of header names
      */
     private static List<String> readHeader(Row row) {
-        if (row == null) {
-            return Collections.emptyList();
-        }
-        short cellSize = row.getLastCellNum();
-        List<String> headerList = new ArrayList<>(cellSize);
+        if (row == null) return Collections.emptyList();
+        int numCells = row.getLastCellNum();
+        List<String> headers = new ArrayList<>(numCells);
 
-        Cell cell;
-        for (int cellNum = 0; cellNum < cellSize; cellNum++) {
-            cell = row.getCell(cellNum);
-            Object cellValue = readCell(cell);
-            headerList.add(cellValue.toString());
+        for (int i = 0; i < numCells; i++) {
+            headers.add(readCellAsString(row.getCell(i)));
         }
-        return headerList;
+        return headers;
     }
 
     /**
-     * Read row data
+     * Maps the row data to a map keyed by column names.
      *
-     * @param row {@link Row}
-     * @return the row data
+     * @param row     The row to read
+     * @param headers The header names
+     * @return A map of column names to cell values
      */
-    private static Map<Integer, Object> readRow(Row row) {
-        if (row == null) {
-            return Collections.emptyMap();
+    private static Map<String, Object> mapRowToHeaders(Row row, List<String> headers) {
+        Map<String, Object> rowData = new HashMap<>();
+        for (int i = 0; i < headers.size(); i++) {
+            rowData.put(headers.get(i), readCell(row.getCell(i)));
         }
-        short cellSize = row.getLastCellNum();
-        // store in map with like (index, cell)
-        Map<Integer, Object> cellValueMap = new HashMap<>(cellSize);
-        Cell cell;
-        for (int i = 0; i < cellSize; i++) {
-            cell = row.getCell(i);
-            Object cellValue = readCell(cell);
-            cellValueMap.put(i, cellValue);
-        }
-        return cellValueMap;
+        return rowData;
     }
 
     /**
-     * Read cell
+     * Converts the map of row data to an instance of the specified class.
      *
-     * @param cell {@link Cell}
-     * @return value
+     * @param dataMap A map of column names to cell values
+     * @param clazz   The class type to instantiate
+     * @param <T>     the type of objects to be created from the Excel data
+     * @return An instance of the class populated with the row data
+     */
+    private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
+        try {
+            T instance = clazz.getDeclaredConstructor().newInstance();
+            for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
+                PropertyDescriptor descriptor = new PropertyDescriptor(entry.getKey(), clazz);
+                descriptor.getWriteMethod().invoke(instance, entry.getValue());
+            }
+            return instance;
+        } catch (Exception e) {
+            log.error("Error converting row data to object.", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Reads the value of a cell as an Object.
+     *
+     * @param cell The cell to read
+     * @return The cell's value as an Object
      */
     private static Object readCell(Cell cell) {
         return switch (cell.getCellType()) {
-            case BLANK -> // blank
-                    "";
-            case ERROR -> // error
-                    cell.getErrorCellValue();
-            case NUMERIC -> // numeric
-                    cell.getNumericCellValue();
-            case STRING -> // string
-                    cell.getStringCellValue();
-            case BOOLEAN -> // boolean
-                    cell.getBooleanCellValue();
-            case FORMULA -> // formula
-                    cell.getCellFormula();
-            default -> cell.getStringCellValue();
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> cell.getNumericCellValue();
+            case BOOLEAN -> cell.getBooleanCellValue();
+            case FORMULA -> cell.getCellFormula();
+            case ERROR -> cell.getErrorCellValue();
+            default -> null;
         };
     }
 
     /**
-     * Mapping cell to header and convert to given type instance.
+     * Reads the value of a cell as a String.
      *
-     * @param headerMap    header
-     * @param cellValueMap cell
-     * @param clazz        {@link Class}
-     * @return Data object
+     * @param cell The cell to read
+     * @return The cell's value as a String
      */
-    private static <T> T mapping(Map<Integer, String> headerMap, Map<Integer, Object> cellValueMap, Class<T> clazz) {
-        Map<String, Object> valueMap = new HashMap<>(headerMap.size());
-        for (Map.Entry<Integer, String> next : headerMap.entrySet()) {
-            Object object = cellValueMap.get(next.getKey());
-            valueMap.put(next.getValue(), object);
-        }
-        return convert(valueMap, clazz);
-    }
-
-
-    /**
-     * Map row data to an object.
-     *
-     * @param valueMap cell values
-     * @param clazz    {@link Class}
-     * @return Data object
-     */
-    private static <T> T convert(Map<String, Object> valueMap, Class<T> clazz) {
-        if (clazz.isInterface()) {
-            throw new UnsupportedOperationException("Target object is an interface, cannot execute!");
-        }
-        T t;
-        try {
-            t = clazz.getDeclaredConstructor().newInstance();
-
-            // write value to field
-            PropertyDescriptor descriptor;
-            for (Map.Entry<String, Object> next : valueMap.entrySet()) {
-                descriptor = new PropertyDescriptor(next.getKey(), clazz);
-                descriptor.getWriteMethod().invoke(t, next.getValue());
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException | IntrospectionException | SecurityException e) {
-            log.error("write value to field error!", e);
-            return null;
-        }
-        return t;
+    private static String readCellAsString(Cell cell) {
+        return cell == null ? "" : cell.toString();
     }
 }

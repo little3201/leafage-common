@@ -21,72 +21,73 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * service interface.
- * D —— DTO
- * V —— VO
+ * Reactive service interface for basic CRUD operations.
  *
- * @author liwenqiang 2021/7/20 23:14
+ * @param <D> DTO type for input data
+ * @param <V> VO type for output data
+ * @author liwenqiang
  * @since 0.1.2
- **/
+ */
 public interface ReactiveBasicService<D, V> {
 
     /**
-     * retrieve.
+     * Retrieve all records.
      *
-     * @return collect of the given type V
+     * @return a Flux stream of type V
      */
     default Flux<V> retrieve() {
         return Flux.empty();
     }
 
     /**
-     * fetch with given id.
+     * Fetch a record by its ID.
      *
-     * @param id row id
-     * @return the given type V
+     * @param id the record ID
+     * @return a Mono of type V, or an empty Mono if not found
      */
     default Mono<V> fetch(Long id) {
         return Mono.empty();
     }
 
     /**
-     * is exist with given name.
+     * Check if a record exists by its name.
      *
-     * @param name row name
-     * @return the result, if exist return true, else false
+     * @param name the record name
+     * @return a Mono emitting true if the record exists, false otherwise
      */
     default Mono<Boolean> exist(String name) {
         return Mono.empty();
     }
 
     /**
-     * create a new row.
+     * Create a new record.
      *
-     * @param d row
-     * @return the given type V
+     * @param d the DTO representing the new record
+     * @return a Mono of the created record of type V
      */
     default Mono<V> create(D d) {
         return Mono.empty();
     }
 
     /**
-     * modify with given id and row.
+     * Modify an existing record by its ID.
      *
-     * @param id row id
-     * @param d  row
-     * @return the given type V
+     * @param id the record ID
+     * @param d  the DTO with updated data
+     * @return a Mono of the updated record of type V
      */
     default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
     /**
-     * remove with given id.
+     * Remove a record by its ID.
      *
-     * @param id row id
-     * @return Void
+     * @param id the record ID
+     * @return a Mono representing completion (Void)
      */
     default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
 }
+

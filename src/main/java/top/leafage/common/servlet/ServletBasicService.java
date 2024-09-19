@@ -21,70 +21,71 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * service interface.
- * D - DTO
- * V - VO
+ * Service interface providing basic CRUD operations.
  *
- * @author liwenqiang 2021/7/20 23:14
+ * @param <D> DTO type for data input
+ * @param <V> VO type for data output
+ * @author liwenqiang
  * @since 0.1.2
- **/
+ */
 public interface ServletBasicService<D, V> {
 
     /**
-     * retrieve.
+     * Retrieve all records.
      *
-     * @return collect of the given type V
+     * @return a list of type V
      */
     default List<V> retrieve() {
         return Collections.emptyList();
     }
 
     /**
-     * fetch with given id.
+     * Fetch a record by its ID.
      *
-     * @param id row id
-     * @return the given type V
+     * @param id the record ID
+     * @return the record of type V, or null if not found
      */
     default V fetch(Long id) {
         return null;
     }
 
     /**
-     * is exist with given name.
+     * Check if a record exists by its name.
      *
-     * @param name row name
-     * @return the result, if exist return true, else false
+     * @param name the record name
+     * @return true if the record exists, false otherwise
      */
     default boolean exist(String name) {
         return false;
     }
 
     /**
-     * create a new row.
+     * Create a new record.
      *
-     * @param d row
-     * @return the given type V
+     * @param d the DTO representing the new record
+     * @return the created record of type V
      */
     default V create(D d) {
         return null;
     }
 
     /**
-     * modify with given id and row.
+     * Modify an existing record by its ID.
      *
-     * @param id row id
-     * @param d  row
-     * @return the given type V
+     * @param id the record ID
+     * @param d  the DTO with updated data
+     * @return the updated record of type V
      */
     default V modify(Long id, D d) {
         return null;
     }
 
     /**
-     * remove with given id.
+     * Remove a record by its ID.
      *
-     * @param id row id
+     * @param id the record ID
      */
     default void remove(Long id) {
     }
 }
+
