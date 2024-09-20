@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * Abstract service for constructing tree nodes from objects.
  *
  * @param <T> the type of object representing a node
- * @author liwenqiang
+ * @author wq li
  * @since 0.1.3
  */
 public abstract class AbstractTreeNodeService<T> {

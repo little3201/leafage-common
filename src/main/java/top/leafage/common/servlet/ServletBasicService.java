@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @param <D> DTO type for data input
  * @param <V> VO type for data output
- * @author liwenqiang
+ * @author wq li
  * @since 0.1.2
  */
 public interface ServletBasicService<D, V> {

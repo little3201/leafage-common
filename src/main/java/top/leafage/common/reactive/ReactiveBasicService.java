@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @author liwenqiang
+ * @author wq li
  * @since 0.1.2
  */
 public interface ReactiveBasicService<D, V> {
