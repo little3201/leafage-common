@@ -113,7 +113,7 @@ public abstract class AbstractTreeNodeService<T> {
      * @param clazz the class of the object
      * @return the ID value, or null if an error occurs
      */
-    protected Object getId(Object obj, Class<?> clazz) {
+    private Object getId(Object obj, Class<?> clazz) {
         try {
             PropertyDescriptor idDescriptor = new PropertyDescriptor(ID, clazz);
             return idDescriptor.getReadMethod().invoke(obj);
@@ -130,7 +130,7 @@ public abstract class AbstractTreeNodeService<T> {
      * @param clazz the class of the object
      * @return the name value, or null if an error occurs
      */
-    protected Object getName(T t, Class<?> clazz) {
+    private Object getName(T t, Class<?> clazz) {
         try {
             PropertyDescriptor nameDescriptor = new PropertyDescriptor(NAME, clazz);
             return nameDescriptor.getReadMethod().invoke(t);
