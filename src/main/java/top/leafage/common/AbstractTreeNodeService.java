@@ -51,7 +51,7 @@ public abstract class AbstractTreeNodeService<T> {
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
-        Object id = this.getId(t, aClass.getSuperclass().getSuperclass());
+        Object id = this.getId(t, aClass.getSuperclass());
         Object name = this.getName(t, aClass);
         Object superiorId = this.getSuperiorId(t, aClass);
 
@@ -71,11 +71,11 @@ public abstract class AbstractTreeNodeService<T> {
      * @since 0.2.0
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
-        Map<Long, List<TreeNode>> listMap = treeNodes.stream()
+        Map<Long, List<TreeNode>> nodesMap = treeNodes.stream()
                 .filter(node -> Objects.nonNull(node.getSuperior()) && node.getSuperior() != 0)
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
 
-        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getId())));
+        treeNodes.forEach(node -> node.setChildren(nodesMap.get(node.getId())));
 
         return treeNodes.stream()
                 .filter(node -> Objects.isNull(node.getSuperior()) || node.getSuperior() == 0)
