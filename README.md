@@ -1,5 +1,10 @@
 # Leafage Common
 
+<p align="center">
+ <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=alert_status" alt="Quality Gate Status">
+ <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=code_smells"/>
+</p>
+
 ### 介绍：
 
 leafage 开源项目的公共模块，提供通用工具和抽象接口；
