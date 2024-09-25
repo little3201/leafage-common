@@ -28,7 +28,7 @@ import java.util.Set;
  * Abstract service for constructing a tree structure in a servlet context.
  *
  * @param <T> the type of nodes in the tree
- * @author liwenqiang
+ * @author wq li
  * @since 0.1.3
  */
 public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {

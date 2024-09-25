@@ -24,8 +24,8 @@ import java.util.Map;
  * Represents a tree node structure with a unique identifier, name, parent reference,
  * expandable properties, and child nodes.
  *
- * @author liwenqiang
- * @since 2021-07-02
+ * @author wq li
+ * @since 0.1.0
  */
 public class TreeNode {
 

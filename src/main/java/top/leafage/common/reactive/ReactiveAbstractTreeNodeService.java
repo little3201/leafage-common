@@ -30,7 +30,7 @@ import java.util.Set;
  * Abstract service for constructing a reactive tree structure.
  *
  * @param <T> the type of nodes in the tree
- * @author liwenqiang
+ * @author wq li
  * @since 0.1.3
  */
 public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {

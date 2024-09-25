@@ -32,6 +32,7 @@ import java.util.*;
  * Supports reading from password-protected files and specific sheets.
  *
  * @param <T> The target class type for data mapping
+ * @author wq lis
  * @since 0.3.0
  */
 public final class ExcelReader<T> {
