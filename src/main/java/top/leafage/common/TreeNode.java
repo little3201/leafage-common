@@ -21,42 +21,44 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tree node
+ * Represents a tree node structure with a unique identifier, name, parent reference,
+ * expandable properties, and child nodes.
  *
- * @author liwenqiang 2021-07-02 17:18
+ * @author wq li
+ * @since 0.1.0
  */
 public class TreeNode {
 
     /**
-     * 主键
+     * Unique identifier of the node.
      */
     private Long id;
 
     /**
-     * 名称
+     * Name of the node.
      */
     private String name;
 
     /**
-     * 上级
+     * ID of the parent node.
      */
     private Long superior;
 
     /**
-     * 扩展属性
+     * Additional properties for extended attributes.
      */
     private Map<String, Object> expand;
 
     /**
-     * 子节点
+     * List of child nodes.
      */
     private List<TreeNode> children;
 
     /**
-     * 构造方法
+     * Constructor for creating a tree node with the specified ID and name.
      *
-     * @param id   主键
-     * @param name name
+     * @param id   Unique identifier of the node.
+     * @param name Name of the node.
      */
     public TreeNode(Long id, String name) {
         this.id = id;
@@ -64,91 +66,94 @@ public class TreeNode {
     }
 
     /**
-     * id getter
+     * Returns the unique identifier of the node.
      *
-     * @return id
+     * @return Unique identifier of the node.
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * id setter
+     * Sets the unique identifier of the node.
+     *
+     * @param id Unique identifier to be set.
      */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * name getter
+     * Returns the name of the node.
      *
-     * @return name
+     * @return Name of the node.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * name setter
+     * Sets the name of the node.
      *
-     * @param name name
+     * @param name Name to be set.
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * superior getter
+     * Returns the ID of the parent node.
      *
-     * @return superior
+     * @return Parent node ID.
      */
     public Long getSuperior() {
         return superior;
     }
 
     /**
-     * superior setter
+     * Sets the ID of the parent node.
      *
-     * @param superior superior
+     * @param superior Parent node ID to be set.
      */
     public void setSuperior(Long superior) {
         this.superior = superior;
     }
 
     /**
-     * expand getter
+     * Returns the expandable properties of the node.
      *
-     * @return expand
+     * @return Map of expandable properties.
      */
     public Map<String, Object> getExpand() {
         return expand;
     }
 
     /**
-     * expand setter
+     * Sets the expandable properties of the node.
      *
-     * @param expand expand
+     * @param expand Map of properties to be set.
      */
     public void setExpand(Map<String, Object> expand) {
         this.expand = expand;
     }
 
     /**
-     * children getter
+     * Returns the list of child nodes.
      *
-     * @return children
+     * @return List of child nodes.
      */
     public List<TreeNode> getChildren() {
         return children;
     }
 
     /**
-     * children setter
+     * Sets the list of child nodes.
      *
-     * @param children children
+     * @param children List of child nodes to be set.
      */
     public void setChildren(List<TreeNode> children) {
         this.children = children;
     }
-
 }
+
+

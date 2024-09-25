@@ -21,69 +21,71 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * service基础接口
- * D —— DTO
- * V —— VO
+ * Service interface providing basic CRUD operations.
  *
- * @author liwenqiang 2021/7/20 23:14
+ * @param <D> DTO type for data input
+ * @param <V> VO type for data output
+ * @author wq li
  * @since 0.1.2
- **/
+ */
 public interface ServletBasicService<D, V> {
 
     /**
-     * 查询所有
+     * Retrieve all records.
      *
-     * @return containing the elements of this list
+     * @return a list of type V
      */
     default List<V> retrieve() {
         return Collections.emptyList();
     }
 
     /**
-     * 获取
+     * Fetch a record by its ID.
      *
-     * @return an element instanceof vo
+     * @param id the record ID
+     * @return the record of type V, or null if not found
      */
     default V fetch(Long id) {
         return null;
     }
 
     /**
-     * 是否存在
+     * Check if a record exists by its name.
      *
-     * @param name 名称
-     * @return true-exist, false-not exist
+     * @param name the record name
+     * @return true if the record exists, false otherwise
      */
     default boolean exist(String name) {
         return false;
     }
 
     /**
-     * 添加
+     * Create a new record.
      *
-     * @param d 入参
-     * @return a element instanceof vo
+     * @param d the DTO representing the new record
+     * @return the created record of type V
      */
     default V create(D d) {
         return null;
     }
 
     /**
-     * 修改
+     * Modify an existing record by its ID.
      *
-     * @param id 主键
-     * @param d  入参
-     * @return a element instanceof vo
+     * @param id the record ID
+     * @param d  the DTO with updated data
+     * @return the updated record of type V
      */
     default V modify(Long id, D d) {
         return null;
     }
 
     /**
-     * 删除
+     * Remove a record by its ID.
      *
-     * @param id 主键
+     * @param id the record ID
      */
     default void remove(Long id) {
     }
 }
+

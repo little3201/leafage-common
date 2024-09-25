@@ -21,71 +21,73 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * service基础接口
- * D —— DTO
- * V —— VO
+ * Reactive service interface for basic CRUD operations.
  *
- * @author liwenqiang 2021/7/20 23:14
+ * @param <D> DTO type for input data
+ * @param <V> VO type for output data
+ * @author wq li
  * @since 0.1.2
- **/
+ */
 public interface ReactiveBasicService<D, V> {
 
     /**
-     * 获取所有
+     * Retrieve all records.
      *
-     * @return containing the elements of this list
+     * @return a Flux stream of type V
      */
     default Flux<V> retrieve() {
         return Flux.empty();
     }
 
     /**
-     * 获取
+     * Fetch a record by its ID.
      *
-     * @return an element instanceof vo
+     * @param id the record ID
+     * @return a Mono of type V, or an empty Mono if not found
      */
     default Mono<V> fetch(Long id) {
         return Mono.empty();
     }
 
     /**
-     * 是否存在
+     * Check if a record exists by its name.
      *
-     * @param name 属性
-     * @return true-exist, false-not exist
+     * @param name the record name
+     * @return a Mono emitting true if the record exists, false otherwise
      */
     default Mono<Boolean> exist(String name) {
         return Mono.empty();
     }
 
     /**
-     * 添加
+     * Create a new record.
      *
-     * @param d 实例
-     * @return a element instanceof vo
+     * @param d the DTO representing the new record
+     * @return a Mono of the created record of type V
      */
     default Mono<V> create(D d) {
         return Mono.empty();
     }
 
     /**
-     * 修改
+     * Modify an existing record by its ID.
      *
-     * @param id 主键
-     * @param d  实例
-     * @return a element instanceof vo
+     * @param id the record ID
+     * @param d  the DTO with updated data
+     * @return a Mono of the updated record of type V
      */
     default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
     /**
-     * 删除
+     * Remove a record by its ID.
      *
-     * @param id 主键
-     * @return Void
+     * @param id the record ID
+     * @return a Mono representing completion (Void)
      */
     default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
 }
+

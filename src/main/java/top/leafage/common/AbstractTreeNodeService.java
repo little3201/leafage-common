@@ -27,142 +27,134 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Constructs a tree node service.
+ * Abstract service for constructing tree nodes from objects.
  *
- * @author liwenqiang 2021-07-21 20:08
+ * @param <T> the type of object representing a node
+ * @author wq li
  * @since 0.1.3
  */
 public abstract class AbstractTreeNodeService<T> {
 
     private static final String ID = "id";
-    // field suffix, like groupName, roleName suffix is Name
     private static final String NAME = "name";
     private static final String SUPERIOR_ID = "superiorId";
 
     private static final Logger log = StatusLogger.getLogger();
 
     /**
-     * Constructs a tree node.
+     * Constructs a tree node from an object, optionally expanding additional properties.
      *
-     * @param t      Object
-     * @param expand Set of properties to expand
-     * @return TreeNode object
+     * @param t      the object representing the node
+     * @param expand a set of property names to expand on the node
+     * @return a constructed TreeNode
      * @since 0.2.0
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
-        // id from superior class
-        Object id = this.getId(t, aClass.getSuperclass().getSuperclass());
-        // name form class
+        Object id = this.getId(t, aClass.getSuperclass());
         Object name = this.getName(t, aClass);
-        // superiorId from class
         Object superiorId = this.getSuperiorId(t, aClass);
 
         TreeNode treeNode = new TreeNode(Objects.nonNull(id) ? (Long) id : null,
                 Objects.nonNull(name) ? String.valueOf(name) : null);
-        // set superior
         treeNode.setSuperior(Objects.nonNull(superiorId) ? (Long) superiorId : null);
 
-        // deal expand
         this.expand(treeNode, aClass, t, expand);
         return treeNode;
     }
 
     /**
-     * Gets and sets children.
+     * Sets the children for tree nodes based on their superior IDs.
      *
-     * @param treeNodes List of children
-     * @return List of TreeNode objects
+     * @param treeNodes the list of tree nodes
+     * @return a list of root nodes (nodes without a superior)
      * @since 0.2.0
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
-        Map<Long, List<TreeNode>> listMap = treeNodes.stream().filter(node -> Objects.nonNull(node.getSuperior()) &&
-                        0 == node.getSuperior())
+        Map<Long, List<TreeNode>> nodesMap = treeNodes.stream()
+                .filter(node -> Objects.nonNull(node.getSuperior()) && node.getSuperior() != 0)
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
-        // get children from grouped map
-        treeNodes.forEach(node -> node.setChildren(listMap.get(node.getId())));
-        return treeNodes.stream().filter(node -> Objects.isNull(node.getSuperior()) || 0 == node.getSuperior())
+
+        treeNodes.forEach(node -> node.setChildren(nodesMap.get(node.getId())));
+
+        return treeNodes.stream()
+                .filter(node -> Objects.isNull(node.getSuperior()) || node.getSuperior() == 0)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Expand data.
+     * Expands additional properties for a TreeNode.
      *
-     * @param treeNode TreeNode object
-     * @param clazz    Class type
-     * @param t        Object
-     * @param expand   Set of properties to expand
+     * @param treeNode the TreeNode to expand
+     * @param clazz    the class of the object
+     * @param t        the object representing the node
+     * @param expand   a set of property names to expand
      */
     private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
         if (expand != null && !expand.isEmpty()) {
-            Map<String, Object> map = new HashMap<>(expand.size());
-            expand.forEach(field -> {
-                try {
-                    PropertyDescriptor superIdDescriptor = new PropertyDescriptor(field, clazz);
-                    Object value = superIdDescriptor.getReadMethod().invoke(t);
-
-                    map.put(field, value);
-                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
-                    log.error("expand data error.", e);
+            Map<String, Object> expandedData = new HashMap<>(expand.size());
+            try {
+                for (String field : expand) {
+                    PropertyDescriptor descriptor = new PropertyDescriptor(field, clazz);
+                    Object value = descriptor.getReadMethod().invoke(t);
+                    expandedData.put(field, value);
                 }
-            });
-            treeNode.setExpand(map);
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                log.error("Error expanding data for TreeNode.", e);
+            }
+            treeNode.setExpand(expandedData);
         }
     }
 
     /**
-     * Gets the ID.
+     * Retrieves the ID from the object.
      *
-     * @param obj   Object instance
-     * @param clazz Class type
-     * @return ID value
+     * @param obj   the object instance
+     * @param clazz the class of the object
+     * @return the ID value, or null if an error occurs
      */
-    protected Object getId(Object obj, Class<?> clazz) {
-        Object id = null;
+    private Object getId(Object obj, Class<?> clazz) {
         try {
             PropertyDescriptor idDescriptor = new PropertyDescriptor(ID, clazz);
-            id = idDescriptor.getReadMethod().invoke(obj);
+            return idDescriptor.getReadMethod().invoke(obj);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get id error.", e);
+            log.error("Error retrieving ID.", e);
+            return null;
         }
-        return id;
     }
 
     /**
-     * Gets the name.
+     * Retrieves the name from the object.
      *
-     * @param t     Object
-     * @param clazz Class type
-     * @return Name value
+     * @param t     the object instance
+     * @param clazz the class of the object
+     * @return the name value, or null if an error occurs
      */
-    protected Object getName(T t, Class<?> clazz) {
-        Object name = null;
+    private Object getName(T t, Class<?> clazz) {
         try {
-            // name
             PropertyDescriptor nameDescriptor = new PropertyDescriptor(NAME, clazz);
-            name = nameDescriptor.getReadMethod().invoke(t);
+            return nameDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get name error.", e);
+            log.error("Error retrieving name.", e);
+            return null;
         }
-        return name;
     }
 
     /**
-     * Gets the superior ID.
+     * Retrieves the superior ID from the object.
      *
-     * @param t     Object
-     * @param clazz Class type
-     * @return Superior ID value
+     * @param t     the object instance
+     * @param clazz the class of the object
+     * @return the superior ID value, or null if an error occurs
      */
     private Object getSuperiorId(T t, Class<?> clazz) {
-        Object superiorId = null;
         try {
             PropertyDescriptor superiorIdDescriptor = new PropertyDescriptor(SUPERIOR_ID, clazz);
-            superiorId = superiorIdDescriptor.getReadMethod().invoke(t);
-
+            return superiorIdDescriptor.getReadMethod().invoke(t);
         } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            log.error("get superiorId error.", e);
+            log.error("Error retrieving superior ID.", e);
+            return null;
         }
-        return superiorId;
     }
 }
+
