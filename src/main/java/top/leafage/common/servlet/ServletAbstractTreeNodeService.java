@@ -53,10 +53,9 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children, Set<String> expand) {
-        List<TreeNode> treeNodes = children.stream()
-                .map(child -> this.node(child, expand))
-                .toList();
-        return this.children(treeNodes);
+        return this.children(children.stream()
+                .map(child -> this.createNode(child, expand))
+                .toList());
     }
 }
 

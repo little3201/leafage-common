@@ -17,40 +17,60 @@
 
 package top.leafage.common.servlet;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Service interface providing basic CRUD operations.
+ * Servlet service interface for basic CRUD operations.
  *
- * @param <D> DTO type for data input
- * @param <V> VO type for data output
- * @author wq li
+ * @param <D> DTO type for input data
+ * @param <V> VO type for output data
  * @since 0.1.2
  */
 public interface ServletBasicService<D, V> {
 
     /**
-     * Retrieve all records.
+     * Retrieves a paginated list of records.
      *
-     * @return a list of type V
+     * @param page       the page number
+     * @param size       the number of records per page
+     * @param sortBy     the field to sort by
+     * @param descending whether sorting is in descending order
+     * @return a paginated list of records
+     * @since 0.3.0
+     */
+    default Page<V> retrieve(int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(Sort.Order.desc(sortBy)) : Sort.by(Sort.Order.asc(sortBy));
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return Page.empty(pageable);
+    }
+
+    /**
+     * Retrieves all records.
+     *
+     * @return a list of all records
      */
     default List<V> retrieve() {
         return Collections.emptyList();
     }
 
     /**
-     * Fetch a record by its ID.
+     * Fetches a record by its ID.
      *
      * @param id the record ID
-     * @return the record of type V, or null if not found
+     * @return the record, or null if not found
      */
     default V fetch(Long id) {
         return null;
     }
 
     /**
-     * Check if a record exists by its name.
+     * Checks if a record exists by its name.
      *
      * @param name the record name
      * @return true if the record exists, false otherwise
@@ -60,32 +80,33 @@ public interface ServletBasicService<D, V> {
     }
 
     /**
-     * Create a new record.
+     * Creates a new record.
      *
      * @param d the DTO representing the new record
-     * @return the created record of type V
+     * @return the created record
      */
     default V create(D d) {
         return null;
     }
 
     /**
-     * Modify an existing record by its ID.
+     * Updates an existing record by its ID.
      *
      * @param id the record ID
-     * @param d  the DTO with updated data
-     * @return the updated record of type V
+     * @param d  the DTO containing updated data
+     * @return the updated record
      */
     default V modify(Long id, D d) {
         return null;
     }
 
     /**
-     * Remove a record by its ID.
+     * Removes a record by its ID.
      *
      * @param id the record ID
      */
     default void remove(Long id) {
     }
+
 }
 

@@ -17,6 +17,10 @@
 
 package top.leafage.common.reactive;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,32 +29,47 @@ import reactor.core.publisher.Mono;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @author wq li
  * @since 0.1.2
  */
 public interface ReactiveBasicService<D, V> {
 
     /**
-     * Retrieve all records.
+     * Retrieves a paginated list of records.
      *
-     * @return a Flux stream of type V
+     * @param page       the page number
+     * @param size       the number of records per page
+     * @param sortBy     the field to sort by
+     * @param descending whether sorting is in descending order
+     * @return a Mono containing a paginated list of records
+     * @since 0.3.0
+     */
+    default Mono<Page<V>> retrieve(int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(Sort.Order.desc(sortBy)) : Sort.by(Sort.Order.asc(sortBy));
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return Mono.just(Page.empty(pageable));
+    }
+
+    /**
+     * Retrieves all records.
+     *
+     * @return a Flux stream of all records
      */
     default Flux<V> retrieve() {
         return Flux.empty();
     }
 
     /**
-     * Fetch a record by its ID.
+     * Fetches a record by its ID.
      *
      * @param id the record ID
-     * @return a Mono of type V, or an empty Mono if not found
+     * @return a Mono containing the record, or an empty Mono if not found
      */
     default Mono<V> fetch(Long id) {
         return Mono.empty();
     }
 
     /**
-     * Check if a record exists by its name.
+     * Checks if a record exists by its name.
      *
      * @param name the record name
      * @return a Mono emitting true if the record exists, false otherwise
@@ -60,34 +79,35 @@ public interface ReactiveBasicService<D, V> {
     }
 
     /**
-     * Create a new record.
+     * Creates a new record.
      *
      * @param d the DTO representing the new record
-     * @return a Mono of the created record of type V
+     * @return a Mono containing the created record
      */
     default Mono<V> create(D d) {
         return Mono.empty();
     }
 
     /**
-     * Modify an existing record by its ID.
+     * Updates an existing record by its ID.
      *
      * @param id the record ID
-     * @param d  the DTO with updated data
-     * @return a Mono of the updated record of type V
+     * @param d  the DTO containing updated data
+     * @return a Mono containing the updated record
      */
     default Mono<V> modify(Long id, D d) {
         return Mono.empty();
     }
 
     /**
-     * Remove a record by its ID.
+     * Removes a record by its ID.
      *
      * @param id the record ID
-     * @return a Mono representing completion (Void)
+     * @return a Mono indicating completion
      */
     default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
 }
+
 
