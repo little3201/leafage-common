@@ -51,7 +51,7 @@ public class TreeNode {
     /**
      * A map containing additional, expandable properties of the node.
      */
-    private final Map<String, Object> expand;
+    private final Map<String, Object> meta;
 
     /**
      * A list of child nodes. Null or empty if there are no children.
@@ -65,14 +65,14 @@ public class TreeNode {
      * @param name       The name of the node.
      * @param superiorId The ID of the parent node, or null for a root node.
      * @param children   The list of child nodes. Null or empty if the node has no children.
-     * @param expand     A map containing any additional, expandable properties of the node.
+     * @param meta       A map containing any additional, expandable properties of the node.
      */
-    private TreeNode(Long id, String name, Long superiorId, List<TreeNode> children, Map<String, Object> expand) {
+    private TreeNode(Long id, String name, Long superiorId, List<TreeNode> children, Map<String, Object> meta) {
         this.id = id;
         this.name = name;
         this.superiorId = superiorId;
         this.children = children;
-        this.expand = expand;
+        this.meta = meta;
     }
 
     /**
@@ -80,6 +80,7 @@ public class TreeNode {
      *
      * @param id The unique identifier for the node.
      * @return A new instance of {@link TreeNodeBuilder}, initialized with the given ID.
+     * @since 0.3.0
      */
     public static TreeNodeBuilder withId(Long id) {
         return builder().id(id);
@@ -89,6 +90,7 @@ public class TreeNode {
      * Creates a new, empty builder for a TreeNode.
      *
      * @return A new instance of {@link TreeNodeBuilder}.
+     * @since 0.3.0
      */
     public static TreeNodeBuilder builder() {
         return new TreeNodeBuilder();
@@ -106,7 +108,7 @@ public class TreeNode {
         private Long id;
         private String name;
         private Long superiorId;
-        private Map<String, Object> expand;
+        private Map<String, Object> meta;
         private List<TreeNode> children;
 
         /**
@@ -151,11 +153,11 @@ public class TreeNode {
         /**
          * Sets additional expandable properties for the node.
          *
-         * @param expand A map of expandable properties.
+         * @param meta A map of expandable properties.
          * @return The current instance of {@link TreeNodeBuilder}.
          */
-        public TreeNodeBuilder expand(Map<String, Object> expand) {
-            this.expand = expand;
+        public TreeNodeBuilder meta(Map<String, Object> meta) {
+            this.meta = meta;
             return this;
         }
 
@@ -176,7 +178,7 @@ public class TreeNode {
          * @return A new instance of {@link TreeNode} with the properties set in the builder.
          */
         public TreeNode build() {
-            return new TreeNode(id, name, superiorId, children, expand);
+            return new TreeNode(id, name, superiorId, children, meta);
         }
     }
 
@@ -213,8 +215,8 @@ public class TreeNode {
      *
      * @return A map containing additional, expandable properties.
      */
-    public Map<String, Object> getExpand() {
-        return expand;
+    public Map<String, Object> getMeta() {
+        return meta;
     }
 
     /**

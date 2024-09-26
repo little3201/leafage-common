@@ -50,9 +50,9 @@ public abstract class AbstractTreeNodeService<T> {
      * @param expand a set of property names to be expanded into the node's additional properties
      * @return a fully constructed TreeNode instance
      * @throws IllegalArgumentException if the ID property is null
-     * @since 0.2.0
+     * @since 0.3.0
      */
-    protected TreeNode node(T t, Set<String> expand) {
+    protected TreeNode createNode(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
         Object id = this.getId(t, aClass.getSuperclass());
         if (Objects.isNull(id)) {
@@ -64,7 +64,7 @@ public abstract class AbstractTreeNodeService<T> {
         return TreeNode.withId((Long) id)
                 .name(Objects.nonNull(name) ? String.valueOf(name) : null)
                 .superiorId(Objects.nonNull(superiorId) ? (Long) superiorId : null)
-                .expand(this.expand(aClass, t, expand)).build();
+                .meta(meta(aClass, t, expand)).build();
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractTreeNodeService<T> {
                         .name(treeNode.getName())
                         .superiorId(treeNode.getSuperiorId())
                         .children(nodesMap.get(treeNode.getId()))
-                        .expand(treeNode.getExpand())
+                        .meta(treeNode.getMeta())
                         .build())
                 .filter(node -> Objects.isNull(node.getSuperiorId()))
                 .collect(Collectors.toList());
@@ -149,8 +149,9 @@ public abstract class AbstractTreeNodeService<T> {
      * @param t      the object representing the node
      * @param expand a set of property names to expand as additional data
      * @return a map containing the expanded properties
+     * @since 0.3.0
      */
-    private Map<String, Object> expand(Class<?> clazz, T t, Set<String> expand) {
+    private Map<String, Object> meta(Class<?> clazz, T t, Set<String> expand) {
         Map<String, Object> expandedData = Collections.emptyMap();
         if (expand != null && !expand.isEmpty()) {
             expandedData = new HashMap<>(expand.size());
