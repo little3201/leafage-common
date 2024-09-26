@@ -55,8 +55,9 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @since 0.2.0
      */
     protected Mono<List<TreeNode>> convert(Flux<T> children, Set<String> expand) {
-        Flux<TreeNode> nodesFlux = children.map(child -> this.node(child, expand));
-
-        return nodesFlux.collectList().map(this::children);
+        return children
+                .map(child -> this.node(child, expand))
+                .collectList()
+                .map(this::children);
     }
 }

@@ -28,11 +28,10 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Utility to read and parse Excel files from InputStream and map to specified types.
- * Supports reading from password-protected files and specific sheets.
+ * Utility class for reading and mapping Excel files from an InputStream to the specified type.
+ * Supports reading from password-protected files and from specific sheets.
  *
- * @param <T> The target class type for data mapping
- * @author wq lis
+ * @param <T> The type to map the Excel rows to
  * @since 0.3.0
  */
 public final class ExcelReader<T> {
@@ -47,11 +46,11 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Reads data from the given InputStream, assuming the default sheet "sheet1".
+     * Reads and maps data from the default sheet "sheet1".
      *
      * @param inputStream The input stream of the Excel file
-     * @param clazz       The target class for mapping rows
-     * @param <T>         the type of objects to be created from the Excel data
+     * @param clazz       The class to map rows to
+     * @param <T>         The type of objects to map the Excel data to
      * @return List of mapped objects
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
@@ -59,13 +58,13 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Reads data from the given InputStream with an optional sheet name and password.
+     * Reads and maps data from a specified sheet, with optional password protection.
      *
      * @param inputStream The input stream of the Excel file
-     * @param clazz       The target class for mapping rows
+     * @param clazz       The class to map rows to
      * @param sheetName   (Optional) The name of the sheet to read
-     * @param password    (Optional) The password for a protected file
-     * @param <T>         the type of objects to be created from the Excel data
+     * @param password    (Optional) The password for protected files
+     * @param <T>         The type of objects to map the Excel data to
      * @return List of mapped objects
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName, String password) {
@@ -74,17 +73,18 @@ public final class ExcelReader<T> {
             if (sheet == null) return Collections.emptyList();
             return readSheet(sheet, clazz);
         } catch (IOException e) {
-            log.error("Error reading from input stream.", e);
+            log.error("Failed to read from input stream.", e);
             return Collections.emptyList();
         }
     }
 
     /**
-     * Creates an appropriate Workbook instance based on the input stream and password.
+     * Creates a Workbook instance from the input stream, with optional password handling.
      *
-     * @param inputStream Input stream of the Excel file
-     * @param password    Optional password for protected files
+     * @param inputStream The input stream of the Excel file
+     * @param password    The password for protected files, if any
      * @return Workbook instance
+     * @throws IOException If an error occurs while reading the input stream
      */
     private static Workbook createWorkbook(InputStream inputStream, String password) throws IOException {
         return StringUtil.isBlank(password)
@@ -93,10 +93,10 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Fetches the sheet with the specified name or defaults to "sheet1" if the name is null or empty.
+     * Retrieves the sheet by name, or defaults to the first sheet if no name is provided.
      *
-     * @param workbook  Workbook instance
-     * @param sheetName Name of the sheet to fetch
+     * @param workbook  The Workbook instance
+     * @param sheetName The sheet name, or null to use the default sheet
      * @return The corresponding Sheet object
      */
     private static Sheet getSheet(Workbook workbook, String sheetName) {
@@ -104,11 +104,11 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Reads data from a specified sheet and maps each row to an instance of the specified class.
+     * Reads and maps the rows of a sheet to instances of the specified class.
      *
      * @param sheet The sheet to read data from
-     * @param clazz The class type to map each row to
-     * @param <T>   the type of objects to be created from the Excel data
+     * @param clazz The class to map rows to
+     * @param <T>   The type of objects to map the Excel data to
      * @return List of mapped objects
      */
     private static <T> List<T> readSheet(Sheet sheet, Class<T> clazz) {
@@ -129,10 +129,10 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Reads the header row and returns a list of column names.
+     * Reads the header row and extracts column names.
      *
      * @param row The header row
-     * @return List of header names
+     * @return List of column names
      */
     private static List<String> readHeader(Row row) {
         if (row == null) return Collections.emptyList();
@@ -146,10 +146,10 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Maps the row data to a map keyed by column names.
+     * Maps a row's cell values to their corresponding header names.
      *
      * @param row     The row to read
-     * @param headers The header names
+     * @param headers The list of header names
      * @return A map of column names to cell values
      */
     private static Map<String, Object> mapRowToHeaders(Row row, List<String> headers) {
@@ -161,11 +161,11 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Converts the map of row data to an instance of the specified class.
+     * Converts the row data map into an instance of the specified class.
      *
-     * @param dataMap A map of column names to cell values
-     * @param clazz   The class type to instantiate
-     * @param <T>     the type of objects to be created from the Excel data
+     * @param dataMap The map of column names to values
+     * @param clazz   The class to instantiate
+     * @param <T>     The type of object to create
      * @return An instance of the class populated with the row data
      */
     private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
@@ -177,13 +177,13 @@ public final class ExcelReader<T> {
             }
             return instance;
         } catch (Exception e) {
-            log.error("Error converting row data to object.", e);
+            log.error("Failed to convert row data to object.", e);
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Reads the value of a cell as an Object.
+     * Reads a cell's value as an Object.
      *
      * @param cell The cell to read
      * @return The cell's value as an Object
@@ -200,7 +200,7 @@ public final class ExcelReader<T> {
     }
 
     /**
-     * Reads the value of a cell as a String.
+     * Reads a cell's value as a String.
      *
      * @param cell The cell to read
      * @return The cell's value as a String

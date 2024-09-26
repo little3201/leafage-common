@@ -21,47 +21,51 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents a tree node structure with a unique identifier, name, parent reference,
- * expandable properties, and child nodes.
+ * Represents a tree node structure, which includes a unique identifier (ID),
+ * a name, an optional parent (superior) ID, expandable properties, and child nodes.
+ * This class provides a flexible structure for hierarchical data representation.
  *
- * @author wq li
+ * <p>This class is designed to be immutable and is constructed using a builder pattern.
+ * The builder allows for easy configuration of all properties before creating an instance.</p>
+ *
+ * @author wq
  * @since 0.1.0
  */
 public class TreeNode {
 
     /**
-     * Unique identifier of the node.
+     * The unique identifier for the node.
      */
     private final Long id;
 
     /**
-     * Name of the node.
+     * The name of the node.
      */
     private final String name;
 
     /**
-     * ID of the parent node.
+     * The ID of the parent node, or null if this node is a root node.
      */
     private final Long superiorId;
 
     /**
-     * Additional properties for extended attributes.
+     * A map containing additional, expandable properties of the node.
      */
     private final Map<String, Object> expand;
 
     /**
-     * List of child nodes.
+     * A list of child nodes. Null or empty if there are no children.
      */
     private final List<TreeNode> children;
 
     /**
-     * Private constructor for the TreeNode class. Instances are created via the builder.
+     * Private constructor for the TreeNode class. Instances are created using the {@link TreeNodeBuilder}.
      *
      * @param id         The unique identifier of the node.
      * @param name       The name of the node.
-     * @param superiorId The parent node ID, or null if this is a root node.
-     * @param children   The list of child nodes.
-     * @param expand     A map of additional properties for extended attributes.
+     * @param superiorId The ID of the parent node, or null for a root node.
+     * @param children   The list of child nodes. Null or empty if the node has no children.
+     * @param expand     A map containing any additional, expandable properties of the node.
      */
     private TreeNode(Long id, String name, Long superiorId, List<TreeNode> children, Map<String, Object> expand) {
         this.id = id;
@@ -72,77 +76,50 @@ public class TreeNode {
     }
 
     /**
-     * Starts the builder process with the provided node ID.
+     * Creates a new builder for a TreeNode and initializes it with the provided node ID.
      *
-     * @param id The unique identifier of the node.
-     * @return A TreeNodeBuilder initialized with the provided ID.
+     * @param id The unique identifier for the node.
+     * @return A new instance of {@link TreeNodeBuilder}, initialized with the given ID.
      */
     public static TreeNodeBuilder withId(Long id) {
         return builder().id(id);
     }
 
     /**
-     * Creates a new instance of the TreeNodeBuilder for building a TreeNode.
+     * Creates a new, empty builder for a TreeNode.
      *
-     * @return A new instance of TreeNodeBuilder.
+     * @return A new instance of {@link TreeNodeBuilder}.
      */
     public static TreeNodeBuilder builder() {
         return new TreeNodeBuilder();
     }
 
     /**
-     * Returns the ID of the parent node.
+     * Builder class for creating instances of {@link TreeNode}.
      *
-     * @return Parent node ID.
-     */
-    public Long getSuperiorId() {
-        return superiorId;
-    }
-
-    /**
-     * Returns the unique identifier of the node.
+     * <p>Allows for the construction of a {@link TreeNode} by setting properties incrementally.</p>
      *
-     * @return Unique identifier of the node.
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * Returns the name of the node.
-     *
-     * @return Name of the node.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * builder
-     *
-     * @author wq li
      * @since 0.3.0
      */
     public static final class TreeNodeBuilder {
 
         private Long id;
-
         private String name;
-
         private Long superiorId;
-
         private Map<String, Object> expand;
-
         private List<TreeNode> children;
 
+        /**
+         * Private constructor to prevent instantiation.
+         */
         private TreeNodeBuilder() {
         }
 
         /**
-         * Sets the node ID for the tree node.
+         * Sets the node's unique identifier.
          *
-         * @param id The unique identifier of the node.
-         * @return The current instance of TreeNodeBuilder.
+         * @param id The node ID.
+         * @return The current instance of {@link TreeNodeBuilder}.
          */
         public TreeNodeBuilder id(Long id) {
             this.id = id;
@@ -150,10 +127,10 @@ public class TreeNode {
         }
 
         /**
-         * Sets the name for the tree node.
+         * Sets the node's name.
          *
-         * @param name The name of the node.
-         * @return The current instance of TreeNodeBuilder.
+         * @param name The node name.
+         * @return The current instance of {@link TreeNodeBuilder}.
          */
         public TreeNodeBuilder name(String name) {
             this.name = name;
@@ -161,10 +138,10 @@ public class TreeNode {
         }
 
         /**
-         * Sets the superior ID (superior) for the tree node.
+         * Sets the ID of the parent node.
          *
-         * @param superiorId The ID of superior node.
-         * @return The current instance of TreeNodeBuilder.
+         * @param superiorId The parent node's ID.
+         * @return The current instance of {@link TreeNodeBuilder}.
          */
         public TreeNodeBuilder superiorId(Long superiorId) {
             this.superiorId = superiorId;
@@ -172,10 +149,10 @@ public class TreeNode {
         }
 
         /**
-         * Sets additional properties for the tree node.
+         * Sets additional expandable properties for the node.
          *
-         * @param expand A map of extended attributes.
-         * @return The current instance of TreeNodeBuilder.
+         * @param expand A map of expandable properties.
+         * @return The current instance of {@link TreeNodeBuilder}.
          */
         public TreeNodeBuilder expand(Map<String, Object> expand) {
             this.expand = expand;
@@ -183,10 +160,10 @@ public class TreeNode {
         }
 
         /**
-         * Sets the list of child nodes for the tree node.
+         * Sets the list of child nodes for the current node.
          *
-         * @param children The list of child nodes.
-         * @return The current instance of TreeNodeBuilder.
+         * @param children A list of child nodes.
+         * @return The current instance of {@link TreeNodeBuilder}.
          */
         public TreeNodeBuilder children(List<TreeNode> children) {
             this.children = children;
@@ -194,30 +171,59 @@ public class TreeNode {
         }
 
         /**
-         * Builds and returns the TreeNode instance.
+         * Constructs and returns a new {@link TreeNode} instance.
          *
-         * @return A new TreeNode instance populated with the builder's data.
+         * @return A new instance of {@link TreeNode} with the properties set in the builder.
          */
         public TreeNode build() {
-            return new TreeNode(this.id, this.name, this.superiorId, this.children, this.expand);
+            return new TreeNode(id, name, superiorId, children, expand);
         }
     }
 
+
     /**
-     * Returns the expandable properties of the node.
+     * Retrieves the ID of the parent (superior) node, or null if the node is a root node.
      *
-     * @return Map of expandable properties.
+     * @return The superior node ID, or null for root nodes.
+     */
+    public Long getSuperiorId() {
+        return superiorId;
+    }
+
+    /**
+     * Retrieves the unique identifier of the node.
+     *
+     * @return The node ID.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Retrieves the name of the node.
+     *
+     * @return The node name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Retrieves the map of expandable properties for the node.
+     *
+     * @return A map containing additional, expandable properties.
      */
     public Map<String, Object> getExpand() {
         return expand;
     }
 
     /**
-     * Returns the list of child nodes.
+     * Retrieves the list of child nodes.
      *
-     * @return List of child nodes.
+     * @return A list of child nodes, or an empty list if the node has no children.
      */
     public List<TreeNode> getChildren() {
         return children;
     }
+
 }

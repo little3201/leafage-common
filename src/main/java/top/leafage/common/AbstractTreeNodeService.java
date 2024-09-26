@@ -27,10 +27,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Abstract service for constructing tree nodes from objects.
+ * Abstract base service for constructing tree structures from objects.
+ * Provides functionality for creating tree nodes and organizing them
+ * based on superior-subordinate relationships.
  *
- * @param <T> the type of object representing a node
- * @author wq li
+ * @param <T> the type of object representing a node in the tree
  * @since 0.1.3
  */
 public abstract class AbstractTreeNodeService<T> {
@@ -42,18 +43,20 @@ public abstract class AbstractTreeNodeService<T> {
     private static final Logger log = StatusLogger.getLogger();
 
     /**
-     * Constructs a tree node from an object, optionally expanding additional properties.
+     * Creates a tree node from the given object, using the provided property names to expand additional data.
+     * This method extracts ID, name, and superior ID from the object and attaches any expanded properties.
      *
-     * @param t      the object representing the node
-     * @param expand a set of property names to expand on the node
-     * @return a constructed TreeNode
+     * @param t      the object representing a node
+     * @param expand a set of property names to be expanded into the node's additional properties
+     * @return a fully constructed TreeNode instance
+     * @throws IllegalArgumentException if the ID property is null
      * @since 0.2.0
      */
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
         Object id = this.getId(t, aClass.getSuperclass());
         if (Objects.isNull(id)) {
-            throw new IllegalArgumentException("id cannot be null");
+            throw new IllegalArgumentException("ID cannot be null");
         }
         Object name = this.getName(t, aClass);
         Object superiorId = this.getSuperiorId(t, aClass);
@@ -65,10 +68,11 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * Sets the children for tree nodes based on their superior IDs.
+     * Organizes the tree nodes by assigning children to their respective parents based on the superior ID.
+     * Returns a list of root nodes (nodes that do not have a superior).
      *
-     * @param treeNodes the list of tree nodes
-     * @return a list of root nodes (nodes without a superior)
+     * @param treeNodes the list of all nodes to organize
+     * @return a list of root nodes, each containing its child nodes
      * @since 0.2.0
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
@@ -76,7 +80,8 @@ public abstract class AbstractTreeNodeService<T> {
                 .filter(node -> Objects.nonNull(node.getSuperiorId()) && node.getSuperiorId() != 0)
                 .collect(Collectors.groupingBy(TreeNode::getSuperiorId));
 
-        return treeNodes.stream().map(treeNode -> TreeNode.withId(treeNode.getId())
+        return treeNodes.stream()
+                .map(treeNode -> TreeNode.withId(treeNode.getId())
                         .name(treeNode.getName())
                         .superiorId(treeNode.getSuperiorId())
                         .children(nodesMap.get(treeNode.getId()))
@@ -87,11 +92,11 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * Retrieves the ID from the object.
+     * Retrieves the ID value from the given object using reflection.
      *
      * @param obj   the object instance
-     * @param clazz the class of the object
-     * @return the ID value, or null if an error occurs
+     * @param clazz the class of the object or its superclass
+     * @return the ID value, or null if an error occurs during reflection
      */
     private Object getId(Object obj, Class<?> clazz) {
         try {
@@ -104,11 +109,11 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * Retrieves the name from the object.
+     * Retrieves the name value from the given object using reflection.
      *
      * @param t     the object instance
      * @param clazz the class of the object
-     * @return the name value, or null if an error occurs
+     * @return the name value, or null if an error occurs during reflection
      */
     private Object getName(T t, Class<?> clazz) {
         try {
@@ -121,11 +126,11 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * Retrieves the superior ID from the object.
+     * Retrieves the superior ID value from the given object using reflection.
      *
      * @param t     the object instance
      * @param clazz the class of the object
-     * @return the superior ID value, or null if an error occurs
+     * @return the superior ID value, or null if an error occurs during reflection
      */
     private Object getSuperiorId(T t, Class<?> clazz) {
         try {
@@ -138,11 +143,12 @@ public abstract class AbstractTreeNodeService<T> {
     }
 
     /**
-     * Expands additional properties for a TreeNode.
+     * Expands additional properties for the TreeNode by reflecting on the object's class and property names.
      *
      * @param clazz  the class of the object
      * @param t      the object representing the node
-     * @param expand a set of property names to expand
+     * @param expand a set of property names to expand as additional data
+     * @return a map containing the expanded properties
      */
     private Map<String, Object> expand(Class<?> clazz, T t, Set<String> expand) {
         Map<String, Object> expandedData = Collections.emptyMap();
@@ -160,6 +166,6 @@ public abstract class AbstractTreeNodeService<T> {
         }
         return expandedData;
     }
-
 }
+
 
