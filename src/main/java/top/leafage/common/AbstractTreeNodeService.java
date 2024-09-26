@@ -52,7 +52,7 @@ public abstract class AbstractTreeNodeService<T> {
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
         Object id = this.getId(t, aClass.getSuperclass());
-        if (id == null) {
+        if (Objects.isNull(id)) {
             throw new IllegalArgumentException("id cannot be null");
         }
         Object name = this.getName(t, aClass);
@@ -60,7 +60,7 @@ public abstract class AbstractTreeNodeService<T> {
 
         return TreeNode.withId((Long) id)
                 .name(Objects.nonNull(name) ? String.valueOf(name) : null)
-                .superior(Objects.nonNull(superiorId) ? (Long) superiorId : null)
+                .superiorId(Objects.nonNull(superiorId) ? (Long) superiorId : null)
                 .expand(this.expand(aClass, t, expand)).build();
     }
 
@@ -73,16 +73,16 @@ public abstract class AbstractTreeNodeService<T> {
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
         Map<Long, List<TreeNode>> nodesMap = treeNodes.stream()
-                .filter(node -> Objects.nonNull(node.getSuperior()) && node.getSuperior() != 0)
-                .collect(Collectors.groupingBy(TreeNode::getSuperior));
+                .filter(node -> Objects.nonNull(node.getSuperiorId()) && node.getSuperiorId() != 0)
+                .collect(Collectors.groupingBy(TreeNode::getSuperiorId));
 
         return treeNodes.stream().map(treeNode -> TreeNode.withId(treeNode.getId())
                         .name(treeNode.getName())
-                        .superior(treeNode.getSuperior())
+                        .superiorId(treeNode.getSuperiorId())
                         .children(nodesMap.get(treeNode.getId()))
                         .expand(treeNode.getExpand())
                         .build())
-                .filter(node -> Objects.isNull(node.getSuperior()) || node.getSuperior() == 0)
+                .filter(node -> Objects.isNull(node.getSuperiorId()))
                 .collect(Collectors.toList());
     }
 

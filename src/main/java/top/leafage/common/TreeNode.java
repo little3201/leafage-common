@@ -42,7 +42,7 @@ public class TreeNode {
     /**
      * ID of the parent node.
      */
-    private final Long superior;
+    private final Long superiorId;
 
     /**
      * Additional properties for extended attributes.
@@ -57,16 +57,16 @@ public class TreeNode {
     /**
      * Private constructor for the TreeNode class. Instances are created via the builder.
      *
-     * @param id       The unique identifier of the node.
-     * @param name     The name of the node.
-     * @param superior The parent node ID, or null if this is a root node.
-     * @param children The list of child nodes.
-     * @param expand   A map of additional properties for extended attributes.
+     * @param id         The unique identifier of the node.
+     * @param name       The name of the node.
+     * @param superiorId The parent node ID, or null if this is a root node.
+     * @param children   The list of child nodes.
+     * @param expand     A map of additional properties for extended attributes.
      */
-    private TreeNode(Long id, String name, Long superior, List<TreeNode> children, Map<String, Object> expand) {
+    private TreeNode(Long id, String name, Long superiorId, List<TreeNode> children, Map<String, Object> expand) {
         this.id = id;
         this.name = name;
-        this.superior = superior;
+        this.superiorId = superiorId;
         this.children = children;
         this.expand = expand;
     }
@@ -91,6 +91,33 @@ public class TreeNode {
     }
 
     /**
+     * Returns the ID of the parent node.
+     *
+     * @return Parent node ID.
+     */
+    public Long getSuperiorId() {
+        return superiorId;
+    }
+
+    /**
+     * Returns the unique identifier of the node.
+     *
+     * @return Unique identifier of the node.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Returns the name of the node.
+     *
+     * @return Name of the node.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * builder
      *
      * @author wq li
@@ -102,7 +129,7 @@ public class TreeNode {
 
         private String name;
 
-        private Long superior;
+        private Long superiorId;
 
         private Map<String, Object> expand;
 
@@ -134,13 +161,13 @@ public class TreeNode {
         }
 
         /**
-         * Sets the parent node ID (superior) for the tree node.
+         * Sets the superior ID (superior) for the tree node.
          *
-         * @param superior The ID of the parent node.
+         * @param superiorId The ID of superior node.
          * @return The current instance of TreeNodeBuilder.
          */
-        public TreeNodeBuilder superior(Long superior) {
-            this.superior = superior;
+        public TreeNodeBuilder superiorId(Long superiorId) {
+            this.superiorId = superiorId;
             return this;
         }
 
@@ -172,35 +199,8 @@ public class TreeNode {
          * @return A new TreeNode instance populated with the builder's data.
          */
         public TreeNode build() {
-            return new TreeNode(this.id, this.name, this.superior, this.children, this.expand);
+            return new TreeNode(this.id, this.name, this.superiorId, this.children, this.expand);
         }
-    }
-
-    /**
-     * Returns the unique identifier of the node.
-     *
-     * @return Unique identifier of the node.
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * Returns the name of the node.
-     *
-     * @return Name of the node.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the ID of the parent node.
-     *
-     * @return Parent node ID.
-     */
-    public Long getSuperior() {
-        return superior;
     }
 
     /**
