@@ -32,37 +32,148 @@ public class TreeNode {
     /**
      * Unique identifier of the node.
      */
-    private Long id;
+    private final Long id;
 
     /**
      * Name of the node.
      */
-    private String name;
+    private final String name;
 
     /**
      * ID of the parent node.
      */
-    private Long superior;
+    private final Long superior;
 
     /**
      * Additional properties for extended attributes.
      */
-    private Map<String, Object> expand;
+    private final Map<String, Object> expand;
 
     /**
      * List of child nodes.
      */
-    private List<TreeNode> children;
+    private final List<TreeNode> children;
 
     /**
-     * Constructor for creating a tree node with the specified ID and name.
+     * Private constructor for the TreeNode class. Instances are created via the builder.
      *
-     * @param id   Unique identifier of the node.
-     * @param name Name of the node.
+     * @param id       The unique identifier of the node.
+     * @param name     The name of the node.
+     * @param superior The parent node ID, or null if this is a root node.
+     * @param children The list of child nodes.
+     * @param expand   A map of additional properties for extended attributes.
      */
-    public TreeNode(Long id, String name) {
+    private TreeNode(Long id, String name, Long superior, List<TreeNode> children, Map<String, Object> expand) {
         this.id = id;
         this.name = name;
+        this.superior = superior;
+        this.children = children;
+        this.expand = expand;
+    }
+
+    /**
+     * Starts the builder process with the provided node ID.
+     *
+     * @param id The unique identifier of the node.
+     * @return A TreeNodeBuilder initialized with the provided ID.
+     */
+    public static TreeNodeBuilder withId(Long id) {
+        return builder().id(id);
+    }
+
+    /**
+     * Creates a new instance of the TreeNodeBuilder for building a TreeNode.
+     *
+     * @return A new instance of TreeNodeBuilder.
+     */
+    public static TreeNodeBuilder builder() {
+        return new TreeNodeBuilder();
+    }
+
+    /**
+     * builder
+     *
+     * @author wq li
+     * @since 0.3.0
+     */
+    public static final class TreeNodeBuilder {
+
+        private Long id;
+
+        private String name;
+
+        private Long superior;
+
+        private Map<String, Object> expand;
+
+        private List<TreeNode> children;
+
+        private TreeNodeBuilder() {
+        }
+
+        /**
+         * Sets the node ID for the tree node.
+         *
+         * @param id The unique identifier of the node.
+         * @return The current instance of TreeNodeBuilder.
+         */
+        public TreeNodeBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * Sets the name for the tree node.
+         *
+         * @param name The name of the node.
+         * @return The current instance of TreeNodeBuilder.
+         */
+        public TreeNodeBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * Sets the parent node ID (superior) for the tree node.
+         *
+         * @param superior The ID of the parent node.
+         * @return The current instance of TreeNodeBuilder.
+         */
+        public TreeNodeBuilder superior(Long superior) {
+            this.superior = superior;
+            return this;
+        }
+
+        /**
+         * Sets additional properties for the tree node.
+         *
+         * @param expand A map of extended attributes.
+         * @return The current instance of TreeNodeBuilder.
+         */
+        public TreeNodeBuilder expand(Map<String, Object> expand) {
+            this.expand = expand;
+            return this;
+        }
+
+        /**
+         * Sets the list of child nodes for the tree node.
+         *
+         * @param children The list of child nodes.
+         * @return The current instance of TreeNodeBuilder.
+         */
+        public TreeNodeBuilder children(List<TreeNode> children) {
+            this.children = children;
+            return this;
+        }
+
+        /**
+         * Builds and returns the TreeNode instance.
+         *
+         * @return A new TreeNode instance populated with the builder's data.
+         */
+        public TreeNode build() {
+            return new TreeNode(this.id, this.name, this.superior, this.children, this.expand);
+        }
     }
 
     /**
@@ -75,30 +186,12 @@ public class TreeNode {
     }
 
     /**
-     * Sets the unique identifier of the node.
-     *
-     * @param id Unique identifier to be set.
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
      * Returns the name of the node.
      *
      * @return Name of the node.
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Sets the name of the node.
-     *
-     * @param name Name to be set.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -111,30 +204,12 @@ public class TreeNode {
     }
 
     /**
-     * Sets the ID of the parent node.
-     *
-     * @param superior Parent node ID to be set.
-     */
-    public void setSuperior(Long superior) {
-        this.superior = superior;
-    }
-
-    /**
      * Returns the expandable properties of the node.
      *
      * @return Map of expandable properties.
      */
     public Map<String, Object> getExpand() {
         return expand;
-    }
-
-    /**
-     * Sets the expandable properties of the node.
-     *
-     * @param expand Map of properties to be set.
-     */
-    public void setExpand(Map<String, Object> expand) {
-        this.expand = expand;
     }
 
     /**
@@ -145,15 +220,4 @@ public class TreeNode {
     public List<TreeNode> getChildren() {
         return children;
     }
-
-    /**
-     * Sets the list of child nodes.
-     *
-     * @param children List of child nodes to be set.
-     */
-    public void setChildren(List<TreeNode> children) {
-        this.children = children;
-    }
 }
-
-

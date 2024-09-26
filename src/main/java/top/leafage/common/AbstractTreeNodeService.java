@@ -52,15 +52,16 @@ public abstract class AbstractTreeNodeService<T> {
     protected TreeNode node(T t, Set<String> expand) {
         Class<?> aClass = t.getClass();
         Object id = this.getId(t, aClass.getSuperclass());
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
         Object name = this.getName(t, aClass);
         Object superiorId = this.getSuperiorId(t, aClass);
 
-        TreeNode treeNode = new TreeNode(Objects.nonNull(id) ? (Long) id : null,
-                Objects.nonNull(name) ? String.valueOf(name) : null);
-        treeNode.setSuperior(Objects.nonNull(superiorId) ? (Long) superiorId : null);
-
-        this.expand(treeNode, aClass, t, expand);
-        return treeNode;
+        return TreeNode.withId((Long) id)
+                .name(Objects.nonNull(name) ? String.valueOf(name) : null)
+                .superior(Objects.nonNull(superiorId) ? (Long) superiorId : null)
+                .expand(this.expand(aClass, t, expand)).build();
     }
 
     /**
@@ -75,35 +76,14 @@ public abstract class AbstractTreeNodeService<T> {
                 .filter(node -> Objects.nonNull(node.getSuperior()) && node.getSuperior() != 0)
                 .collect(Collectors.groupingBy(TreeNode::getSuperior));
 
-        treeNodes.forEach(node -> node.setChildren(nodesMap.get(node.getId())));
-
-        return treeNodes.stream()
+        return treeNodes.stream().map(treeNode -> TreeNode.withId(treeNode.getId())
+                        .name(treeNode.getName())
+                        .superior(treeNode.getSuperior())
+                        .children(nodesMap.get(treeNode.getId()))
+                        .expand(treeNode.getExpand())
+                        .build())
                 .filter(node -> Objects.isNull(node.getSuperior()) || node.getSuperior() == 0)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Expands additional properties for a TreeNode.
-     *
-     * @param treeNode the TreeNode to expand
-     * @param clazz    the class of the object
-     * @param t        the object representing the node
-     * @param expand   a set of property names to expand
-     */
-    private void expand(TreeNode treeNode, Class<?> clazz, T t, Set<String> expand) {
-        if (expand != null && !expand.isEmpty()) {
-            Map<String, Object> expandedData = new HashMap<>(expand.size());
-            try {
-                for (String field : expand) {
-                    PropertyDescriptor descriptor = new PropertyDescriptor(field, clazz);
-                    Object value = descriptor.getReadMethod().invoke(t);
-                    expandedData.put(field, value);
-                }
-            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
-                log.error("Error expanding data for TreeNode.", e);
-            }
-            treeNode.setExpand(expandedData);
-        }
     }
 
     /**
@@ -156,5 +136,30 @@ public abstract class AbstractTreeNodeService<T> {
             return null;
         }
     }
+
+    /**
+     * Expands additional properties for a TreeNode.
+     *
+     * @param clazz  the class of the object
+     * @param t      the object representing the node
+     * @param expand a set of property names to expand
+     */
+    private Map<String, Object> expand(Class<?> clazz, T t, Set<String> expand) {
+        Map<String, Object> expandedData = Collections.emptyMap();
+        if (expand != null && !expand.isEmpty()) {
+            expandedData = new HashMap<>(expand.size());
+            try {
+                for (String field : expand) {
+                    PropertyDescriptor descriptor = new PropertyDescriptor(field, clazz);
+                    Object value = descriptor.getReadMethod().invoke(t);
+                    expandedData.put(field, value);
+                }
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                log.error("Error expanding data for TreeNode.", e);
+            }
+        }
+        return expandedData;
+    }
+
 }
 
