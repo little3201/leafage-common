@@ -27,7 +27,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * audit metadata.
+ * Abstract class representing audit metadata for entities, providing fields and methods
+ * for auditing the creation and modification details, such as the creator, modifier,
+ * creation time, and modification time.
+ * This class is intended to be extended by entity classes that require audit logging.
+ * It leverages Spring Data's auditing infrastructure.
+ * <p>
+ * The {@code @MappedSuperclass} annotation allows this class's fields to be inherited by subclasses,
+ * while the {@code @EntityListeners(AuditingEntityListener.class)} annotation enables audit event handling.
  *
  * @author wq li
  * @since 0.3.0
@@ -36,59 +43,61 @@ import java.util.Optional;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AuditMetadata implements Auditable<String, Long, Instant> {
 
-
+    /**
+     * Primary key of the entity, automatically generated.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    /**
+     * Indicates whether the entity is enabled. Default is {@code true}.
+     */
     private boolean enabled = true;
 
     /**
-     * 创建人
+     * The username of the user who created the entity. Not updatable after the entity is created.
      */
     @Column(name = "created_by", updatable = false, length = 50)
     private String createdBy;
 
     /**
-     * 创建时间
+     * The timestamp when the entity was created. Not updatable after the entity is created.
      */
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private Instant createdDate;
 
     /**
-     * 最后修改人
+     * The username of the user who last modified the entity. Only updatable when the entity is modified.
      */
     @Column(name = "last_modified_by", insertable = false, length = 50)
     private String lastModifiedBy;
 
     /**
-     * 最后修改时间
+     * The timestamp when the entity was last modified. Only updatable when the entity is modified.
      */
     @LastModifiedDate
     @Column(name = "last_modified_date", insertable = false)
     private Instant lastModifiedDate;
 
-
     /**
-     * <p>isEnabled.</p>
+     * Returns whether the entity is enabled.
      *
-     * @return a boolean
+     * @return {@code true} if the entity is enabled, otherwise {@code false}.
      */
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * <p>Setter for the field <code>enabled</code>.</p>
+     * Sets the enabled status of the entity.
      *
-     * @param enabled a boolean
+     * @param enabled a boolean indicating the enabled status.
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 
     /**
      * {@inheritDoc}
@@ -106,7 +115,6 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
         this.createdBy = createdBy;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -123,7 +131,6 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
         this.createdDate = creationDate;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -139,7 +146,6 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
-
 
     /**
      * {@inheritDoc}
@@ -166,9 +172,9 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     }
 
     /**
-     * <p>Setter for the field <code>id</code>.</p>
+     * Sets the primary key of the entity.
      *
-     * @param id a {@link Long} object
+     * @param id a {@link Long} representing the entity ID.
      */
     public void setId(Long id) {
         this.id = id;
@@ -182,3 +188,4 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
         return Objects.isNull(getId());
     }
 }
+

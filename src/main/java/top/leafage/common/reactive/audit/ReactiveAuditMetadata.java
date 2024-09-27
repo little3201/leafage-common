@@ -28,7 +28,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * relational audit metadata
+ * Abstract class representing audit metadata for reactive entities.
+ * Provides fields and methods for managing audit information such as entity creation,
+ * modification details, and whether the entity is enabled. Intended to be extended
+ * by entity classes that require audit tracking in a reactive context.
+ * <p>
+ * Annotations like {@code @InsertOnlyProperty} and {@code @CreatedDate} handle
+ * database insertion and automatic timestamping for creation events.
+ * <p>
+ * This class implements the {@link Auditable} interface for consistent audit behavior.
  *
  * @author wq li
  * @since 0.3.0
@@ -36,26 +44,26 @@ import java.util.Optional;
 public abstract class ReactiveAuditMetadata implements Auditable<String, Long, Instant> {
 
     /**
-     * 主键
+     * The primary key of the entity.
      */
     @Id
     private Long id;
 
     /**
-     * 是否启用
+     * Indicates whether the entity is enabled. Defaults to {@code true}.
      */
     @Column(value = "is_enabled")
     private boolean enabled = true;
 
     /**
-     * 创建人
+     * The username of the user who created the entity. Immutable once set.
      */
     @InsertOnlyProperty
     @Column(value = "created_by")
     private String createdBy;
 
     /**
-     * 创建时间
+     * The timestamp when the entity was created. Automatically set on insertion.
      */
     @InsertOnlyProperty
     @CreatedDate
@@ -63,37 +71,35 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     private Instant createdDate;
 
     /**
-     * 最后修改人
+     * The username of the user who last modified the entity.
      */
     @Column(value = "last_modified_by")
     private String lastModifiedBy;
 
     /**
-     * 最后修改时间
+     * The timestamp when the entity was last modified. Automatically updated on modification.
      */
     @LastModifiedDate
     @Column(value = "last_modified_date")
     private Instant lastModifiedDate;
 
-
     /**
-     * <p>isEnabled.</p>
+     * Returns whether the entity is enabled.
      *
-     * @return a boolean
+     * @return {@code true} if the entity is enabled, otherwise {@code false}.
      */
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * <p>Setter for the field <code>enabled</code>.</p>
+     * Sets the enabled status of the entity.
      *
-     * @param enabled a boolean
+     * @param enabled a boolean indicating the enabled status.
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 
     /**
      * {@inheritDoc}
@@ -110,7 +116,6 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
-
 
     /**
      * {@inheritDoc}
@@ -169,9 +174,9 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     }
 
     /**
-     * <p>Setter for the field <code>id</code>.</p>
+     * Sets the primary key of the entity.
      *
-     * @param id a {@link java.lang.Long} object
+     * @param id a {@link Long} representing the entity ID.
      */
     public void setId(Long id) {
         this.id = id;
@@ -185,3 +190,4 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
         return Objects.isNull(getId());
     }
 }
+

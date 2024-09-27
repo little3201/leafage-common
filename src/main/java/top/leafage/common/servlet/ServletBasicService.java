@@ -18,9 +18,7 @@
 package top.leafage.common.servlet;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import top.leafage.common.BasicService;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,22 +30,21 @@ import java.util.List;
  * @param <V> VO type for output data
  * @since 0.1.2
  */
-public interface ServletBasicService<D, V> {
+public interface ServletBasicService<D, V> extends BasicService {
 
     /**
      * Retrieves a paginated list of records.
      *
-     * @param page       the page number
-     * @param size       the number of records per page
-     * @param sortBy     the field to sort by
-     * @param descending whether sorting is in descending order
-     * @return a paginated list of records
+     * @param page       The page number (zero-based).
+     * @param size       The number of records per page.
+     * @param sortBy     The field to sort by. If null, records are unsorted.
+     * @param descending Whether sorting should be in descending order.
+     * @param filters    Optional filter criteria to apply.
+     * @return A paginated list of records.
      * @since 0.3.0
      */
-    default Page<V> retrieve(int page, int size, String sortBy, boolean descending) {
-        Sort sort = descending ? Sort.by(Sort.Order.desc(sortBy)) : Sort.by(Sort.Order.asc(sortBy));
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return Page.empty(pageable);
+    default Page<V> retrieve(int page, int size, String sortBy, boolean descending, String... filters) {
+        return Page.empty(pageable(page, size, sortBy, descending));
     }
 
     /**

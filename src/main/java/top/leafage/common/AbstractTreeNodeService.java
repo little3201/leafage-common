@@ -46,10 +46,10 @@ public abstract class AbstractTreeNodeService<T> {
      * Creates a tree node from the given object, using the provided property names to expand additional data.
      * This method extracts ID, name, and superior ID from the object and attaches any expanded properties.
      *
-     * @param t      the object representing a node
-     * @param expand a set of property names to be expanded into the node's additional properties
-     * @return a fully constructed TreeNode instance
-     * @throws IllegalArgumentException if the ID property is null
+     * @param t      the object representing a node.
+     * @param expand a set of property names to be expanded into the node's additional properties.
+     * @return a fully constructed TreeNode instance.
+     * @throws IllegalArgumentException if the ID property is null.
      * @since 0.3.0
      */
     protected TreeNode createNode(T t, Set<String> expand) {
@@ -71,8 +71,8 @@ public abstract class AbstractTreeNodeService<T> {
      * Organizes the tree nodes by assigning children to their respective parents based on the superior ID.
      * Returns a list of root nodes (nodes that do not have a superior).
      *
-     * @param treeNodes the list of all nodes to organize
-     * @return a list of root nodes, each containing its child nodes
+     * @param treeNodes the list of all nodes to organize.
+     * @return a list of root nodes, each containing its child nodes.
      * @since 0.2.0
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
@@ -94,9 +94,9 @@ public abstract class AbstractTreeNodeService<T> {
     /**
      * Retrieves the ID value from the given object using reflection.
      *
-     * @param obj   the object instance
-     * @param clazz the class of the object or its superclass
-     * @return the ID value, or null if an error occurs during reflection
+     * @param obj   the object instance.
+     * @param clazz the class of the object or its superclass.
+     * @return the ID value, or null if an error occurs during reflection.
      */
     private Object getId(Object obj, Class<?> clazz) {
         try {
@@ -111,9 +111,9 @@ public abstract class AbstractTreeNodeService<T> {
     /**
      * Retrieves the name value from the given object using reflection.
      *
-     * @param t     the object instance
-     * @param clazz the class of the object
-     * @return the name value, or null if an error occurs during reflection
+     * @param t     the object instance.
+     * @param clazz the class of the object.
+     * @return the name value, or null if an error occurs during reflection.
      */
     private Object getName(T t, Class<?> clazz) {
         try {
@@ -128,9 +128,9 @@ public abstract class AbstractTreeNodeService<T> {
     /**
      * Retrieves the superior ID value from the given object using reflection.
      *
-     * @param t     the object instance
-     * @param clazz the class of the object
-     * @return the superior ID value, or null if an error occurs during reflection
+     * @param t     the object instance.
+     * @param clazz the class of the object.
+     * @return the superior ID value, or null if an error occurs during reflection.
      */
     private Object getSuperiorId(T t, Class<?> clazz) {
         try {
@@ -145,10 +145,10 @@ public abstract class AbstractTreeNodeService<T> {
     /**
      * Expands additional properties for the TreeNode by reflecting on the object's class and property names.
      *
-     * @param clazz  the class of the object
-     * @param t      the object representing the node
-     * @param expand a set of property names to expand as additional data
-     * @return a map containing the expanded properties
+     * @param clazz  the class of the object.
+     * @param t      the object representing the node.
+     * @param expand a set of property names to expand as additional data.
+     * @return a map containing the expanded properties.
      * @since 0.3.0
      */
     private Map<String, Object> meta(Class<?> clazz, T t, Set<String> expand) {

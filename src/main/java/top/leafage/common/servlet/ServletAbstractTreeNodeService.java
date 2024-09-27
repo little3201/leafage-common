@@ -36,8 +36,8 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
     /**
      * Converts a list of child nodes into a tree structure.
      *
-     * @param children the list of child nodes
-     * @return the tree node collection
+     * @param children the list of child nodes.
+     * @return the tree node collection.
      * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children) {
@@ -47,9 +47,9 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
     /**
      * Converts a list of child nodes into a tree structure, with additional properties.
      *
-     * @param children the list of child nodes
-     * @param meta   a set of additional properties to include
-     * @return the tree node collection
+     * @param children the list of child nodes.
+     * @param meta   a set of additional properties to include.
+     * @return the tree node collection.
      * @since 0.2.0
      */
     protected List<TreeNode> convert(List<T> children, Set<String> meta) {

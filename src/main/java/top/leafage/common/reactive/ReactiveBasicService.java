@@ -18,11 +18,9 @@
 package top.leafage.common.reactive;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import top.leafage.common.BasicService;
 
 /**
  * Reactive service interface for basic CRUD operations.
@@ -31,28 +29,27 @@ import reactor.core.publisher.Mono;
  * @param <V> VO type for output data
  * @since 0.1.2
  */
-public interface ReactiveBasicService<D, V> {
+public interface ReactiveBasicService<D, V> extends BasicService {
 
     /**
      * Retrieves a paginated list of records.
      *
-     * @param page       the page number
-     * @param size       the number of records per page
-     * @param sortBy     the field to sort by
-     * @param descending whether sorting is in descending order
-     * @return a Mono containing a paginated list of records
+     * @param page       The page number (zero-based).
+     * @param size       The number of records per page.
+     * @param sortBy     The field to sort by. If null, records are unsorted.
+     * @param descending Whether sorting should be in descending order.
+     * @param filters    Optional filter criteria to apply.
+     * @return A paginated list of records.
      * @since 0.3.0
      */
-    default Mono<Page<V>> retrieve(int page, int size, String sortBy, boolean descending) {
-        Sort sort = descending ? Sort.by(Sort.Order.desc(sortBy)) : Sort.by(Sort.Order.asc(sortBy));
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return Mono.just(Page.empty(pageable));
+    default Mono<Page<V>> retrieve(int page, int size, String sortBy, boolean descending, String... filters) {
+        return Mono.just(Page.empty(pageable(page, size, sortBy, descending)));
     }
 
     /**
      * Retrieves all records.
      *
-     * @return a Flux stream of all records
+     * @return a Flux stream of all records.
      */
     default Flux<V> retrieve() {
         return Flux.empty();
@@ -61,8 +58,8 @@ public interface ReactiveBasicService<D, V> {
     /**
      * Fetches a record by its ID.
      *
-     * @param id the record ID
-     * @return a Mono containing the record, or an empty Mono if not found
+     * @param id the record ID.
+     * @return a Mono containing the record, or an empty Mono if not found.
      */
     default Mono<V> fetch(Long id) {
         return Mono.empty();
@@ -71,8 +68,8 @@ public interface ReactiveBasicService<D, V> {
     /**
      * Checks if a record exists by its name.
      *
-     * @param name the record name
-     * @return a Mono emitting true if the record exists, false otherwise
+     * @param name the record name.
+     * @return a Mono emitting true if the record exists, false otherwise.
      */
     default Mono<Boolean> exist(String name) {
         return Mono.empty();
@@ -81,8 +78,8 @@ public interface ReactiveBasicService<D, V> {
     /**
      * Creates a new record.
      *
-     * @param d the DTO representing the new record
-     * @return a Mono containing the created record
+     * @param d the DTO representing the new record.
+     * @return a Mono containing the created record.
      */
     default Mono<V> create(D d) {
         return Mono.empty();
@@ -91,9 +88,9 @@ public interface ReactiveBasicService<D, V> {
     /**
      * Updates an existing record by its ID.
      *
-     * @param id the record ID
-     * @param d  the DTO containing updated data
-     * @return a Mono containing the updated record
+     * @param id the record ID.
+     * @param d  the DTO containing updated data.
+     * @return a Mono containing the updated record.
      */
     default Mono<V> modify(Long id, D d) {
         return Mono.empty();
@@ -102,8 +99,8 @@ public interface ReactiveBasicService<D, V> {
     /**
      * Removes a record by its ID.
      *
-     * @param id the record ID
-     * @return a Mono indicating completion
+     * @param id the record ID.
+     * @return a Mono indicating completion.
      */
     default Mono<Void> remove(Long id) {
         return Mono.empty();
