@@ -17,7 +17,6 @@
 
 package top.leafage.common.servlet;
 
-import org.springframework.data.domain.Page;
 import top.leafage.common.BasicService;
 
 import java.util.Collections;
@@ -31,21 +30,6 @@ import java.util.List;
  * @since 0.1.2
  */
 public interface ServletBasicService<D, V> extends BasicService {
-
-    /**
-     * Retrieves a paginated list of records.
-     *
-     * @param page       The page number (zero-based).
-     * @param size       The number of records per page.
-     * @param sortBy     The field to sort by. If null, records are unsorted.
-     * @param descending Whether sorting should be in descending order.
-     * @param filters    Optional filter criteria to apply.
-     * @return A paginated list of records.
-     * @since 0.3.0
-     */
-    default Page<V> retrieve(int page, int size, String sortBy, boolean descending, String... filters) {
-        return Page.empty(pageable(page, size, sortBy, descending));
-    }
 
     /**
      * Retrieves all records.
