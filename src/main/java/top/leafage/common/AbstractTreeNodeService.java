@@ -76,17 +76,12 @@ public abstract class AbstractTreeNodeService<T> {
      * @since 0.2.0
      */
     protected List<TreeNode> children(List<TreeNode> treeNodes) {
-        Map<Long, List<TreeNode>> nodesMap = treeNodes.stream()
-                .filter(node -> Objects.nonNull(node.getSuperiorId()) && node.getSuperiorId() != 0)
+        Map<Long, List<TreeNode>> nodesMap = treeNodes.parallelStream()
+                .filter(node -> Objects.nonNull(node.getSuperiorId()))
                 .collect(Collectors.groupingBy(TreeNode::getSuperiorId));
 
-        return treeNodes.stream()
-                .map(treeNode -> TreeNode.withId(treeNode.getId())
-                        .name(treeNode.getName())
-                        .superiorId(treeNode.getSuperiorId())
-                        .children(nodesMap.get(treeNode.getId()))
-                        .meta(treeNode.getMeta())
-                        .build())
+        return treeNodes.parallelStream()
+                .peek(treeNode -> treeNode.setChildren(nodesMap.get(treeNode.getId())))
                 .filter(node -> Objects.isNull(node.getSuperiorId()))
                 .collect(Collectors.toList());
     }

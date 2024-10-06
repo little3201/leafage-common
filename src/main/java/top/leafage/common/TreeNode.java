@@ -56,7 +56,7 @@ public class TreeNode {
     /**
      * A list of child nodes. Null or empty if there are no children.
      */
-    private final List<TreeNode> children;
+    private List<TreeNode> children;
 
     /**
      * Private constructor for the TreeNode class. Instances are created using the {@link TreeNodeBuilder}.
@@ -162,17 +162,6 @@ public class TreeNode {
         }
 
         /**
-         * Sets the list of child nodes for the current node.
-         *
-         * @param children A list of child nodes.
-         * @return The current instance of {@link TreeNodeBuilder}.
-         */
-        public TreeNodeBuilder children(List<TreeNode> children) {
-            this.children = children;
-            return this;
-        }
-
-        /**
          * Constructs and returns a new {@link TreeNode} instance.
          *
          * @return A new instance of {@link TreeNode} with the properties set in the builder.
@@ -228,4 +217,7 @@ public class TreeNode {
         return children;
     }
 
+    public void setChildren(List<TreeNode> children) {
+        this.children = children;
+    }
 }
