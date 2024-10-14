@@ -52,7 +52,6 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * Indicates whether the entity is enabled. Defaults to {@code true}.
      */
-    @Column(value = "is_enabled")
     private boolean enabled = true;
 
     /**

@@ -19,7 +19,6 @@ package top.leafage.common.reactive;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import top.leafage.common.BasicService;
 
 /**
  * Reactive service interface for basic CRUD operations.
@@ -28,7 +27,7 @@ import top.leafage.common.BasicService;
  * @param <V> VO type for output data
  * @since 0.1.2
  */
-public interface ReactiveBasicService<D, V> extends BasicService {
+public interface ReactiveBasicService<D, V> {
 
     /**
      * Retrieves all records.
@@ -50,13 +49,13 @@ public interface ReactiveBasicService<D, V> extends BasicService {
     }
 
     /**
-     * Checks if a record exists by its name.
+     * Checks if a record exists by it's field.
      *
-     * @param name the record name.
+     * @param field the record's field.
      * @return a Mono emitting true if the record exists, false otherwise.
      */
-    default Mono<Boolean> exist(String name) {
-        return Mono.empty();
+    default Mono<Boolean> exist(String field) {
+        return Mono.just(false);
     }
 
     /**

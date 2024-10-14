@@ -17,8 +17,6 @@
 
 package top.leafage.common.servlet;
 
-import top.leafage.common.BasicService;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +27,7 @@ import java.util.List;
  * @param <V> VO type for output data
  * @since 0.1.2
  */
-public interface ServletBasicService<D, V> extends BasicService {
+public interface ServletBasicService<D, V> {
 
     /**
      * Retrieves all records.
@@ -51,12 +49,12 @@ public interface ServletBasicService<D, V> extends BasicService {
     }
 
     /**
-     * Checks if a record exists by its name.
+     * Checks if a record exists by it's field.
      *
-     * @param name the record name
+     * @param field the record's field
      * @return true if the record exists, false otherwise
      */
-    default boolean exist(String name) {
+    default boolean exist(String field) {
         return false;
     }
 
