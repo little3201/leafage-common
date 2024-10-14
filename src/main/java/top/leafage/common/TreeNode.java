@@ -217,6 +217,11 @@ public class TreeNode {
         return children;
     }
 
+    /**
+     * Sets the list of child nodes for the current node.
+     *
+     * @param children A list of child nodes.
+     */
     public void setChildren(List<TreeNode> children) {
         this.children = children;
     }
