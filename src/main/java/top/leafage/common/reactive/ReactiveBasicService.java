@@ -119,8 +119,7 @@ public interface ReactiveBasicService<D, V> extends BasicService {
     default <S extends ReactiveAuditMetadata, T extends ReadonlyMetadata> T convertToVO(S source, Class<T> voClass) {
         try {
             T target = create(source.getId(), source.isEnabled(), source.getLastModifiedDate().orElse(null), voClass);
-            convert(source, target);
-            return target;
+            return convert(source, target);
         } catch (Exception e) {
             throw new RuntimeException("Convert to reactive vo error", e);
         }
@@ -139,8 +138,7 @@ public interface ReactiveBasicService<D, V> extends BasicService {
     default <S, T extends ReactiveAuditMetadata> T convertToDomain(S source, Class<T> targetClass) {
         try {
             T target = targetClass.getDeclaredConstructor().newInstance();
-            convert(source, target);
-            return target;
+            return convert(source, target);
         } catch (Exception e) {
             throw new RuntimeException("Convert to reactive domain error", e);
         }

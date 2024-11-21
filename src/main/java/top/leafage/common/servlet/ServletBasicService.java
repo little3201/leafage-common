@@ -127,8 +127,7 @@ public interface ServletBasicService<D, V> extends BasicService {
         try {
             T target = create(source.getId(), source.isEnabled(),
                     source.getLastModifiedDate().orElse(null), voClass);
-            convert(source, target);
-            return target;
+            return convert(source, target);
         } catch (Exception e) {
             throw new RuntimeException("Convert to vo error", e);
         }
@@ -147,8 +146,7 @@ public interface ServletBasicService<D, V> extends BasicService {
     default <S, T extends AuditMetadata> T convertToDomain(S source, Class<T> targetClass) {
         try {
             T target = targetClass.getDeclaredConstructor().newInstance();
-            convert(source, target);
-            return target;
+            return convert(source, target);
         } catch (Exception e) {
             throw new RuntimeException("Convert to domain error", e);
         }

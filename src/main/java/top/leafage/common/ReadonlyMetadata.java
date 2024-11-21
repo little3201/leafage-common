@@ -18,6 +18,11 @@ package top.leafage.common;
 
 import java.time.Instant;
 
+/**
+ * This interface includes methods for creating objects.
+ *
+ * @author wq li
+ */
 public interface ReadonlyMetadata {
 
     /**

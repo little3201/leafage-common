@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
-import top.leafage.common.servlet.audit.AuditMetadata;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;
@@ -58,6 +57,16 @@ public interface BasicService {
         }
     }
 
+    /**
+     * Converts a source object to an existing target object.
+     *
+     * @param id               The record id.
+     * @param enabled          The record enabled.
+     * @param lastModifiedDate The record lastModifiedDate.
+     * @param voClass          The class of the target object.
+     * @param <T>              The type of the target object.
+     * @return The populated target object.
+     */
     default <T> T create(Long id, boolean enabled, Instant lastModifiedDate, Class<T> voClass) {
         try {
             Constructor<T> constructor = voClass.getConstructor(Long.class, boolean.class, Instant.class);
