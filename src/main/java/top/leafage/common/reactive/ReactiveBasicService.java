@@ -20,6 +20,8 @@ package top.leafage.common.reactive;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import top.leafage.common.BasicService;
+import top.leafage.common.ReadonlyMetadata;
+import top.leafage.common.reactive.audit.ReactiveAuditMetadata;
 
 import java.util.List;
 
@@ -103,6 +105,47 @@ public interface ReactiveBasicService<D, V> extends BasicService {
     default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
+
+    /**
+     * Converts a source object to an instance of the target class.
+     *
+     * @param source  The source object to convert.
+     * @param voClass The class of the vo object.
+     * @param <S>     The type of the source object.
+     * @param <T>     The type of the target object.
+     * @return An instance of the target class.
+     * @throws RuntimeException if the conversion fails.
+     */
+    default <S extends ReactiveAuditMetadata, T extends ReadonlyMetadata> T convertToVO(S source, Class<T> voClass) {
+        try {
+            T target = create(source.getId(), source.isEnabled(), source.getLastModifiedDate().orElse(null), voClass);
+            convert(source, target);
+            return target;
+        } catch (Exception e) {
+            throw new RuntimeException("Convert to reactive vo error", e);
+        }
+    }
+
+    /**
+     * Converts a source object to an instance of the target class.
+     *
+     * @param source      The source object to convert.
+     * @param targetClass The class of the target object.
+     * @param <S>         The type of the source object.
+     * @param <T>         The type of the target object.
+     * @return An instance of the target class.
+     * @throws RuntimeException if the conversion fails.
+     */
+    default <S, T extends ReactiveAuditMetadata> T convertToDomain(S source, Class<T> targetClass) {
+        try {
+            T target = targetClass.getDeclaredConstructor().newInstance();
+            convert(source, target);
+            return target;
+        } catch (Exception e) {
+            throw new RuntimeException("Convert to reactive domain error", e);
+        }
+    }
+
 }
 
 

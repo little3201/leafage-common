@@ -5,6 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
+import top.leafage.common.servlet.audit.AuditMetadata;
+
+import java.lang.reflect.Constructor;
+import java.time.Instant;
 
 /**
  * This interface includes methods for creating pageable objects and converting entities.
@@ -35,27 +39,6 @@ public interface BasicService {
     }
 
     /**
-     * Converts a source object to an instance of the target class.
-     *
-     * @param source      The source object to convert.
-     * @param targetClass The class of the target object.
-     * @param <S>         The type of the source object.
-     * @param <T>         The type of the target object.
-     * @return An instance of the target class.
-     * @throws RuntimeException if the conversion fails.
-     */
-    default <S, T> T convert(S source, Class<T> targetClass) {
-        try {
-            T target = targetClass.getDeclaredConstructor().newInstance();
-            BeanCopier copier = BeanCopier.create(source.getClass(), targetClass, false);
-            copier.copy(source, target, null);
-            return target;
-        } catch (Exception e) {
-            throw new RuntimeException("Convert error", e);
-        }
-    }
-
-    /**
      * Converts a source object to an existing target object.
      *
      * @param source The source object to convert.
@@ -72,6 +55,15 @@ public interface BasicService {
             return target;
         } catch (Exception e) {
             throw new RuntimeException("Convert error", e);
+        }
+    }
+
+    default <T> T create(Long id, boolean enabled, Instant lastModifiedDate, Class<T> voClass) {
+        try {
+            Constructor<T> constructor = voClass.getConstructor(Long.class, boolean.class, Instant.class);
+            return constructor.newInstance(id, enabled, lastModifiedDate);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create VO instance", e);
         }
     }
 }
