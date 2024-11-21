@@ -21,6 +21,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import top.leafage.common.BasicService;
 
+import java.util.List;
+
 /**
  * Reactive service interface for basic CRUD operations.
  *
@@ -33,9 +35,10 @@ public interface ReactiveBasicService<D, V> extends BasicService {
     /**
      * Retrieves all records.
      *
+     * @param ids the given records id .
      * @return a Flux stream of all records.
      */
-    default Flux<V> retrieve() {
+    default Flux<V> retrieve(List<Long> ids) {
         return Flux.empty();
     }
 

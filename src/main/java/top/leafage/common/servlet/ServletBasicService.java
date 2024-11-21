@@ -34,9 +34,10 @@ public interface ServletBasicService<D, V> extends BasicService {
     /**
      * Retrieves all records.
      *
+     * @param ids the given records id .
      * @return a list of all records
      */
-    default List<V> retrieve() {
+    default List<V> retrieve(List<Long> ids) {
         return Collections.emptyList();
     }
 
