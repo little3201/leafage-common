@@ -17,6 +17,8 @@
 
 package top.leafage.common.servlet;
 
+import top.leafage.common.BasicService;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
  * @param <V> VO type for output data
  * @since 0.1.2
  */
-public interface ServletBasicService<D, V> {
+public interface ServletBasicService<D, V> extends BasicService {
 
     /**
      * Retrieves all records.
@@ -52,20 +54,41 @@ public interface ServletBasicService<D, V> {
      * Checks if a record exists by it's field.
      *
      * @param field the record's field
+     * @param id    the record's id
      * @return true if the record exists, false otherwise
      */
-    default boolean exist(String field) {
+    default boolean exists(String field, Long id) {
+        return false;
+    }
+
+    /**
+     * Enable or Disable a record by it's ID.
+     *
+     * @param id the record ID
+     * @return true if the record enabled/disabled, false otherwise
+     */
+    default boolean enable(Long id) {
         return false;
     }
 
     /**
      * Creates a new record.
      *
-     * @param d the DTO representing the new record
+     * @param d the new record
      * @return the created record
      */
     default V create(D d) {
         return null;
+    }
+
+    /**
+     * Creates all given records.
+     *
+     * @param iterable the new records.
+     * @return the created records.
+     */
+    default List<V> createAll(Iterable<D> iterable) {
+        return Collections.emptyList();
     }
 
     /**

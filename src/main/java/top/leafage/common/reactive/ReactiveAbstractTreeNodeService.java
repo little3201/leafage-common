@@ -42,21 +42,21 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convert(Flux<T> children) {
-        return this.convert(children, Collections.emptySet());
+    protected Mono<List<TreeNode>> convertToTree(Flux<T> children) {
+        return convertToTree(children, Collections.emptySet());
     }
 
     /**
      * Converts a reactive stream of child nodes into a tree structure with additional properties.
      *
      * @param children a Flux of child nodes.
-     * @param meta   a set of additional properties to include.
+     * @param meta     a set of additional properties to include.
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convert(Flux<T> children, Set<String> meta) {
+    protected Mono<List<TreeNode>> convertToTree(Flux<T> children, Set<String> meta) {
         return children
-                .map(child -> this.createNode(child, meta))
+                .map(child -> createNode(child, meta))
                 .collectList()
                 .map(this::children);
     }

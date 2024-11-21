@@ -40,21 +40,21 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode> convert(List<T> children) {
-        return this.convert(children, Collections.emptySet());
+    protected List<TreeNode> convertToTree(List<T> children) {
+        return convertToTree(children, Collections.emptySet());
     }
 
     /**
      * Converts a list of child nodes into a tree structure, with additional properties.
      *
      * @param children the list of child nodes.
-     * @param meta   a set of additional properties to include.
+     * @param meta     a set of additional properties to include.
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode> convert(List<T> children, Set<String> meta) {
-        return this.children(children.stream()
-                .map(child -> this.createNode(child, meta))
+    protected List<TreeNode> convertToTree(List<T> children, Set<String> meta) {
+        return children(children.stream()
+                .map(child -> createNode(child, meta))
                 .toList());
     }
 }
