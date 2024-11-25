@@ -27,14 +27,11 @@ public interface BasicService {
      */
     default Pageable pageable(int page, int size, String sortBy, boolean descending) {
         size = Math.min(size, 500);
-        Pageable pageable;
-        if (StringUtils.hasText(sortBy)) {
-            Sort sort = Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
-            pageable = PageRequest.of(page, size, sort);
-        } else {
-            pageable = PageRequest.of(page, size);
-        }
-        return pageable;
+
+        Sort sort = Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC,
+                StringUtils.hasText(sortBy) ? sortBy : "id");
+
+        return PageRequest.of(page, size, sort);
     }
 
     /**
