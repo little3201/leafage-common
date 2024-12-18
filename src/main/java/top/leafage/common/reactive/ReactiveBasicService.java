@@ -61,7 +61,7 @@ public interface ReactiveBasicService<D, V> extends BasicService {
      * @param id    the record's id
      * @return a Mono emitting true if the record exists, false otherwise.
      */
-    default Mono<Boolean> exist(String field, Long id) {
+    default Mono<Boolean> exists(String field, Long id) {
         return Mono.just(false);
     }
 
