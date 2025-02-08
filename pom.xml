@@ -31,6 +31,12 @@
     <name>leafage-common</name>
     <description>common for leafage</description>
 
+    <properties>
+        <sonar.projectKey>little3201_leafage-gateway</sonar.projectKey>
+        <sonar.organization>little3201</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.poi</groupId>
