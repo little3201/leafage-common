@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * This interface includes methods for creating pageable objects and converting entities.
@@ -41,10 +40,9 @@ public interface BasicService {
      * @param size       The size of the page (number of items per page), capped at 500.
      * @param sortBy     The field to sort by, or null for unsorted pagination.
      * @param descending Whether the sorting should be in descending order.
-     * @param conditions filter conditions to apply, can be null or empty.
      * @return A {@link Pageable} instance configured with the provided parameters.
      */
-    default Pageable pageable(int page, int size, String sortBy, boolean descending, List<Condition> conditions) {
+    default Pageable pageable(int page, int size, String sortBy, boolean descending) {
         size = Math.min(size, 500);
 
         Sort sort = Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC,
