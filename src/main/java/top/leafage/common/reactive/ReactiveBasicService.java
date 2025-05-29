@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import top.leafage.common.BasicService;
-import top.leafage.common.Condition;
 import top.leafage.common.ReadonlyMetadata;
 import top.leafage.common.reactive.audit.ReactiveAuditMetadata;
 
@@ -39,21 +38,21 @@ import java.util.List;
 public interface ReactiveBasicService<D, V> extends BasicService {
 
     /**
-     * Retrieves all records.
+     * Retrieves records by pageable, sort, filters.
      *
      * @param page       The page number (zero-based).
      * @param size       The size of the page (number of items per page), capped at 500.
      * @param sortBy     The field to sort by, or null for unsorted pagination.
      * @param descending Whether the sorting should be in descending order.
-     * @param conditions filter conditions to apply to the query.
+     * @param filters    filters to apply to the query.
      * @return a Flux stream of all records.
      */
-    default Mono<Page<V>> retrieve(int page, int size, String sortBy, boolean descending, List<Condition> conditions) {
+    default Mono<Page<V>> retrieve(int page, int size, String sortBy, boolean descending, String filters) {
         return Mono.just(new PageImpl<>(Collections.emptyList()));
     }
 
     /**
-     * Retrieves all records.
+     * Retrieves all records or by given ids.
      *
      * @param ids the given records id .
      * @return a Flux stream of all records.

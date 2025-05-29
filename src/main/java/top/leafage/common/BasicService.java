@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;
+import java.util.function.Function;
 
 /**
  * This interface includes methods for creating pageable objects and converting entities.
@@ -88,5 +89,16 @@ public interface BasicService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create VO instance", e);
         }
+    }
+
+    /**
+     * Parse filters.
+     *
+     * @param filters filter dsl
+     * @param handler handle function
+     * @return R
+     */
+    default <R> R parseFilters(String filters, Function<String, R> handler) {
+        return handler.apply(filters == null ? "" : filters);
     }
 }
