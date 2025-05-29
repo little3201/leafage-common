@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import top.leafage.common.TreeNode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Abstract service for constructing a tree structure in a servlet context.
@@ -31,7 +32,7 @@ import java.util.Set;
  * @author wq li
  * @since 0.1.3
  */
-public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
+public abstract class ServletAbstractTreeNodeService<T, ID> extends AbstractTreeNodeService<T, ID> {
 
     /**
      * Converts a list of child nodes into a tree structure.
@@ -40,7 +41,7 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode> convertToTree(List<T> children) {
+    protected List<TreeNode<ID>> convertToTree(List<T> children) {
         return convertToTree(children, Collections.emptySet());
     }
 
@@ -52,10 +53,13 @@ public abstract class ServletAbstractTreeNodeService<T> extends AbstractTreeNode
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode> convertToTree(List<T> children, Set<String> meta) {
-        return children(children.stream()
+    protected List<TreeNode<ID>> convertToTree(List<T> children, Set<String> meta) {
+        List<TreeNode<ID>> nodes = children.stream()
                 .map(child -> createNode(child, meta))
-                .toList());
+                .collect(Collectors.toList());
+
+        return buildTree(nodes);
     }
 }
+
 

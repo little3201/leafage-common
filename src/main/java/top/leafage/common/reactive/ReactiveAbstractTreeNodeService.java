@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.Set;
  * @author wq li
  * @since 0.1.3
  */
-public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNodeService<T> {
+public abstract class ReactiveAbstractTreeNodeService<T, ID> extends AbstractTreeNodeService<T, ID> {
 
     /**
      * Converts a reactive stream of child nodes into a tree structure.
@@ -42,7 +42,7 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convertToTree(Flux<T> children) {
+    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children) {
         return convertToTree(children, Collections.emptySet());
     }
 
@@ -54,10 +54,11 @@ public abstract class ReactiveAbstractTreeNodeService<T> extends AbstractTreeNod
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode>> convertToTree(Flux<T> children, Set<String> meta) {
+    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children, Set<String> meta) {
         return children
                 .map(child -> createNode(child, meta))
                 .collectList()
-                .map(this::children);
+                .map(this::buildTree); // 使用父类方法构建树
     }
 }
+

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright 2018-2024 little3201.
+  ~  Copyright 2018-2025 little3201.
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@
     <parent>
         <groupId>top.leafage</groupId>
         <artifactId>leafage-starter-parent</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
@@ -58,6 +58,11 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
             <optional>true</optional>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
     </dependencies>
 

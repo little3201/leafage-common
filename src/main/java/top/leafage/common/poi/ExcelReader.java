@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.apache.poi.util.StringUtil;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for reading and mapping Excel files from an InputStream to the specified type.
@@ -37,6 +40,7 @@ import java.util.*;
 public final class ExcelReader<T> {
 
     private static final Logger log = StatusLogger.getLogger();
+    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new ConcurrentHashMap<>();
 
     /**
      * Private constructor to prevent instantiation.
@@ -122,8 +126,15 @@ public final class ExcelReader<T> {
 
         for (int i = firstRowNum + 1; i <= lastRowNum; i++) {
             Row row = sheet.getRow(i);
+            if (isRowEmpty(row)) continue;
+
             Map<String, Object> rowData = mapRowToHeaders(row, headers);
-            dataList.add(convert(rowData, clazz));
+            T obj = convert(rowData, clazz);
+            if (obj != null) {
+                dataList.add(obj);
+            } else {
+                log.warn("Skipping row {} due to conversion failure", i + 1);
+            }
         }
         return dataList;
     }
@@ -171,14 +182,22 @@ public final class ExcelReader<T> {
     private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
+            Map<String, PropertyDescriptor> descriptorMap = getPropertyDescriptors(clazz);
+
             for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
-                PropertyDescriptor descriptor = new PropertyDescriptor(entry.getKey(), clazz);
-                descriptor.getWriteMethod().invoke(instance, entry.getValue());
+                String header = entry.getKey();
+                Object value = entry.getValue();
+
+                PropertyDescriptor descriptor = descriptorMap.get(header);
+                if (descriptor != null && descriptor.getWriteMethod() != null) {
+                    Object convertedValue = convertType(value, descriptor.getPropertyType());
+                    descriptor.getWriteMethod().invoke(instance, convertedValue);
+                }
             }
             return instance;
         } catch (Exception e) {
-            log.error("Failed to convert row data to object.", e);
-            throw new RuntimeException(e);
+            log.error("Failed to convert row to object", e);
+            return null; // 避免抛出异常，中断读取流程
         }
     }
 
@@ -208,4 +227,53 @@ public final class ExcelReader<T> {
     private static String readCellAsString(Cell cell) {
         return cell == null ? "" : cell.toString();
     }
+
+    private static Object convertType(Object value, Class<?> targetType) {
+        if (value == null) return null;
+        if (targetType.isInstance(value)) return value;
+
+        String str = value.toString().trim();
+        if (targetType == String.class) return str;
+        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
+        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
+        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
+        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
+        if (targetType == LocalDate.class) return LocalDate.parse(str);
+        // 可拓展更多类型
+        return str;
+    }
+
+    private static <T> Map<String, PropertyDescriptor> getPropertyDescriptors(Class<T> clazz) {
+        return descriptorCache.computeIfAbsent(clazz, key -> {
+            Map<String, PropertyDescriptor> map = new HashMap<>();
+            try {
+                for (Field field : clazz.getDeclaredFields()) {
+                    String name = field.getName();
+                    if (field.isAnnotationPresent(ExcelColumn.class)) {
+                        name = field.getAnnotation(ExcelColumn.class).value();
+                    }
+                    map.put(normalize(name), new PropertyDescriptor(field.getName(), clazz));
+                }
+            } catch (Exception e) {
+                log.error("Failed to introspect class: {}", clazz, e);
+            }
+            return map;
+        });
+    }
+
+    private static String normalize(String name) {
+        return name.trim().replaceAll("[_\\s]+", "").toLowerCase();
+    }
+
+    private static boolean isRowEmpty(Row row) {
+        if (row == null) return true;
+        for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
+            Cell cell = row.getCell(i);
+            if (cell != null && cell.getCellType() != CellType.BLANK && !cell.toString().trim().isEmpty()) {
+                return false; // 有一个非空单元格，行就不是空的
+            }
+        }
+        return true;
+    }
+
 }
