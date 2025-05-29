@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -98,7 +99,8 @@ public interface BasicService {
      * @param handler handle function
      * @return R
      */
-    default <R> R parseFilters(String filters, Function<String, R> handler) {
-        return handler.apply(filters == null ? "" : filters);
+    default <R> Optional<R> parseFilters(String filters, Function<String, R> handler) {
+        if (!StringUtils.hasText(filters)) return Optional.empty();
+        return Optional.ofNullable(handler.apply(filters));
     }
 }
