@@ -17,13 +17,10 @@ package top.leafage.common.reactive.audit;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Auditable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Abstract class representing audit metadata for reactive entities.
@@ -33,13 +30,12 @@ import java.util.Optional;
  * <p>
  * Annotations like {@code @InsertOnlyProperty} and {@code @CreatedDate} handle
  * database insertion and automatic timestamping for creation events.
- * <p>
- * This class implements the {@link Auditable} interface for consistent audit behavior.
+ * <p>.
  *
  * @author wq li
  * @since 0.3.0
  */
-public abstract class ReactiveAuditMetadata implements Auditable<String, Long, Instant> {
+public abstract class ReactiveAuditMetadata {
 
     /**
      * The primary key of the entity.
@@ -101,15 +97,13 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<String> getCreatedBy() {
-        return Optional.ofNullable(this.createdBy);
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
@@ -117,15 +111,13 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<Instant> getCreatedDate() {
-        return Optional.ofNullable(this.createdDate);
+    public Instant getCreatedDate() {
+        return this.createdDate;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCreatedDate(Instant creationDate) {
         this.createdDate = creationDate;
     }
@@ -133,15 +125,13 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<String> getLastModifiedBy() {
-        return Optional.ofNullable(this.lastModifiedBy);
+    public String getLastModifiedBy() {
+        return this.lastModifiedBy;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
@@ -149,15 +139,13 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<Instant> getLastModifiedDate() {
-        return Optional.ofNullable(this.lastModifiedDate);
+    public Instant getLastModifiedDate() {
+        return this.lastModifiedDate;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
@@ -165,7 +153,6 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
     /**
      * {@inheritDoc}
      */
-    @Override
     public Long getId() {
         return this.id;
     }
@@ -179,12 +166,5 @@ public abstract class ReactiveAuditMetadata implements Auditable<String, Long, I
         this.id = id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isNew() {
-        return Objects.isNull(getId());
-    }
 }
 

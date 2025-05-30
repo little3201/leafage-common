@@ -17,12 +17,8 @@ package top.leafage.common.servlet.audit;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Auditable;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Abstract class representing audit metadata for entities, providing fields and methods
@@ -38,8 +34,7 @@ import java.util.Optional;
  * @since 0.3.0
  */
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public abstract class AuditMetadata implements Auditable<String, Long, Instant> {
+public abstract class AuditMetadata {
 
     /**
      * Primary key of the entity, automatically generated.
@@ -100,15 +95,13 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<String> getCreatedBy() {
-        return Optional.ofNullable(this.createdBy);
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
@@ -116,15 +109,13 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<Instant> getCreatedDate() {
-        return Optional.ofNullable(this.createdDate);
+    public Instant getCreatedDate() {
+        return this.createdDate;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCreatedDate(Instant creationDate) {
         this.createdDate = creationDate;
     }
@@ -132,15 +123,13 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<String> getLastModifiedBy() {
-        return Optional.ofNullable(this.lastModifiedBy);
+    public String getLastModifiedBy() {
+        return this.lastModifiedBy;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
@@ -148,15 +137,13 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Optional<Instant> getLastModifiedDate() {
-        return Optional.ofNullable(this.lastModifiedDate);
+    public Instant getLastModifiedDate() {
+        return this.lastModifiedDate;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
@@ -164,7 +151,6 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
     /**
      * {@inheritDoc}
      */
-    @Override
     public Long getId() {
         return this.id;
     }
@@ -178,12 +164,5 @@ public abstract class AuditMetadata implements Auditable<String, Long, Instant> 
         this.id = id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isNew() {
-        return Objects.isNull(getId());
-    }
 }
 

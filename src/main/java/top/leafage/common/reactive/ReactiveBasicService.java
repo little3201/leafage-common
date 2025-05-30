@@ -135,7 +135,7 @@ public interface ReactiveBasicService<D, V> extends BasicService {
      */
     default <S extends ReactiveAuditMetadata, T extends ReadonlyMetadata> T convertToVO(S source, Class<T> voClass) {
         try {
-            T target = create(source.getId(), source.isEnabled(), source.getLastModifiedDate().orElse(null), voClass);
+            T target = create(source.getId(), source.isEnabled(), source.getLastModifiedDate(), voClass);
             return convert(source, target);
         } catch (Exception e) {
             throw new RuntimeException("Convert to reactive vo error", e);
