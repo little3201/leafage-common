@@ -17,14 +17,20 @@
 
 package top.leafage.common;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -102,5 +108,68 @@ public interface BasicService {
     default <R> Optional<R> parseFilters(String filters, Function<String, R> handler) {
         if (!StringUtils.hasText(filters)) return Optional.empty();
         return Optional.ofNullable(handler.apply(filters));
+    }
+
+    /**
+     * JPA 查询条件构建（Predicate 构建器）
+     */
+    default Optional<Predicate> buildJpaPredicate(String filters,
+                                                  CriteriaBuilder cb,
+                                                  Root<?> root) {
+        return parseFilters(filters, raw -> {
+            String[] parts = raw.split(",");
+            List<Predicate> predicates = new ArrayList<>();
+
+            for (String part : parts) {
+                part = part.trim();
+                if (part.contains(":")) {
+                    String[] kv = part.split(":", 2);
+                    predicates.add(cb.equal(root.get(kv[0]), kv[1]));
+                } else if (part.contains(">")) {
+                    String[] kv = part.split(">", 2);
+                    predicates.add(cb.greaterThan(root.get(kv[0]), kv[1]));
+                } else if (part.contains("<")) {
+                    String[] kv = part.split("<", 2);
+                    predicates.add(cb.lessThan(root.get(kv[0]), kv[1]));
+                } else if (part.contains("~")) {
+                    String[] kv = part.split("~", 2);
+                    predicates.add(cb.like(root.get(kv[0]), "%" + kv[1] + "%"));
+                }
+            }
+
+            return predicates.isEmpty() ? null : cb.and(predicates.toArray(new Predicate[0]));
+        });
+    }
+
+    /**
+     * R2DBC 查询条件构建（Criteria 构建器）
+     */
+    default Optional<Criteria> buildR2dbcCriteria(String filters) {
+        return parseFilters(filters, raw -> {
+            String[] parts = raw.split(",");
+            Criteria criteria = null;
+
+            for (String part : parts) {
+                part = part.trim();
+                Criteria c = null;
+                if (part.contains(":")) {
+                    String[] kv = part.split(":", 2);
+                    c = Criteria.where(kv[0]).is(kv[1]);
+                } else if (part.contains(">")) {
+                    String[] kv = part.split(">", 2);
+                    c = Criteria.where(kv[0]).greaterThan(kv[1]);
+                } else if (part.contains("<")) {
+                    String[] kv = part.split("<", 2);
+                    c = Criteria.where(kv[0]).lessThan(kv[1]);
+                } else if (part.contains("~")) {
+                    String[] kv = part.split("~", 2);
+                    c = Criteria.where(kv[0]).like("%" + kv[1] + "%");
+                }
+                if (c != null) {
+                    criteria = (criteria == null) ? c : criteria.and(c);
+                }
+            }
+            return criteria;
+        });
     }
 }
