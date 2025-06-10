@@ -36,38 +36,24 @@ import java.time.Instant;
  */
 public class R2dbcAuditMetadata {
 
-    /**
-     * Indicates whether the entity is enabled. Defaults to {@code true}.
-     */
     private boolean enabled = true;
 
-    /**
-     * The username of the user who created the entity. Immutable once set.
-     */
     @InsertOnlyProperty
     @Column(value = "created_by")
     private String createdBy;
 
-    /**
-     * The timestamp when the entity was created. Automatically set on insertion.
-     */
     @InsertOnlyProperty
     @CreatedDate
     @Column(value = "created_date")
     private Instant createdDate;
 
-    /**
-     * The username of the user who last modified the entity.
-     */
     @Column(value = "last_modified_by")
     private String lastModifiedBy;
 
-    /**
-     * The timestamp when the entity was last modified. Automatically updated on modification.
-     */
     @LastModifiedDate
     @Column(value = "last_modified_date")
     private Instant lastModifiedDate;
+
 
     public boolean isEnabled() {
         return enabled;
