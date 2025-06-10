@@ -15,13 +15,10 @@
  *
  */
 
-package top.leafage.common.servlet;
+package top.leafage.common.jdbc;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import top.leafage.common.BasicService;
-import top.leafage.common.ReadonlyMetadata;
-import top.leafage.common.servlet.audit.AuditMetadata;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,9 +28,9 @@ import java.util.List;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @since 0.1.2
+ * @since 0.3.4
  */
-public interface ServletBasicService<D, V> extends BasicService {
+public interface JdbcCrudService<D, V> {
 
     /**
      * Retrieves records by pageable, sort, filters.
@@ -127,44 +124,6 @@ public interface ServletBasicService<D, V> extends BasicService {
      * @param id the record ID
      */
     default void remove(Long id) {
-    }
-
-    /**
-     * Converts a source object to an instance of the target class.
-     *
-     * @param source  The source object to convert.
-     * @param voClass The class of the vo object.
-     * @param <S>     The type of the source object.
-     * @param <T>     The type of the target object.
-     * @return An instance of the target class.
-     * @throws RuntimeException if the conversion fails.
-     */
-    default <S extends AuditMetadata, T extends ReadonlyMetadata> T convertToVO(S source, Class<T> voClass) {
-        try {
-            T target = create(source.getId(), source.isEnabled(), source.getLastModifiedDate(), voClass);
-            return convert(source, target);
-        } catch (Exception e) {
-            throw new RuntimeException("Convert to vo error", e);
-        }
-    }
-
-    /**
-     * Converts a source object to an instance of the target class.
-     *
-     * @param source      The source object to convert.
-     * @param targetClass The class of the target object.
-     * @param <S>         The type of the source object.
-     * @param <T>         The type of the target object.
-     * @return An instance of the target class.
-     * @throws RuntimeException if the conversion fails.
-     */
-    default <S, T extends AuditMetadata> T convertToDomain(S source, Class<T> targetClass) {
-        try {
-            T target = targetClass.getDeclaredConstructor().newInstance();
-            return convert(source, target);
-        } catch (Exception e) {
-            throw new RuntimeException("Convert to domain error", e);
-        }
     }
 
 }

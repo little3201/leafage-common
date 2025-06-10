@@ -15,24 +15,28 @@
  *
  */
 
-package top.leafage.common.poi;
+package top.leafage.common.jdbc;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import top.leafage.common.TreeNode;
+
+import java.util.List;
 
 /**
- * excel column
+ * Abstract service for constructing a tree structure in a jdbc context.
  *
- * @since 0.3.2
+ * @param <N> the tree node
+ * @author wq li
+ * @since 0.3.4
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ExcelColumn {
+public interface JdbcTreeService<N, ID> extends JdbcCrudService<N, ID> {
 
-    /*
-     * Excel 列名
+    /**
+     * 获取树结构数据
+     *
+     * @return 树结构数据集
      */
-    String value();
+    List<TreeNode<ID>> tree();
+
 }
+
+

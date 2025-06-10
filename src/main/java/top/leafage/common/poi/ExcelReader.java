@@ -208,6 +208,9 @@ public final class ExcelReader<T> {
      * @return The cell's value as an Object.
      */
     private static Object readCell(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
             case NUMERIC -> cell.getNumericCellValue();

@@ -31,7 +31,7 @@ import java.util.Map;
  * The builder allows for easy configuration of all properties before creating an instance.</p>
  *
  * @author wq
- * @since 0.1.0
+ * @since 0.3.4
  */
 public class TreeNode<T> {
 

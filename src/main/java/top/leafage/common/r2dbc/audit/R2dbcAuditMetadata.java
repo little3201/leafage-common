@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package top.leafage.common.reactive.audit;
+package top.leafage.common.r2dbc.audit;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
@@ -23,10 +22,10 @@ import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 import java.time.Instant;
 
 /**
- * Abstract class representing audit metadata for reactive entities.
+ * Abstract class representing audit metadata for r2dbc entities.
  * Provides fields and methods for managing audit information such as entity creation,
  * modification details, and whether the entity is enabled. Intended to be extended
- * by entity classes that require audit tracking in a reactive context.
+ * by entity classes that require audit tracking in a r2dbc context.
  * <p>
  * Annotations like {@code @InsertOnlyProperty} and {@code @CreatedDate} handle
  * database insertion and automatic timestamping for creation events.
@@ -35,13 +34,7 @@ import java.time.Instant;
  * @author wq li
  * @since 0.3.0
  */
-public abstract class ReactiveAuditMetadata {
-
-    /**
-     * The primary key of the entity.
-     */
-    @Id
-    private Long id;
+public class R2dbcAuditMetadata {
 
     /**
      * Indicates whether the entity is enabled. Defaults to {@code true}.
@@ -76,94 +69,44 @@ public abstract class ReactiveAuditMetadata {
     @Column(value = "last_modified_date")
     private Instant lastModifiedDate;
 
-    /**
-     * Returns whether the entity is enabled.
-     *
-     * @return {@code true} if the entity is enabled, otherwise {@code false}.
-     */
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * Sets the enabled status of the entity.
-     *
-     * @param enabled a boolean indicating the enabled status.
-     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getCreatedBy() {
         return this.createdBy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Instant getCreatedDate() {
         return this.createdDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setCreatedDate(Instant creationDate) {
         this.createdDate = creationDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getLastModifiedBy() {
         return this.lastModifiedBy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Instant getLastModifiedDate() {
         return this.lastModifiedDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Long getId() {
-        return this.id;
-    }
-
-    /**
-     * Sets the primary key of the entity.
-     *
-     * @param id a {@link Long} representing the entity ID.
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }

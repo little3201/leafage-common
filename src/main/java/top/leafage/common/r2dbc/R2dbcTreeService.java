@@ -15,24 +15,28 @@
  *
  */
 
-package top.leafage.common.poi;
+package top.leafage.common.r2dbc;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import reactor.core.publisher.Mono;
+import top.leafage.common.TreeNode;
+
+import java.util.List;
 
 /**
- * excel column
+ * Abstract service for constructing a r2dbc tree structure.
  *
- * @since 0.3.2
+ * @param <N> the tree node
+ * @author wq li
+ * @since 0.3.4
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ExcelColumn {
+public interface R2dbcTreeService<N, ID> extends R2dbcCrudService<N, ID> {
 
-    /*
-     * Excel 列名
+    /**
+     * 获取树结构数据
+     *
+     * @return 树结构数据集
      */
-    String value();
+    Mono<List<TreeNode<ID>>> tree();
+
 }
+
