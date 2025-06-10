@@ -27,6 +27,7 @@
     </parent>
 
     <artifactId>leafage-common</artifactId>
+    <version>0.3.4</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
