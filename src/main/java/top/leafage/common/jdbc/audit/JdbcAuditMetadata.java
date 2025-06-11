@@ -61,22 +61,6 @@ public class JdbcAuditMetadata {
     private Instant lastModifiedDate;
 
 
-    public String getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Instant getCreatedDate() {
-        return this.createdDate;
-    }
-
-    public void setCreatedDate(Instant creationDate) {
-        this.createdDate = creationDate;
-    }
-
     public String getLastModifiedBy() {
         return this.lastModifiedBy;
     }
@@ -91,6 +75,22 @@ public class JdbcAuditMetadata {
 
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getCreatedBy() {
+        return this.createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Instant getCreatedDate() {
+        return this.createdDate;
+    }
+
+    public void setCreatedDate(Instant creationDate) {
+        this.createdDate = creationDate;
     }
 
 }
