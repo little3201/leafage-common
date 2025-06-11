@@ -3,6 +3,8 @@
 <p align="center">
  <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=alert_status" alt="Quality Gate Status">
  <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=code_smells" alt="code_smells"/>
+ <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=bugs" alt="bugs">
+ <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=ncloc" alt="lines of code"/>
 </p>
 
 ### 介绍：
