@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,24 +17,22 @@
 
 package top.leafage.common.poi;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.status.StatusLogger;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Write rows to a excel file.
+ * excel column
  *
- * @author wq li
- * @since 0.3.0
+ * @since 0.3.2
  */
-public final class ExcelWriter {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ExcelColumn {
 
-    private static final Logger log = StatusLogger.getLogger();
-
-    /**
-     * Private constructor to prevent instantiation.
+    /*
+     * Excel 列名
      */
-    private ExcelWriter() {
-        // Prevent instantiation
-    }
-
+    String value();
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  *
  */
 
-package top.leafage.common.servlet;
+package top.leafage.common.jdbc;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,32 +28,31 @@ import java.util.List;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @since 0.1.2
+ * @since 0.3.4
  */
-public interface ServletBasicService<D, V> {
+public interface JdbcCrudService<D, V> {
 
     /**
-     * Retrieves a paginated list of records.
+     * Retrieves records by pageable, sort, filters.
      *
-     * @param page       the page number
-     * @param size       the number of records per page
-     * @param sortBy     the field to sort by
-     * @param descending whether sorting is in descending order
-     * @return a paginated list of records
-     * @since 0.3.0
+     * @param page       The page number (zero-based).
+     * @param size       The size of the page (number of items per page), capped at 500.
+     * @param sortBy     The field to sort by, or null for unsorted pagination.
+     * @param descending Whether the sorting should be in descending order.
+     * @param filters    filters to apply to the query.
+     * @return a Flux stream of all records.
      */
-    default Page<V> retrieve(int page, int size, String sortBy, boolean descending) {
-        Sort sort = descending ? Sort.by(Sort.Order.desc(sortBy)) : Sort.by(Sort.Order.asc(sortBy));
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return Page.empty(pageable);
+    default Page<V> retrieve(int page, int size, String sortBy, boolean descending, String filters) {
+        return new PageImpl<>(Collections.emptyList());
     }
 
     /**
-     * Retrieves all records.
+     * Retrieves all records or by given ids.
      *
+     * @param ids the given records id .
      * @return a list of all records
      */
-    default List<V> retrieve() {
+    default List<V> retrieve(List<Long> ids) {
         return Collections.emptyList();
     }
 
@@ -70,23 +67,44 @@ public interface ServletBasicService<D, V> {
     }
 
     /**
-     * Checks if a record exists by its name.
+     * Checks if a record exists by it's field.
      *
-     * @param name the record name
+     * @param field the record's field
+     * @param id    the record's id
      * @return true if the record exists, false otherwise
      */
-    default boolean exist(String name) {
+    default boolean exists(String field, Long id) {
+        return false;
+    }
+
+    /**
+     * Enable or Disable a record by it's ID.
+     *
+     * @param id the record ID
+     * @return true if the record enabled/disabled, false otherwise
+     */
+    default boolean enable(Long id) {
         return false;
     }
 
     /**
      * Creates a new record.
      *
-     * @param d the DTO representing the new record
+     * @param d the new record
      * @return the created record
      */
     default V create(D d) {
         return null;
+    }
+
+    /**
+     * Creates all given records.
+     *
+     * @param iterable the new records.
+     * @return the created records.
+     */
+    default List<V> createAll(Iterable<D> iterable) {
+        return Collections.emptyList();
     }
 
     /**

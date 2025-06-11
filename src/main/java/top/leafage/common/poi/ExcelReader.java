@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2024 little3201.
+ *  Copyright 2018-2025 little3201.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.apache.poi.util.StringUtil;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for reading and mapping Excel files from an InputStream to the specified type.
@@ -37,6 +40,7 @@ import java.util.*;
 public final class ExcelReader<T> {
 
     private static final Logger log = StatusLogger.getLogger();
+    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new ConcurrentHashMap<>();
 
     /**
      * Private constructor to prevent instantiation.
@@ -48,10 +52,10 @@ public final class ExcelReader<T> {
     /**
      * Reads and maps data from the default sheet "sheet1".
      *
-     * @param inputStream The input stream of the Excel file
-     * @param clazz       The class to map rows to
-     * @param <T>         The type of objects to map the Excel data to
-     * @return List of mapped objects
+     * @param inputStream The input stream of the Excel file.
+     * @param clazz       The class to map rows to.
+     * @param <T>         The type of objects to map the Excel data to.
+     * @return List of mapped objects.
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
         return read(inputStream, clazz, null, null);
@@ -60,12 +64,12 @@ public final class ExcelReader<T> {
     /**
      * Reads and maps data from a specified sheet, with optional password protection.
      *
-     * @param inputStream The input stream of the Excel file
-     * @param clazz       The class to map rows to
-     * @param sheetName   (Optional) The name of the sheet to read
-     * @param password    (Optional) The password for protected files
-     * @param <T>         The type of objects to map the Excel data to
-     * @return List of mapped objects
+     * @param inputStream The input stream of the Excel file.
+     * @param clazz       The class to map rows to.
+     * @param sheetName   (Optional) The name of the sheet to read.
+     * @param password    (Optional) The password for protected files.
+     * @param <T>         The type of objects to map the Excel data to.
+     * @return List of mapped objects.
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName, String password) {
         try (Workbook workbook = createWorkbook(inputStream, password)) {
@@ -81,10 +85,10 @@ public final class ExcelReader<T> {
     /**
      * Creates a Workbook instance from the input stream, with optional password handling.
      *
-     * @param inputStream The input stream of the Excel file
-     * @param password    The password for protected files, if any
-     * @return Workbook instance
-     * @throws IOException If an error occurs while reading the input stream
+     * @param inputStream The input stream of the Excel file.
+     * @param password    The password for protected files, if any.
+     * @return Workbook instance.
+     * @throws IOException If an error occurs while reading the input stream.
      */
     private static Workbook createWorkbook(InputStream inputStream, String password) throws IOException {
         return StringUtil.isBlank(password)
@@ -95,9 +99,9 @@ public final class ExcelReader<T> {
     /**
      * Retrieves the sheet by name, or defaults to the first sheet if no name is provided.
      *
-     * @param workbook  The Workbook instance
-     * @param sheetName The sheet name, or null to use the default sheet
-     * @return The corresponding Sheet object
+     * @param workbook  The Workbook instance.
+     * @param sheetName The sheet name, or null to use the default sheet.
+     * @return The corresponding Sheet object.
      */
     private static Sheet getSheet(Workbook workbook, String sheetName) {
         return StringUtil.isBlank(sheetName) ? workbook.getSheetAt(0) : workbook.getSheet(sheetName);
@@ -106,10 +110,10 @@ public final class ExcelReader<T> {
     /**
      * Reads and maps the rows of a sheet to instances of the specified class.
      *
-     * @param sheet The sheet to read data from
-     * @param clazz The class to map rows to
-     * @param <T>   The type of objects to map the Excel data to
-     * @return List of mapped objects
+     * @param sheet The sheet to read data from.
+     * @param clazz The class to map rows to.
+     * @param <T>   The type of objects to map the Excel data to.
+     * @return List of mapped objects.
      */
     private static <T> List<T> readSheet(Sheet sheet, Class<T> clazz) {
         int firstRowNum = sheet.getFirstRowNum();
@@ -122,8 +126,15 @@ public final class ExcelReader<T> {
 
         for (int i = firstRowNum + 1; i <= lastRowNum; i++) {
             Row row = sheet.getRow(i);
+            if (isRowEmpty(row)) continue;
+
             Map<String, Object> rowData = mapRowToHeaders(row, headers);
-            dataList.add(convert(rowData, clazz));
+            T obj = convert(rowData, clazz);
+            if (obj != null) {
+                dataList.add(obj);
+            } else {
+                log.warn("Skipping row {} due to conversion failure", i + 1);
+            }
         }
         return dataList;
     }
@@ -131,8 +142,8 @@ public final class ExcelReader<T> {
     /**
      * Reads the header row and extracts column names.
      *
-     * @param row The header row
-     * @return List of column names
+     * @param row The header row.
+     * @return List of column names.
      */
     private static List<String> readHeader(Row row) {
         if (row == null) return Collections.emptyList();
@@ -148,9 +159,9 @@ public final class ExcelReader<T> {
     /**
      * Maps a row's cell values to their corresponding header names.
      *
-     * @param row     The row to read
-     * @param headers The list of header names
-     * @return A map of column names to cell values
+     * @param row     The row to read.
+     * @param headers The list of header names.
+     * @return A map of column names to cell values.
      */
     private static Map<String, Object> mapRowToHeaders(Row row, List<String> headers) {
         Map<String, Object> rowData = new HashMap<>();
@@ -163,32 +174,43 @@ public final class ExcelReader<T> {
     /**
      * Converts the row data map into an instance of the specified class.
      *
-     * @param dataMap The map of column names to values
-     * @param clazz   The class to instantiate
-     * @param <T>     The type of object to create
-     * @return An instance of the class populated with the row data
+     * @param dataMap The map of column names to values.
+     * @param clazz   The class to instantiate.
+     * @param <T>     The type of object to create.
+     * @return An instance of the class populated with the row data.
      */
     private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
+            Map<String, PropertyDescriptor> descriptorMap = getPropertyDescriptors(clazz);
+
             for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
-                PropertyDescriptor descriptor = new PropertyDescriptor(entry.getKey(), clazz);
-                descriptor.getWriteMethod().invoke(instance, entry.getValue());
+                String header = entry.getKey();
+                Object value = entry.getValue();
+
+                PropertyDescriptor descriptor = descriptorMap.get(header);
+                if (descriptor != null && descriptor.getWriteMethod() != null) {
+                    Object convertedValue = convertType(value, descriptor.getPropertyType());
+                    descriptor.getWriteMethod().invoke(instance, convertedValue);
+                }
             }
             return instance;
         } catch (Exception e) {
-            log.error("Failed to convert row data to object.", e);
-            throw new RuntimeException(e);
+            log.error("Failed to convert row to object", e);
+            return null; // 避免抛出异常，中断读取流程
         }
     }
 
     /**
      * Reads a cell's value as an Object.
      *
-     * @param cell The cell to read
-     * @return The cell's value as an Object
+     * @param cell The cell to read.
+     * @return The cell's value as an Object.
      */
     private static Object readCell(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
             case NUMERIC -> cell.getNumericCellValue();
@@ -202,10 +224,59 @@ public final class ExcelReader<T> {
     /**
      * Reads a cell's value as a String.
      *
-     * @param cell The cell to read
-     * @return The cell's value as a String
+     * @param cell The cell to read.
+     * @return The cell's value as a String.
      */
     private static String readCellAsString(Cell cell) {
         return cell == null ? "" : cell.toString();
     }
+
+    private static Object convertType(Object value, Class<?> targetType) {
+        if (value == null) return null;
+        if (targetType.isInstance(value)) return value;
+
+        String str = value.toString().trim();
+        if (targetType == String.class) return str;
+        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
+        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
+        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
+        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
+        if (targetType == LocalDate.class) return LocalDate.parse(str);
+        // 可拓展更多类型
+        return str;
+    }
+
+    private static <T> Map<String, PropertyDescriptor> getPropertyDescriptors(Class<T> clazz) {
+        return descriptorCache.computeIfAbsent(clazz, key -> {
+            Map<String, PropertyDescriptor> map = new HashMap<>();
+            try {
+                for (Field field : clazz.getDeclaredFields()) {
+                    String name = field.getName();
+                    if (field.isAnnotationPresent(ExcelColumn.class)) {
+                        name = field.getAnnotation(ExcelColumn.class).value();
+                    }
+                    map.put(normalize(name), new PropertyDescriptor(field.getName(), clazz));
+                }
+            } catch (Exception e) {
+                log.error("Failed to introspect class: {}", clazz, e);
+            }
+            return map;
+        });
+    }
+
+    private static String normalize(String name) {
+        return name.trim().replaceAll("[_\\s]+", "").toLowerCase();
+    }
+
+    private static boolean isRowEmpty(Row row) {
+        if (row == null) return true;
+        for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
+            Cell cell = row.getCell(i);
+            if (cell != null && cell.getCellType() != CellType.BLANK && !cell.toString().trim().isEmpty()) {
+                return false; // 有一个非空单元格，行就不是空的
+            }
+        }
+        return true;
+    }
+
 }
