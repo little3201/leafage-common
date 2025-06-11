@@ -25,11 +25,13 @@ import java.util.List;
 /**
  * Abstract service for constructing a r2dbc tree structure.
  *
- * @param <N> the tree node
+ * @param <D>  DTO type for input data.
+ * @param <V>  VO type for output data.
+ * @param <ID> the type of ID.
  * @author wq li
  * @since 0.3.4
  */
-public interface R2dbcTreeService<N, ID> extends R2dbcCrudService<N, ID> {
+public interface R2dbcTreeService<D, V, ID> extends R2dbcCrudService<D, V> {
 
     /**
      * 获取树结构数据

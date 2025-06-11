@@ -14,7 +14,9 @@
  */
 package top.leafage.common.r2dbc.audit;
 
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
@@ -36,9 +38,8 @@ import java.time.Instant;
  */
 public class R2dbcAuditMetadata {
 
-    private boolean enabled = true;
-
     @InsertOnlyProperty
+    @CreatedBy
     @Column(value = "created_by")
     private String createdBy;
 
@@ -47,6 +48,7 @@ public class R2dbcAuditMetadata {
     @Column(value = "created_date")
     private Instant createdDate;
 
+    @LastModifiedBy
     @Column(value = "last_modified_by")
     private String lastModifiedBy;
 
@@ -54,14 +56,6 @@ public class R2dbcAuditMetadata {
     @Column(value = "last_modified_date")
     private Instant lastModifiedDate;
 
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getCreatedBy() {
         return this.createdBy;

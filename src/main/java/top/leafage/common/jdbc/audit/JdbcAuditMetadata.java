@@ -15,8 +15,13 @@
 package top.leafage.common.jdbc.audit;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.MappedSuperclass;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 
 import java.time.Instant;
 
@@ -33,17 +38,21 @@ import java.time.Instant;
  * @author wq li
  * @since 0.3.0
  */
-public abstract class JdbcAuditMetadata {
+@MappedSuperclass
+@Embeddable
+public class JdbcAuditMetadata {
 
-    private boolean enabled = true;
-
+    @InsertOnlyProperty
+    @CreatedBy
     @Column(name = "created_by", updatable = false, length = 50)
     private String createdBy;
 
+    @InsertOnlyProperty
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private Instant createdDate;
 
+    @LastModifiedBy
     @Column(name = "last_modified_by", insertable = false, length = 50)
     private String lastModifiedBy;
 
@@ -51,14 +60,6 @@ public abstract class JdbcAuditMetadata {
     @Column(name = "last_modified_date", insertable = false)
     private Instant lastModifiedDate;
 
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getCreatedBy() {
         return this.createdBy;

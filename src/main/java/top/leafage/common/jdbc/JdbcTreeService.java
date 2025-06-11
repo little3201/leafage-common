@@ -24,11 +24,13 @@ import java.util.List;
 /**
  * Abstract service for constructing a tree structure in a jdbc context.
  *
- * @param <N> the tree node
+ * @param <D>  DTO type for input data.
+ * @param <V>  VO type for output data.
+ * @param <ID> the type of ID.
  * @author wq li
  * @since 0.3.4
  */
-public interface JdbcTreeService<N, ID> extends JdbcCrudService<N, ID> {
+public interface JdbcTreeService<D, V, ID> extends JdbcCrudService<D, V> {
 
     /**
      * 获取树结构数据

@@ -87,7 +87,7 @@ public abstract class DomainConverter {
             T target = voClass.getDeclaredConstructor().newInstance();
             return this.convert(source, target);
         } catch (Exception e) {
-            throw new RuntimeException("Convert to r2dbc vo error", e);
+            throw new RuntimeException("Convert to vo error", e);
         }
     }
 
@@ -106,7 +106,7 @@ public abstract class DomainConverter {
             T target = targetClass.getDeclaredConstructor().newInstance();
             return this.convert(source, target);
         } catch (Exception e) {
-            throw new RuntimeException("Convert to r2dbc domain error", e);
+            throw new RuntimeException("Convert to domain error", e);
         }
     }
 
