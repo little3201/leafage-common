@@ -24,14 +24,10 @@ import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 import java.time.Instant;
 
 /**
- * Abstract class representing audit metadata for r2dbc entities.
+ * Abstract class representing audit metadata for a entities.
  * Provides fields and methods for managing audit information such as entity creation,
  * modification details, and whether the entity is enabled. Intended to be extended
- * by entity classes that require audit tracking in a r2dbc context.
- * <p>
- * Annotations like {@code @InsertOnlyProperty} and {@code @CreatedDate} handle
- * database insertion and automatic timestamping for creation events.
- * <p>.
+ * by entity classes that require audit tracking in context.
  *
  * @author wq li
  * @since 0.3.0

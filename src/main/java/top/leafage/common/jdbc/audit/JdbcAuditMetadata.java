@@ -16,7 +16,6 @@ package top.leafage.common.jdbc.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.MappedSuperclass;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -25,19 +24,14 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.Instant;
 
 /**
- * Abstract class representing audit metadata for entities, providing fields and methods
- * for auditing the creation and modification details, such as the creator, modifier,
- * creation time, and modification time.
- * This class is intended to be extended by entity classes that require audit logging.
- * It leverages Spring Data's auditing infrastructure.
- * <p>
- * The {@code @MappedSuperclass} annotation allows this class's fields to be inherited by subclasses,
- * while the {@code @EntityListeners(AuditingEntityListener.class)} annotation enables audit event handling.
+ * Abstract class representing audit metadata for a entities.
+ * Provides fields and methods for managing audit information such as entity creation,
+ * modification details, and whether the entity is enabled. Intended to be extended
+ * by entity classes that require audit tracking in context.
  *
  * @author wq li
  * @since 0.3.0
  */
-@MappedSuperclass
 @Embeddable
 public class JdbcAuditMetadata {
 
