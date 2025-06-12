@@ -21,7 +21,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 
 import java.time.Instant;
 
@@ -42,12 +41,10 @@ import java.time.Instant;
 @Embeddable
 public class JdbcAuditMetadata {
 
-    @InsertOnlyProperty
     @CreatedBy
     @Column(name = "created_by", updatable = false, length = 50)
     private String createdBy;
 
-    @InsertOnlyProperty
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     private Instant createdDate;
