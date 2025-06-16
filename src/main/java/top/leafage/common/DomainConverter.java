@@ -23,8 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
-import java.util.function.Function;
+import java.time.LocalDate;
 
 /**
  * This interface includes methods for creating pageable objects and converting entities.
@@ -33,6 +32,28 @@ import java.util.function.Function;
  * @since 0.3.4
  */
 public abstract class DomainConverter {
+
+    /**
+     * Type convert
+     *
+     * @param value      value
+     * @param targetType target type
+     * @return target value
+     */
+    public static Object convertType(Object value, Class<?> targetType) {
+        if (value == null) return null;
+        if (targetType.isInstance(value)) return value;
+
+        String str = value.toString().trim();
+        if (targetType == String.class) return str;
+        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
+        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
+        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
+        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
+        if (targetType == LocalDate.class) return LocalDate.parse(str);
+        // 可拓展更多类型
+        return str;
+    }
 
     /**
      * Creates a {@link Pageable} object for pagination and sorting.
@@ -108,18 +129,6 @@ public abstract class DomainConverter {
         } catch (Exception e) {
             throw new RuntimeException("Convert to domain error", e);
         }
-    }
-
-    /**
-     * Parse filters.
-     *
-     * @param filters filter dsl
-     * @param handler handle function
-     * @return R type
-     */
-    protected <R> Optional<R> parseFilters(String filters, Function<String, R> handler) {
-        if (!StringUtils.hasText(filters)) return Optional.empty();
-        return Optional.ofNullable(handler.apply(filters));
     }
 
 }

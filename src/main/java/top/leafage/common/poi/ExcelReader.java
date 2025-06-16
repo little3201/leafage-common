@@ -21,12 +21,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
+import top.leafage.common.DomainConverter;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -190,7 +190,7 @@ public final class ExcelReader<T> {
 
                 PropertyDescriptor descriptor = descriptorMap.get(header);
                 if (descriptor != null && descriptor.getWriteMethod() != null) {
-                    Object convertedValue = convertType(value, descriptor.getPropertyType());
+                    Object convertedValue = DomainConverter.convertType(value, descriptor.getPropertyType());
                     descriptor.getWriteMethod().invoke(instance, convertedValue);
                 }
             }
@@ -231,21 +231,6 @@ public final class ExcelReader<T> {
         return cell == null ? "" : cell.toString();
     }
 
-    private static Object convertType(Object value, Class<?> targetType) {
-        if (value == null) return null;
-        if (targetType.isInstance(value)) return value;
-
-        String str = value.toString().trim();
-        if (targetType == String.class) return str;
-        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
-        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
-        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
-        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
-        if (targetType == LocalDate.class) return LocalDate.parse(str);
-        // 可拓展更多类型
-        return str;
-    }
-
     private static <T> Map<String, PropertyDescriptor> getPropertyDescriptors(Class<T> clazz) {
         return descriptorCache.computeIfAbsent(clazz, key -> {
             Map<String, PropertyDescriptor> map = new HashMap<>();
@@ -253,7 +238,7 @@ public final class ExcelReader<T> {
                 for (Field field : clazz.getDeclaredFields()) {
                     String name = field.getName();
                     if (field.isAnnotationPresent(ExcelColumn.class)) {
-                        name = field.getAnnotation(ExcelColumn.class).value();
+                        name = Objects.requireNonNull(field.getAnnotation(ExcelColumn.class)).value();
                     }
                     map.put(normalize(name), new PropertyDescriptor(field.getName(), clazz));
                 }
