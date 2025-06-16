@@ -152,7 +152,7 @@ public interface JdbcCrudService<D, V> {
      * - lte: 小于等于
      *
      * @param filters 过滤条件字符串
-     * @param cb      JPA CriteriaBuilder，用于构造查询条件
+     * @param cb      CriteriaBuilder，用于构造查询条件
      * @param root    Root实体对象，表示查询的根类型
      * @param <T>     实体类型泛型
      * @return Optional封装的Predicate查询条件，若无有效条件则为空
@@ -174,12 +174,29 @@ public interface JdbcCrudService<D, V> {
                 Path<?> path = root.get(field);
                 Object typedValue = convertType(value, path.getJavaType());
 
-                Predicate predicate = switch (op) {
-                    case "eq" -> cb.equal(path, typedValue);
-                    case "ne" -> cb.notEqual(path, typedValue);
-                    case "like" -> cb.like(path.as(String.class), "%" + value + "%");
-                    default -> null;
-                };
+                Predicate predicate = null;
+                switch (op) {
+                    case "eq" -> predicate = cb.equal(path, typedValue);
+                    case "ne" -> predicate = cb.notEqual(path, typedValue);
+                    case "like" -> predicate = cb.like(path.as(String.class), "%" + value + "%");
+                    case "gt", "gte", "lt", "lte" -> {
+                        // 类型转换：保证类型安全
+                        if (typedValue instanceof Comparable) {
+                            @SuppressWarnings("unchecked")
+                            Path<Comparable<Object>> cmpPath = (Path<Comparable<Object>>) path;
+                            @SuppressWarnings("unchecked")
+                            Comparable<Object> cmpValue = (Comparable<Object>) typedValue;
+
+                            predicate = switch (op) {
+                                case "gt" -> cb.greaterThan(cmpPath, cmpValue);
+                                case "gte" -> cb.greaterThanOrEqualTo(cmpPath, cmpValue);
+                                case "lt" -> cb.lessThan(cmpPath, cmpValue);
+                                case "lte" -> cb.lessThanOrEqualTo(cmpPath, cmpValue);
+                                default -> null;
+                            };
+                        }
+                    }
+                }
 
                 if (predicate != null) {
                     predicates.add(predicate);
@@ -192,5 +209,6 @@ public interface JdbcCrudService<D, V> {
         return predicates.isEmpty() ? Optional.empty()
                 : Optional.of(cb.and(predicates.toArray(new Predicate[0])));
     }
+
 }
 
