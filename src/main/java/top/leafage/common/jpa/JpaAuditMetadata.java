@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package top.leafage.common.jdbc.audit;
+package top.leafage.common.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -33,7 +33,7 @@ import java.time.Instant;
  * @since 0.3.0
  */
 @Embeddable
-public class JdbcAuditMetadata {
+public class JpaAuditMetadata {
 
     @CreatedBy
     @Column(name = "created_by", updatable = false, length = 50)

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package top.leafage.common.r2dbc.audit;
+package top.leafage.common;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,7 +32,7 @@ import java.time.Instant;
  * @author wq li
  * @since 0.3.0
  */
-public class R2dbcAuditMetadata {
+public class AuditMetadata {
 
     @InsertOnlyProperty
     @CreatedBy
