@@ -23,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
-
 /**
  * This interface includes methods for creating pageable objects and converting entities.
  *
@@ -34,41 +32,21 @@ import java.time.LocalDate;
 public abstract class DomainConverter {
 
     /**
-     * Type convert
-     *
-     * @param value      value
-     * @param targetType target type
-     * @return target value
-     */
-    public static Object convertType(Object value, Class<?> targetType) {
-        if (value == null) return null;
-        if (targetType.isInstance(value)) return value;
-
-        String str = value.toString().trim();
-        if (targetType == String.class) return str;
-        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
-        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
-        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
-        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
-        if (targetType == LocalDate.class) return LocalDate.parse(str);
-        // 可拓展更多类型
-        return str;
-    }
-
-    /**
-     * Creates a {@link Pageable} object for pagination and sorting.
+     * Creates a {@link org.springframework.data.domain.Pageable} object for pagination and sorting.
      *
      * @param page       The page number (zero-based).
      * @param size       The size of the page (number of items per page), capped at 500.
      * @param sortBy     The field to sort by, or null for unsorted pagination.
      * @param descending Whether the sorting should be in descending order.
-     * @return A {@link Pageable} instance configured with the provided parameters.
+     * @return A {@link org.springframework.data.domain.Pageable} instance configured with the provided parameters.
      */
     protected Pageable pageable(int page, int size, String sortBy, boolean descending) {
-        size = Math.min(size, 500);
+        if (size > 500) {
+            throw new IllegalArgumentException("Page size must be less than 500");
+        }
 
-        Sort sort = Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC,
-                StringUtils.hasText(sortBy) ? sortBy : "id");
+        Sort sort = Sort.by(new Sort.Order(descending ? Sort.Direction.DESC : Sort.Direction.ASC,
+                StringUtils.hasText(sortBy) ? sortBy : "id"));
 
         return PageRequest.of(page, size, sort);
     }
@@ -81,7 +59,7 @@ public abstract class DomainConverter {
      * @param <S>    The type of the source object.
      * @param <T>    The type of the target object.
      * @return The populated target object.
-     * @throws RuntimeException if the conversion fails.
+     * @throws java.lang.RuntimeException if the conversion fails.
      */
     protected <S, T> T convert(S source, T target) {
         try {
@@ -101,7 +79,7 @@ public abstract class DomainConverter {
      * @param <S>     The type of the source object.
      * @param <T>     The type of the target object.
      * @return An instance of the target class.
-     * @throws RuntimeException if the conversion fails.
+     * @throws java.lang.RuntimeException if the conversion fails.
      */
     protected <S, T> T convertToVO(S source, Class<T> voClass) {
         try {
@@ -120,7 +98,7 @@ public abstract class DomainConverter {
      * @param <S>         The type of the source object.
      * @param <T>         The type of the target object.
      * @return An instance of the target class.
-     * @throws RuntimeException if the conversion fails.
+     * @throws java.lang.RuntimeException if the conversion fails.
      */
     protected <S, T> T convertToDomain(S source, Class<T> targetClass) {
         try {

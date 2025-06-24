@@ -19,14 +19,11 @@ package top.leafage.common.r2dbc;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Reactive service interface for basic CRUD operations.
@@ -34,6 +31,7 @@ import java.util.Optional;
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
  * @since 0.3.4
+ * @author wq li
  */
 public interface R2dbcCrudService<D, V> {
 
@@ -123,56 +121,6 @@ public interface R2dbcCrudService<D, V> {
         return Mono.empty();
     }
 
-    /**
-     * 解析过滤条件字符串并构建查询的Criteria。
-     * <p>
-     * 过滤条件格式示例： "age:gt:18,status:eq:active,name:like:john"
-     * 每个条件由字段名、操作符和对应值组成，三者之间用冒号分隔，
-     * 多个条件之间用逗号分隔。
-     * <p>
-     * 支持的操作符包括：
-     * - eq: 等于
-     * - ne: 不等于
-     * - like: 模糊匹配（SQL LIKE，自动加%前后缀）
-     * - gt: 大于
-     * - gte: 大于等于
-     * - lt: 小于
-     * - lte: 小于等于
-     *
-     * @param filters 过滤条件字符串
-     * @return Optional封装的Criteria查询条件，若无有效条件则为空
-     */
-    default Optional<Criteria> parseFilters(String filters) {
-        if (!StringUtils.hasText(filters)) return Optional.empty();
-        String[] parts = filters.split(",");
-        Criteria criteria = null;
-
-        for (String part : parts) {
-            String[] tokens = part.trim().split(":", 3);
-            if (tokens.length != 3) continue;
-
-            String field = tokens[0];
-            String op = tokens[1].toLowerCase();
-            String value = tokens[2];
-
-            Criteria c = switch (op) {
-                case "eq" -> Criteria.where(field).is(value);
-                case "ne" -> Criteria.where(field).not(value);
-                case "like" -> Criteria.where(field).like("%" + value + "%");
-                case "gt" -> Criteria.where(field).greaterThan(value);
-                case "gte" -> Criteria.where(field).greaterThanOrEquals(value);
-                case "lt" -> Criteria.where(field).lessThan(value);
-                case "lte" -> Criteria.where(field).lessThanOrEquals(value);
-                default -> null;
-            };
-
-            if (c != null) {
-                criteria = (criteria == null) ? c : criteria.and(c);
-            }
-        }
-
-        return Optional.ofNullable(criteria);
-    }
 }
 
 

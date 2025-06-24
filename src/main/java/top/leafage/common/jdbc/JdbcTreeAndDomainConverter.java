@@ -26,11 +26,12 @@ import java.util.stream.Collectors;
 /**
  * jdbc converter
  *
- * @param <N>  The type of tree node
+ * @param <T>  The type of tree node
  * @param <ID> The type of ID
  * @since 0.3.4
+ * @author wq li
  */
-public abstract class JdbcTreeAndDomainConverter<N, ID> extends TreeAndDomainConverter<N, ID> {
+public abstract class JdbcTreeAndDomainConverter<T, ID> extends TreeAndDomainConverter<T, ID> {
 
     /**
      * Converts a list of child nodes into a tree structure.
@@ -39,7 +40,7 @@ public abstract class JdbcTreeAndDomainConverter<N, ID> extends TreeAndDomainCon
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode<ID>> convertToTree(List<N> children) {
+    protected List<TreeNode<ID>> convertToTree(List<T> children) {
         return this.convertToTree(children, Collections.emptySet());
     }
 
@@ -51,7 +52,7 @@ public abstract class JdbcTreeAndDomainConverter<N, ID> extends TreeAndDomainCon
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode<ID>> convertToTree(List<N> children, Set<String> meta) {
+    protected List<TreeNode<ID>> convertToTree(List<T> children, Set<String> meta) {
         List<TreeNode<ID>> nodes = children.stream()
                 .map(child -> this.createNode(child, meta))
                 .collect(Collectors.toList());

@@ -21,7 +21,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
-import top.leafage.common.DomainConverter;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> The type to map the Excel rows to
  * @since 0.3.0
+ * @author wq li
  */
 public final class ExcelReader<T> {
 
@@ -190,7 +192,7 @@ public final class ExcelReader<T> {
 
                 PropertyDescriptor descriptor = descriptorMap.get(header);
                 if (descriptor != null && descriptor.getWriteMethod() != null) {
-                    Object convertedValue = DomainConverter.convertType(value, descriptor.getPropertyType());
+                    Object convertedValue = DefaultConversionService.getSharedInstance().convert(value, descriptor.getPropertyType());
                     descriptor.getWriteMethod().invoke(instance, convertedValue);
                 }
             }
@@ -240,7 +242,7 @@ public final class ExcelReader<T> {
                     if (field.isAnnotationPresent(ExcelColumn.class)) {
                         name = Objects.requireNonNull(field.getAnnotation(ExcelColumn.class)).value();
                     }
-                    map.put(normalize(name), new PropertyDescriptor(field.getName(), clazz));
+                    map.put(normalize(name), BeanUtils.getPropertyDescriptor(clazz, field.getName()));
                 }
             } catch (Exception e) {
                 log.error("Failed to introspect class: {}", clazz, e);
@@ -257,8 +259,9 @@ public final class ExcelReader<T> {
         if (row == null) return true;
         for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
+            // 有一个非空单元格，行就不是空的
             if (cell != null && cell.getCellType() != CellType.BLANK && !cell.toString().trim().isEmpty()) {
-                return false; // 有一个非空单元格，行就不是空的
+                return false;
             }
         }
         return true;

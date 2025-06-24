@@ -25,14 +25,17 @@ import java.lang.annotation.Target;
 /**
  * excel column
  *
+ * @author wq li
  * @since 0.3.2
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelColumn {
 
-    /*
+    /**
      * Excel 列名
+     *
+     * @return alias
      */
     String value();
 }

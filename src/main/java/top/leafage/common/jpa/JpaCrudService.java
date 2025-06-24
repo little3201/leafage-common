@@ -21,6 +21,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
 import top.leafage.common.jdbc.JdbcCrudService;
 
@@ -28,14 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static top.leafage.common.DomainConverter.convertType;
-
 /**
  * Servlet service interface for jpa CRUD operations.
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
  * @since 0.3.4
+ * @author wq li
  */
 public interface JpaCrudService<D, V> extends JdbcCrudService<D, V> {
 
@@ -76,7 +76,7 @@ public interface JpaCrudService<D, V> extends JdbcCrudService<D, V> {
 
             try {
                 Path<?> path = root.get(field);
-                Object typedValue = convertType(value, path.getJavaType());
+                Object typedValue = DefaultConversionService.getSharedInstance().convert(value, path.getJavaType());
 
                 Predicate predicate = null;
                 switch (op) {

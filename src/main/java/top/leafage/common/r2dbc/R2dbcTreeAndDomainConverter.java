@@ -27,11 +27,12 @@ import java.util.Set;
 /**
  * r2dbc converter
  *
- * @param <N>
- * @param <ID>
+ * @param <T>  The type of tree node
+ * @param <ID> The type of ID
  * @since 0.3.4
+ * @author wq li
  */
-public abstract class R2dbcTreeAndDomainConverter<N, ID> extends TreeAndDomainConverter<N, ID> {
+public abstract class R2dbcTreeAndDomainConverter<T, ID> extends TreeAndDomainConverter<T, ID> {
 
     /**
      * Converts a r2dbc stream of child nodes into a tree structure.
@@ -40,7 +41,7 @@ public abstract class R2dbcTreeAndDomainConverter<N, ID> extends TreeAndDomainCo
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<N> children) {
+    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children) {
         return this.convertToTree(children, Collections.emptySet());
     }
 
@@ -52,7 +53,7 @@ public abstract class R2dbcTreeAndDomainConverter<N, ID> extends TreeAndDomainCo
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<N> children, Set<String> meta) {
+    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children, Set<String> meta) {
         return children
                 .map(child -> super.createNode(child, meta))
                 .collectList()

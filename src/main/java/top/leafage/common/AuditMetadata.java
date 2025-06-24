@@ -53,34 +53,74 @@ public class AuditMetadata {
     private Instant lastModifiedDate;
 
 
+    /**
+     * <p>Getter for the field <code>createdBy</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getCreatedBy() {
         return this.createdBy;
     }
 
+    /**
+     * <p>Setter for the field <code>createdBy</code>.</p>
+     *
+     * @param createdBy a {@link java.lang.String} object
+     */
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
+    /**
+     * <p>Getter for the field <code>createdDate</code>.</p>
+     *
+     * @return a {@link java.time.Instant} object
+     */
     public Instant getCreatedDate() {
         return this.createdDate;
     }
 
+    /**
+     * <p>Setter for the field <code>createdDate</code>.</p>
+     *
+     * @param creationDate a {@link java.time.Instant} object
+     */
     public void setCreatedDate(Instant creationDate) {
         this.createdDate = creationDate;
     }
 
+    /**
+     * <p>Getter for the field <code>lastModifiedBy</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getLastModifiedBy() {
         return this.lastModifiedBy;
     }
 
+    /**
+     * <p>Setter for the field <code>lastModifiedBy</code>.</p>
+     *
+     * @param lastModifiedBy a {@link java.lang.String} object
+     */
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    /**
+     * <p>Getter for the field <code>lastModifiedDate</code>.</p>
+     *
+     * @return a {@link java.time.Instant} object
+     */
     public Instant getLastModifiedDate() {
         return this.lastModifiedDate;
     }
 
+    /**
+     * <p>Setter for the field <code>lastModifiedDate</code>.</p>
+     *
+     * @param lastModifiedDate a {@link java.time.Instant} object
+     */
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
