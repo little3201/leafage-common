@@ -17,16 +17,9 @@
 
 package top.leafage.common.jdbc;
 
-import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,8 +28,8 @@ import java.util.List;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @since 0.3.4
  * @author wq li
+ * @since 0.3.4
  */
 public interface JdbcCrudService<D, V> {
 
@@ -134,104 +127,5 @@ public interface JdbcCrudService<D, V> {
     default void remove(Long id) {
     }
 
-    /**
-     * 解析过滤条件字符串并构建查询的 Example。
-     * <p>
-     * 过滤条件格式示例： "status:eq:active,name:like:john"
-     * 每个条件由字段名、操作符和对应值组成，三者之间用冒号分隔，
-     * 多个条件之间用逗号分隔。
-     * <p>
-     * 支持的操作符包括：
-     * - eq: 等于
-     * - like: 模糊匹配（SQL LIKE，自动加%前后缀）
-     *
-     * @param filters     过滤条件字符串
-     * @param entityClass 对象类型
-     * @param <T>         实体类型泛型
-     * @return Example查询条件，若无有效条件则为空
-     */
-    default <T> Example<T> buildExample(String filters, Class<T> entityClass) {
-        ExampleMatcher matcher = ExampleMatcher.matching();
-
-        // 构造空实例以便填充
-        T instance;
-        try {
-            instance = entityClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Constructor error", e);
-        }
-
-        if (filters != null && !filters.trim().isEmpty()) {
-            String[] parts = filters.split(",");
-
-            for (String part : parts) {
-                String[] tokens = part.trim().split(":", 3);
-                if (tokens.length != 3) continue;
-
-                String field = tokens[0].trim();
-                String op = tokens[1].toLowerCase().trim();
-                String value = tokens[2].trim();
-
-                // 根据操作符设置匹配条件
-                switch (op) {
-                    case "eq":
-                        matcher = matcher.withMatcher(field, ExampleMatcher.GenericPropertyMatchers.exact());
-                        setFieldValue(instance, field, value);
-                        break;
-                    case "like":
-                        matcher = matcher.withMatcher(field, ExampleMatcher.GenericPropertyMatchers.contains());
-                        setFieldValue(instance, field, value);
-                        break;
-                    default:
-                }
-            }
-        }
-
-        return Example.of(instance, matcher);
-    }
-
-    /**
-     * <p>setFieldValue.</p>
-     *
-     * @param instance a T object
-     * @param field a {@link java.lang.String} object
-     * @param value a {@link java.lang.String} object
-     * @param <T> a T class
-     */
-    private <T> void setFieldValue(T instance, String field, String value) {
-        try {
-            PropertyDescriptor descriptor = getPropertyDescriptor(instance.getClass(), field);
-            // 获取对应的 setter 方法
-            Method setter = descriptor.getWriteMethod();
-            if (setter != null) {
-                // 根据 setter 的参数类型进行转换
-                Class<?> parameterType = descriptor.getPropertyType();
-                Object convertedValue = DefaultConversionService.getSharedInstance().convert(value, parameterType);
-                setter.invoke(instance, convertedValue);
-            }
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to set field value", e);
-        }
-    }
-
-    /**
-     * <p>getPropertyDescriptor.</p>
-     *
-     * @param clazz a {@link java.lang.Class} object
-     * @param propertyName a {@link java.lang.String} object
-     * @return a {@link java.beans.PropertyDescriptor} object
-     * @throws java.beans.IntrospectionException if any.
-     */
-    private PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String propertyName) throws IntrospectionException {
-        Class<?> current = clazz;
-        while (current != null) {
-            try {
-                return new PropertyDescriptor(propertyName, current);
-            } catch (IntrospectionException e) {
-                current = current.getSuperclass();
-            }
-        }
-        throw new IntrospectionException("Property '" + propertyName + "' not found in class hierarchy of " + clazz.getName());
-    }
 }
 
