@@ -23,7 +23,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
-import top.leafage.common.jdbc.JdbcCrudService;
+import top.leafage.common.CrudService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +34,10 @@ import java.util.Optional;
  *
  * @param <D> DTO type for input data
  * @param <V> VO type for output data
- * @since 0.3.4
  * @author wq li
+ * @since 0.3.4
  */
-public interface JpaCrudService<D, V> extends JdbcCrudService<D, V> {
+public interface JpaCrudService<D, V> extends CrudService<D, V> {
 
     /**
      * 解析过滤条件字符串并构建查询的Predicate。

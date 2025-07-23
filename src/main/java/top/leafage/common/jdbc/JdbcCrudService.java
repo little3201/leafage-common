@@ -17,11 +17,12 @@
 
 package top.leafage.common.jdbc;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.data.relational.core.query.Criteria;
+import top.leafage.common.CrudService;
 
-import java.util.Collections;
-import java.util.List;
+import java.beans.PropertyDescriptor;
 
 /**
  * Servlet service interface for jdbc CRUD operations.
@@ -31,101 +32,76 @@ import java.util.List;
  * @author wq li
  * @since 0.3.4
  */
-public interface JdbcCrudService<D, V> {
+public interface JdbcCrudService<D, V> extends CrudService<D, V> {
 
     /**
-     * Retrieves records by pageable, sort, filters.
+     * 解析过滤条件字符串并构建查询的Criteria。
+     * <p>
+     * 过滤条件格式示例： "age:gt:18,status:eq:active,name:like:john"
+     * 每个条件由字段名、操作符和对应值组成，三者之间用冒号分隔，
+     * 多个条件之间用逗号分隔。
+     * <p>
+     * 支持的操作符包括：
+     * - eq: 等于
+     * - ne: 不等于
+     * - like: 模糊匹配（SQL LIKE，自动加%前后缀）
+     * - gt: 大于
+     * - gte: 大于等于
+     * - lt: 小于
+     * - lte: 小于等于
      *
-     * @param page       The page number (zero-based).
-     * @param size       The size of the page (number of items per page), capped at 500.
-     * @param sortBy     The field to sort by, or null for unsorted pagination.
-     * @param descending Whether the sorting should be in descending order.
-     * @param filters    filters to apply to the query.
-     * @return a Flux stream of all records.
+     * @param filters     过滤条件字符串
+     * @param entityClass 实体类型
+     * @return Optional封装的Predicate查询条件，若无有效条件则为空
      */
-    default Page<V> retrieve(int page, int size, String sortBy, boolean descending, String filters) {
-        return new PageImpl<>(Collections.emptyList());
+    default Criteria buildCriteria(String filters, Class<?> entityClass) {
+        if (filters == null || filters.trim().isEmpty()) {
+            return Criteria.empty();
+        }
+
+        String[] parts = filters.split(",");
+
+        Criteria criteria = Criteria.empty();
+
+        for (String part : parts) {
+            String[] tokens = part.split(":", 3);
+            if (tokens.length != 3) continue;
+
+            String field = tokens[0].trim();
+            String op = tokens[1].trim().toLowerCase();
+            String value = tokens[2].trim();
+
+            Criteria condition = switch (op) {
+                case "eq" -> Criteria.where(field).is(convertValue(field, value, entityClass));
+                case "ne" -> Criteria.where(field).not(convertValue(field, value, entityClass));
+                case "like" -> Criteria.where(field).like("%" + value + "%");
+                case "gt" -> Criteria.where(field).greaterThan(convertValue(field, value, entityClass));
+                case "lt" -> Criteria.where(field).lessThan(convertValue(field, value, entityClass));
+                case "gte" -> Criteria.where(field).greaterThanOrEquals(convertValue(field, value, entityClass));
+                case "lte" -> Criteria.where(field).lessThanOrEquals(convertValue(field, value, entityClass));
+                default -> null;
+            };
+
+            criteria = condition == null ? criteria : criteria.and(condition);
+        }
+        return criteria;
     }
 
     /**
-     * Retrieves all records or by given ids.
+     * convert value.
      *
-     * @param ids the given records id .
-     * @return a list of all records
+     * @param field       a {@link java.lang.String} object
+     * @param value       a {@link java.lang.String} object
+     * @param entityClass entity class
+     * @return Object value.
      */
-    default List<V> retrieve(List<Long> ids) {
-        return Collections.emptyList();
-    }
+    private Object convertValue(String field, String value, Class<?> entityClass) {
+        if (value == null || value.isBlank()) return null;
+        PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(entityClass, field);
+        if (descriptor == null) return null;
 
-    /**
-     * Fetches a record by its ID.
-     *
-     * @param id the record ID
-     * @return the record, or null if not found
-     */
-    default V fetch(Long id) {
-        return null;
+        Class<?> targetType = descriptor.getPropertyType();
+        return DefaultConversionService.getSharedInstance().convert(value, targetType);
     }
-
-    /**
-     * Checks if a record exists by it's field.
-     *
-     * @param field the record's field
-     * @param id    the record's id
-     * @return true if the record exists, false otherwise
-     */
-    default boolean exists(String field, Long id) {
-        return false;
-    }
-
-    /**
-     * Enable or Disable a record by it's ID.
-     *
-     * @param id the record ID
-     * @return true if the record enabled/disabled, false otherwise
-     */
-    default boolean enable(Long id) {
-        return false;
-    }
-
-    /**
-     * Creates a new record.
-     *
-     * @param d the new record
-     * @return the created record
-     */
-    default V create(D d) {
-        return null;
-    }
-
-    /**
-     * Creates all given records.
-     *
-     * @param iterable the new records.
-     * @return the created records.
-     */
-    default List<V> createAll(Iterable<D> iterable) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Updates an existing record by its ID.
-     *
-     * @param id the record ID
-     * @param d  the DTO containing updated data
-     * @return the updated record
-     */
-    default V modify(Long id, D d) {
-        return null;
-    }
-
-    /**
-     * Removes a record by its ID.
-     *
-     * @param id the record ID
-     */
-    default void remove(Long id) {
-    }
-
 }
 
