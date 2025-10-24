@@ -29,20 +29,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for reading and mapping Excel files from an InputStream to the specified type.
  * Supports reading from password-protected files and from specific sheets.
  *
  * @param <T> The type to map the Excel rows to
- * @since 0.3.0
  * @author wq li
+ * @since 0.3.0
  */
 public final class ExcelReader<T> {
 
     private static final Logger log = StatusLogger.getLogger();
-    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new ConcurrentHashMap<>();
 
     /**
      * Private constructor to prevent instantiation.
@@ -130,7 +128,7 @@ public final class ExcelReader<T> {
             Row row = sheet.getRow(i);
             if (isRowEmpty(row)) continue;
 
-            Map<String, Object> rowData = mapRowToHeaders(row, headers);
+            Map<String, Object> rowData = mapRowToHeaders(clazz, row, headers);
             T obj = convert(rowData, clazz);
             if (obj != null) {
                 dataList.add(obj);
@@ -165,10 +163,14 @@ public final class ExcelReader<T> {
      * @param headers The list of header names.
      * @return A map of column names to cell values.
      */
-    private static Map<String, Object> mapRowToHeaders(Row row, List<String> headers) {
+    private static <T> Map<String, Object> mapRowToHeaders(Class<T> clazz, Row row, List<String> headers) {
         Map<String, Object> rowData = new HashMap<>();
         for (int i = 0; i < headers.size(); i++) {
-            rowData.put(headers.get(i), readCell(row.getCell(i)));
+            String headerKey = getHeaderKey(clazz, headers.get(i));
+            if (headerKey != null) {
+                Object cellValue = readCell(row.getCell(i));
+                rowData.put(headerKey, cellValue);
+            }
         }
         return rowData;
     }
@@ -184,13 +186,12 @@ public final class ExcelReader<T> {
     private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
-            Map<String, PropertyDescriptor> descriptorMap = getPropertyDescriptors(clazz);
 
             for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
-                String header = entry.getKey();
+                String field = entry.getKey();
                 Object value = entry.getValue();
 
-                PropertyDescriptor descriptor = descriptorMap.get(header);
+                PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(clazz, field);
                 if (descriptor != null && descriptor.getWriteMethod() != null) {
                     Object convertedValue = DefaultConversionService.getSharedInstance().convert(value, descriptor.getPropertyType());
                     descriptor.getWriteMethod().invoke(instance, convertedValue);
@@ -233,26 +234,33 @@ public final class ExcelReader<T> {
         return cell == null ? "" : cell.toString();
     }
 
-    private static <T> Map<String, PropertyDescriptor> getPropertyDescriptors(Class<T> clazz) {
-        return descriptorCache.computeIfAbsent(clazz, key -> {
-            Map<String, PropertyDescriptor> map = new HashMap<>();
-            try {
-                for (Field field : clazz.getDeclaredFields()) {
-                    String name = field.getName();
-                    if (field.isAnnotationPresent(ExcelColumn.class)) {
-                        name = Objects.requireNonNull(field.getAnnotation(ExcelColumn.class)).value();
-                    }
-                    map.put(normalize(name), BeanUtils.getPropertyDescriptor(clazz, field.getName()));
-                }
-            } catch (Exception e) {
-                log.error("Failed to introspect class: {}", clazz, e);
-            }
-            return map;
-        });
-    }
+    private static <T> String getHeaderKey(Class<T> clazz, String header) {
+        if (clazz == null || header == null) {
+            return null;
+        }
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                String fieldName = field.getName();
 
-    private static String normalize(String name) {
-        return name.trim().replaceAll("[_\\s]+", "").toLowerCase();
+                // 如果header直接匹配字段名，直接返回字段名
+                if (header.equals(fieldName)) {
+                    return fieldName;
+                }
+
+                // 检查ExcelColumn注解
+                ExcelColumn excelColumn = field.getAnnotation(ExcelColumn.class);
+                if (excelColumn != null) {
+                    String displayName = excelColumn.value();
+                    // 如果header匹配注解的显示名称，返回对应的字段名
+                    if (header.equals(displayName)) {
+                        return fieldName;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to introspect class: {}", clazz, e);
+        }
+        return null;
     }
 
     private static boolean isRowEmpty(Row row) {

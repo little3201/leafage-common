@@ -31,9 +31,20 @@ import org.springframework.util.StringUtils;
  */
 public abstract class DomainConverter {
 
-    public static final String ID_MUST_NOT_BE_NULL = "The given id must not be null";
+    /**
+     * must not be null
+     */
     public static final String _MUST_NOT_BE_NULL = "The given %s must not be null";
+
+    /**
+     * must not be empty
+     */
     public static final String _MUST_NOT_BE_EMPTY = "The given %s must not be empty";
+
+    /**
+     * id must not be null
+     */
+    public static final String ID_MUST_NOT_BE_NULL = String.format(_MUST_NOT_BE_NULL, "id");
 
     /**
      * Creates a {@link org.springframework.data.domain.Pageable} object for pagination and sorting.
