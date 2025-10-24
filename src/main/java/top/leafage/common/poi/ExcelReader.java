@@ -239,7 +239,15 @@ public final class ExcelReader<T> {
             return null;
         }
         try {
-            for (Field field : clazz.getDeclaredFields()) {
+            List<Field> allFields = new ArrayList<>();
+            Class<?> currentClass = clazz;
+
+            while (currentClass != null && currentClass != Object.class) {
+                allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+                currentClass = currentClass.getSuperclass();
+            }
+
+            for (Field field : allFields) {
                 String fieldName = field.getName();
 
                 // 如果header直接匹配字段名，直接返回字段名
