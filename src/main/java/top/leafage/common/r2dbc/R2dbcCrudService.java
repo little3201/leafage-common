@@ -130,7 +130,6 @@ public interface R2dbcCrudService<D, V> {
     default Mono<Void> remove(Long id) {
         return Mono.empty();
     }
-
 }
 
 

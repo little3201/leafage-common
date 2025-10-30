@@ -23,7 +23,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
-import top.leafage.common.CrudService;
+import top.leafage.common.jdbc.JdbcAbstractDataService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.Optional;
  * @author wq li
  * @since 0.3.4
  */
-public interface JpaCrudService<D, V> extends CrudService<D, V> {
+public interface JpaAbstractDataService<D, V> extends JdbcAbstractDataService<D, V> {
 
     /**
      * 解析过滤条件字符串并构建查询的Predicate。
@@ -73,6 +73,10 @@ public interface JpaCrudService<D, V> extends CrudService<D, V> {
             String field = tokens[0];
             String op = tokens[1].toLowerCase();
             String value = tokens[2];
+
+            if (!StringUtils.hasText(field) || !StringUtils.hasText(op) || !StringUtils.hasText(value)) {
+                continue;
+            }
 
             try {
                 Path<?> path = root.get(field);

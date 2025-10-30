@@ -15,7 +15,7 @@
  *
  */
 
-package top.leafage.common;
+package top.leafage.common.jdbc;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +31,7 @@ import java.util.List;
  * @author wq li
  * @since 0.3.4
  */
-public interface CrudService<D, V> {
+public interface JdbcAbstractDataService<D, V> {
 
     /**
      * Retrieves records by pageable, sort, filters.
@@ -126,6 +126,5 @@ public interface CrudService<D, V> {
      */
     default void remove(Long id) {
     }
-
 }
 
