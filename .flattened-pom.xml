@@ -21,12 +21,12 @@
   <parent>
     <groupId>top.leafage</groupId>
     <artifactId>leafage-starter-parent</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6</version>
     <relativePath></relativePath>
   </parent>
   <groupId>top.leafage</groupId>
   <artifactId>leafage-common</artifactId>
-  <version>0.3.5</version>
+  <version>0.3.6</version>
   <name>leafage-common</name>
   <description>common for leafage</description>
   <url>https://www.leafage.top/leafage-common</url>
@@ -69,6 +69,11 @@
     <url>https://github.com/little3201/leafage-starter-parent/leafage-common</url>
   </scm>
   <issueManagement />
+  <properties>
+    <sonar.projectKey>little3201_leafage-common</sonar.projectKey>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.organization>little3201</sonar.organization>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.poi</groupId>
@@ -79,7 +84,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-relational</artifactId>
-      <version>3.5.0</version>
+      <version>3.5.1</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -91,17 +96,18 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>io.projectreactor</groupId>
-      <artifactId>reactor-core</artifactId>
-      <version>3.7.6</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>6.2.8</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>5.12.2</version>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
+      <version>3.7.7</version>
       <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>
