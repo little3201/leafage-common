@@ -31,7 +31,7 @@ import java.util.List;
  * @author wq li
  * @since 0.3.4
  */
-public interface JdbcAbstractDataService<D, V> {
+public interface JdbcCrudService<D, V> {
 
     /**
      * Retrieves records by pageable, sort, filters.

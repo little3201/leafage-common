@@ -23,7 +23,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
-import top.leafage.common.jdbc.JdbcAbstractDataService;
+import top.leafage.common.jdbc.JdbcCrudService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.Optional;
  * @author wq li
  * @since 0.3.4
  */
-public interface JpaAbstractDataService<D, V> extends JdbcAbstractDataService<D, V> {
+public interface JpaCrudService<D, V> extends JdbcCrudService<D, V> {
 
     /**
      * 解析过滤条件字符串并构建查询的Predicate。
