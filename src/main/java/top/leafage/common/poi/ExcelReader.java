@@ -23,8 +23,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.codec.multipart.FilePart;
+import reactor.core.publisher.Mono;
 
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -52,13 +56,77 @@ public final class ExcelReader<T> {
     /**
      * Reads and maps data from the default sheet "sheet1".
      *
+     * @param filePart {@code FilePart}.
+     * @param clazz    The class to map rows to.
+     * @param <T>      The type of objects to map the Excel data to.
+     * @return List of mapped objects.
+     * @since 0.3.5
+     */
+    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz) {
+        return read(filePart, clazz, null);
+    }
+
+    /**
+     * Reads and maps data from the default sheet "sheet1".
+     *
+     * @param filePart  {@code FilePart}.
+     * @param clazz     The class to map rows to.
+     * @param sheetName (Optional) The name of the sheet to read.
+     * @param <T>       The type of objects to map the Excel data to.
+     * @return List of mapped objects.
+     * @since 0.3.5
+     */
+    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz, String sheetName) {
+        return read(filePart, clazz, sheetName, null);
+    }
+
+    /**
+     * Reads and maps data from the default sheet "sheet1".
+     *
+     * @param filePart  {@code FilePart}.
+     * @param clazz     The class to map rows to.
+     * @param sheetName (Optional) The name of the sheet to read.
+     * @param password  (Optional) The password for protected files.
+     * @param <T>       The type of objects to map the Excel data to.
+     * @return List of mapped objects.
+     * @since 0.3.5
+     */
+    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz, String sheetName, String password) {
+        return DataBufferUtils.join(filePart.content())
+                .map(dataBuffer -> {
+                    try {
+                        byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                        dataBuffer.read(bytes);
+                        return read(new ByteArrayInputStream(bytes), clazz, sheetName, password);
+                    } finally {
+                        DataBufferUtils.release(dataBuffer);
+                    }
+                });
+    }
+
+    /**
+     * Reads and maps data from the default sheet "sheet1".
+     *
      * @param inputStream The input stream of the Excel file.
      * @param clazz       The class to map rows to.
      * @param <T>         The type of objects to map the Excel data to.
      * @return List of mapped objects.
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
-        return read(inputStream, clazz, null, null);
+        return read(inputStream, clazz, null);
+    }
+
+    /**
+     * Reads and maps data from the default sheet "sheet1".
+     *
+     * @param inputStream The input stream of the Excel file.
+     * @param clazz       The class to map rows to.
+     * @param sheetName   (Optional) The name of the sheet to read.
+     * @param <T>         The type of objects to map the Excel data to.
+     * @return List of mapped objects.
+     */
+    public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName) {
+        return read(inputStream, clazz, sheetName, null);
     }
 
     /**

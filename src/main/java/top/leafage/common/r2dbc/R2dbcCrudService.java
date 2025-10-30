@@ -101,6 +101,16 @@ public interface R2dbcCrudService<D, V> {
     }
 
     /**
+     * Creates all given records.
+     *
+     * @param iterable the new records.
+     * @return the created records.
+     */
+    default Flux<V> createAll(Iterable<D> iterable) {
+        return Flux.empty();
+    }
+
+    /**
      * Updates an existing record by its ID.
      *
      * @param id the record ID.
