@@ -23,12 +23,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.codec.multipart.FilePart;
-import reactor.core.publisher.Mono;
 
 import java.beans.PropertyDescriptor;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -42,66 +38,15 @@ import java.util.*;
  * @author wq li
  * @since 0.3.0
  */
-public final class ExcelReader<T> {
+public class ExcelReader<T> {
 
-    private static final Logger log = StatusLogger.getLogger();
+    private static final Logger logger = StatusLogger.getLogger();
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private ExcelReader() {
+    protected ExcelReader() {
         // Prevent instantiation
-    }
-
-    /**
-     * Reads and maps data from the default sheet "sheet1".
-     *
-     * @param filePart {@code FilePart}.
-     * @param clazz    The class to map rows to.
-     * @param <T>      The type of objects to map the Excel data to.
-     * @return List of mapped objects.
-     * @since 0.3.5
-     */
-    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz) {
-        return read(filePart, clazz, null);
-    }
-
-    /**
-     * Reads and maps data from the default sheet "sheet1".
-     *
-     * @param filePart  {@code FilePart}.
-     * @param clazz     The class to map rows to.
-     * @param sheetName (Optional) The name of the sheet to read.
-     * @param <T>       The type of objects to map the Excel data to.
-     * @return List of mapped objects.
-     * @since 0.3.5
-     */
-    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz, String sheetName) {
-        return read(filePart, clazz, sheetName, null);
-    }
-
-    /**
-     * Reads and maps data from the default sheet "sheet1".
-     *
-     * @param filePart  {@code FilePart}.
-     * @param clazz     The class to map rows to.
-     * @param sheetName (Optional) The name of the sheet to read.
-     * @param password  (Optional) The password for protected files.
-     * @param <T>       The type of objects to map the Excel data to.
-     * @return List of mapped objects.
-     * @since 0.3.5
-     */
-    public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz, String sheetName, String password) {
-        return DataBufferUtils.join(filePart.content())
-                .map(dataBuffer -> {
-                    try {
-                        byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                        dataBuffer.read(bytes);
-                        return read(new ByteArrayInputStream(bytes), clazz, sheetName, password);
-                    } finally {
-                        DataBufferUtils.release(dataBuffer);
-                    }
-                });
     }
 
     /**
@@ -145,7 +90,7 @@ public final class ExcelReader<T> {
             if (sheet == null) return Collections.emptyList();
             return readSheet(sheet, clazz);
         } catch (IOException e) {
-            log.error("Failed to read from input stream.", e);
+            logger.error("Failed to read from input stream.", e);
             return Collections.emptyList();
         }
     }
@@ -201,7 +146,7 @@ public final class ExcelReader<T> {
             if (obj != null) {
                 dataList.add(obj);
             } else {
-                log.warn("Skipping row {} due to conversion failure", i + 1);
+                logger.warn("Skipping row {} due to conversion failure", i + 1);
             }
         }
         return dataList;
@@ -267,7 +212,7 @@ public final class ExcelReader<T> {
             }
             return instance;
         } catch (Exception e) {
-            log.error("Failed to convert row to object", e);
+            logger.error("Failed to convert row to object", e);
             return null; // 避免抛出异常，中断读取流程
         }
     }
@@ -334,7 +279,7 @@ public final class ExcelReader<T> {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to introspect class: {}", clazz, e);
+            logger.error("Failed to introspect class: {}", clazz, e);
         }
         return null;
     }
