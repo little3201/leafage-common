@@ -13,51 +13,53 @@
  * limitations under the License.
  */
 
-package top.leafage.common.r2dbc;
+package top.leafage.common.data.reactive;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import top.leafage.common.TreeAndDomainConverter;
-import top.leafage.common.TreeNode;
+import top.leafage.common.data.converter.AbstractTreeNodeConverter;
+import top.leafage.common.data.domain.TreeNode;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 /**
- * r2dbc converter
+ * reactive converter
  *
- * @param <T>  The type of tree node
- * @param <ID> The type of ID
- * @since 0.3.4
  * @author wq li
+ * @since 0.3.4
  */
-public abstract class R2dbcTreeAndDomainConverter<T, ID> extends TreeAndDomainConverter<T, ID> {
+public class ReactiveModelToTreeNodeConverter extends AbstractTreeNodeConverter {
 
     /**
-     * Converts a r2dbc stream of child nodes into a tree structure.
+     * Converts a reactive stream of child nodes into a tree structure.
      *
      * @param children a Flux of child nodes.
+     * @param <T>      the source type
+     * @param <ID>     the pk type
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children) {
-        return this.convertToTree(children, Collections.emptySet());
+    public static <T, ID> Mono<List<TreeNode<ID>>> toTree(Flux<T> children) {
+        return toTree(children, Collections.emptySet());
     }
 
     /**
-     * Converts a r2dbc stream of child nodes into a tree structure with additional properties.
+     * Converts a reactive stream of child nodes into a tree structure with additional properties.
      *
      * @param children a Flux of child nodes.
      * @param meta     a set of additional properties to include.
+     * @param <T>      the source type
+     * @param <ID>     the pk type
      * @return a Mono emitting the tree node collection.
      * @since 0.2.0
      */
-    protected Mono<List<TreeNode<ID>>> convertToTree(Flux<T> children, Set<String> meta) {
+    public static <T, ID> Mono<List<TreeNode<ID>>> toTree(Flux<T> children, Set<String> meta) {
         return children
-                .map(child -> super.createNode(child, meta))
+                .<TreeNode<ID>>map(child -> createNode(child, meta))
                 .collectList()
-                .map(super::buildTree); // 使用父类方法构建树
+                .map(AbstractTreeNodeConverter::buildTree);
     }
 
 }

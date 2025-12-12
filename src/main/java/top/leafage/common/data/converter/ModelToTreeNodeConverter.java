@@ -13,35 +13,33 @@
  * limitations under the License.
  */
 
-package top.leafage.common.jdbc;
+package top.leafage.common.data.converter;
 
-import top.leafage.common.TreeAndDomainConverter;
-import top.leafage.common.TreeNode;
+import top.leafage.common.data.domain.TreeNode;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * jdbc converter
  *
- * @param <T>  The type of tree node
- * @param <ID> The type of ID
- * @since 0.3.4
  * @author wq li
+ * @since 0.3.4
  */
-public abstract class JdbcTreeAndDomainConverter<T, ID> extends TreeAndDomainConverter<T, ID> {
+public class ModelToTreeNodeConverter extends AbstractTreeNodeConverter {
 
     /**
      * Converts a list of child nodes into a tree structure.
      *
      * @param children the list of child nodes.
+     * @param <T>      the source type
+     * @param <ID>     the pk type
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode<ID>> convertToTree(List<T> children) {
-        return this.convertToTree(children, Collections.emptySet());
+    public static <T, ID> List<TreeNode<ID>> toTree(List<T> children) {
+        return toTree(children, Collections.emptySet());
     }
 
     /**
@@ -49,15 +47,17 @@ public abstract class JdbcTreeAndDomainConverter<T, ID> extends TreeAndDomainCon
      *
      * @param children the list of child nodes.
      * @param meta     a set of additional properties to include.
+     * @param <T>      the source type
+     * @param <ID>     the pk type
      * @return the tree node collection.
      * @since 0.2.0
      */
-    protected List<TreeNode<ID>> convertToTree(List<T> children, Set<String> meta) {
+    public static <T, ID> List<TreeNode<ID>> toTree(List<T> children, Set<String> meta) {
         List<TreeNode<ID>> nodes = children.stream()
-                .map(child -> this.createNode(child, meta))
-                .collect(Collectors.toList());
+                .<TreeNode<ID>>map(child -> createNode(child, meta))
+                .toList();
 
-        return this.buildTree(nodes);
+        return buildTree(nodes);
     }
 
 }

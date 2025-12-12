@@ -1,21 +1,19 @@
 /*
- *  Copyright 2018-2025 little3201.
+ * Copyright (c) 2025.  little3201.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package top.leafage.common.r2dbc;
+package top.leafage.common.data.reactive;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -25,20 +23,21 @@ import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import top.leafage.common.data.Service;
 
 import java.beans.PropertyDescriptor;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Reactive service interface for basic CRUD operations.
+ * Reactive service interface.
  *
- * @param <D> DTO type for input data
- * @param <V> VO type for output data
+ * @param <D> The dto type.
+ * @param <V> the vo type.
  * @author wq li
- * @since 0.3.4
+ * @since 0.3.7
  */
-public interface R2dbcCrudService<D, V> {
+public interface ReactiveCrudService<D, V> extends Service {
 
     /**
      * Retrieves records by pageable, sort, filters.
@@ -55,7 +54,7 @@ public interface R2dbcCrudService<D, V> {
     }
 
     /**
-     * Retrieves all records or by given ids.
+     * Retrieves all records or by given pks.
      *
      * @param ids the given records id .
      * @return a Flux stream of all records.
@@ -65,9 +64,9 @@ public interface R2dbcCrudService<D, V> {
     }
 
     /**
-     * Fetches a record by its ID.
+     * Fetch a record by pk.
      *
-     * @param id the record ID.
+     * @param id the pk.
      * @return a Mono containing the record, or an empty Mono if not found.
      */
     default Mono<V> fetch(Long id) {
@@ -75,20 +74,9 @@ public interface R2dbcCrudService<D, V> {
     }
 
     /**
-     * Checks if a record exists by it's field.
+     * Enable or Disable a record by pk.
      *
-     * @param field the record's field
-     * @param id    the record's id
-     * @return a Mono emitting true if the record exists, false otherwise.
-     */
-    default Mono<Boolean> exists(String field, Long id) {
-        return Mono.just(false);
-    }
-
-    /**
-     * Enable or Disable a record by it's ID.
-     *
-     * @param id the record ID
+     * @param id the pk.
      * @return a Mono emitting true if the record enabled/disabled, false otherwise
      */
     default Mono<Boolean> enable(Long id) {
@@ -98,17 +86,17 @@ public interface R2dbcCrudService<D, V> {
     /**
      * Creates a new record.
      *
-     * @param d the DTO representing the new record.
+     * @param dto the dto.
      * @return a Mono containing the created record.
      */
-    default Mono<V> create(D d) {
+    default Mono<V> create(D dto) {
         return Mono.empty();
     }
 
     /**
      * Creates all given records.
      *
-     * @param iterable the new records.
+     * @param iterable the dto iterable.
      * @return the created records.
      */
     default Flux<V> createAll(Iterable<D> iterable) {
@@ -116,20 +104,20 @@ public interface R2dbcCrudService<D, V> {
     }
 
     /**
-     * Updates an existing record by its ID.
+     * Updates an existing record by pk.
      *
-     * @param id the record ID.
-     * @param d  the DTO containing updated data.
+     * @param id  the pk.
+     * @param dto the dto.
      * @return a Mono containing the updated record.
      */
-    default Mono<V> modify(Long id, D d) {
+    default Mono<V> modify(Long id, D dto) {
         return Mono.empty();
     }
 
     /**
-     * Removes a record by its ID.
+     * Removes a record by pk.
      *
-     * @param id the record ID.
+     * @param id the pk.
      * @return a Mono indicating completion.
      */
     default Mono<Void> remove(Long id) {
@@ -158,7 +146,7 @@ public interface R2dbcCrudService<D, V> {
      * @since 0.3.5
      */
     default Criteria buildCriteria(String filters, Class<?> entityClass) {
-        if (filters == null || filters.trim().isEmpty()) {
+        if (!StringUtils.hasText(filters)) {
             return Criteria.empty();
         }
 
@@ -178,14 +166,18 @@ public interface R2dbcCrudService<D, V> {
                 continue;
             }
 
+            Object convertedValue = convertValue(field, value, entityClass);
+            if (convertedValue == null) {
+                return criteria.and(Criteria.where(field).isNull());
+            }
             Criteria condition = switch (op) {
-                case "eq" -> Criteria.where(field).is(convertValue(field, value, entityClass));
-                case "ne" -> Criteria.where(field).not(convertValue(field, value, entityClass));
+                case "eq" -> Criteria.where(field).is(convertedValue);
+                case "ne" -> Criteria.where(field).not(convertedValue);
                 case "like" -> Criteria.where(field).like("%" + value + "%");
-                case "gt" -> Criteria.where(field).greaterThan(convertValue(field, value, entityClass));
-                case "lt" -> Criteria.where(field).lessThan(convertValue(field, value, entityClass));
-                case "gte" -> Criteria.where(field).greaterThanOrEquals(convertValue(field, value, entityClass));
-                case "lte" -> Criteria.where(field).lessThanOrEquals(convertValue(field, value, entityClass));
+                case "gt" -> Criteria.where(field).greaterThan(convertedValue);
+                case "lt" -> Criteria.where(field).lessThan(convertedValue);
+                case "gte" -> Criteria.where(field).greaterThanOrEquals(convertedValue);
+                case "lte" -> Criteria.where(field).lessThanOrEquals(convertedValue);
                 default -> null;
             };
 
@@ -204,7 +196,7 @@ public interface R2dbcCrudService<D, V> {
      * @since 0.3.5
      */
     private Object convertValue(String field, String value, Class<?> entityClass) {
-        if (value == null || value.isBlank()) return null;
+        if (!StringUtils.hasText(value)) return null;
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(entityClass, field);
         if (descriptor == null) return null;
 

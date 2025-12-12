@@ -1,21 +1,19 @@
 /*
- *  Copyright 2018-2025 little3201.
+ * Copyright (c) 2025.  little3201.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package top.leafage.common.jpa;
+package top.leafage.common.data.jpa;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
@@ -23,21 +21,21 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
-import top.leafage.common.jdbc.JdbcCrudService;
+import top.leafage.common.data.CrudService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Servlet service interface for jpa CRUD operations.
+ * Servlet service interface.
  *
- * @param <D> DTO type for input data
- * @param <V> VO type for output data
+ * @param <D> The dto type.
+ * @param <V> the vo type.
  * @author wq li
- * @since 0.3.4
+ * @since 0.3.7
  */
-public interface JpaCrudService<D, V> extends JdbcCrudService<D, V> {
+public interface JpaCrudService<D, V> extends CrudService<D, V> {
 
     /**
      * 解析过滤条件字符串并构建查询的Predicate。

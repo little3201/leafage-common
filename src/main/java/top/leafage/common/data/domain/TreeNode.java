@@ -1,21 +1,19 @@
 /*
- *  Copyright 2018-2025 little3201.
+ * Copyright (c) 2025.  little3201.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package top.leafage.common;
+package top.leafage.common.data.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +43,8 @@ public class TreeNode<T> {
         this.id = id;
         this.name = name;
         this.superiorId = superiorId;
+        this.children = children != null ? children : Collections.emptyList();
         this.meta = meta != null ? meta : Collections.emptyMap();
-        this.children = children != null ? children : new ArrayList<>();
     }
 
     /**
@@ -54,7 +52,7 @@ public class TreeNode<T> {
      *
      * @param id  a T object
      * @param <T> a T class
-     * @return a {@link top.leafage.common.TreeNode.TreeNodeBuilder} object
+     * @return a {@link TreeNode.TreeNodeBuilder} object
      */
     public static <T> TreeNodeBuilder<T> withId(T id) {
         return new TreeNodeBuilder<T>().id(id);
@@ -64,7 +62,7 @@ public class TreeNode<T> {
      * <p>builder.</p>
      *
      * @param <T> a T class
-     * @return a {@link top.leafage.common.TreeNode.TreeNodeBuilder} object
+     * @return a {@link TreeNode.TreeNodeBuilder} object
      */
     public static <T> TreeNodeBuilder<T> builder() {
         return new TreeNodeBuilder<>();
