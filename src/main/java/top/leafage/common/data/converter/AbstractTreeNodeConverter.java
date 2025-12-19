@@ -13,41 +13,43 @@
  * limitations under the License.
  */
 
-package top.leafage.common;
+package top.leafage.common.data.converter;
 
-import java.beans.IntrospectionException;
+import org.springframework.beans.BeanUtils;
+import top.leafage.common.data.domain.TreeNode;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Abstract base service for constructing tree structures from objects.
- * Provides functionality for creating tree nodes and organizing them
- * based on superior-subordinate relationships.
+ * Methods for constructing tree structures from objects.
  *
- * @param <N> the tree node
+ * @author wq li
  * @since 0.3.4
  */
-public abstract class TreeAndDomainConverter<N, ID> extends DomainConverter {
+public abstract class AbstractTreeNodeConverter {
 
     /**
      * Create tree node.
      *
      * @param t      The source object to convert.
      * @param expand The expand data.
+     * @param <T>    the source type
+     * @param <ID>   the pk type
      * @return An instance of the tree node.
-     * @throws RuntimeException if the conversion fails.
+     * @throws java.lang.RuntimeException if the conversion fails.
      */
-    protected TreeNode<ID> createNode(N t, Set<String> expand) {
+    public static <T, ID> TreeNode<ID> createNode(T t, Set<String> expand) {
         Class<?> clazz = t.getClass();
-        ID id = this.getValue(t, clazz, "id");
+        ID id = getValue(t, clazz, "id");
         if (id == null) throw new IllegalArgumentException("ID must not be null");
 
-        String name = this.getValue(t, clazz, "name");
-        ID superiorId = this.getValue(t, clazz, "superiorId");
+        String name = getValue(t, clazz, "name");
+        ID superiorId = getValue(t, clazz, "superiorId");
 
-        Map<String, Object> meta = this.extractMeta(clazz, t, expand);
+        Map<String, Object> meta = extractMeta(clazz, t, expand);
 
         return TreeNode.withId(id)
                 .name(name)
@@ -60,10 +62,11 @@ public abstract class TreeAndDomainConverter<N, ID> extends DomainConverter {
      * Build tree node.
      *
      * @param nodes The tree nodes.
+     * @param <ID>  the pk type
      * @return A list of the tree node.
-     * @throws RuntimeException if the conversion fails.
+     * @throws java.lang.RuntimeException if the conversion fails.
      */
-    protected List<TreeNode<ID>> buildTree(List<TreeNode<ID>> nodes) {
+    public static <ID> List<TreeNode<ID>> buildTree(List<TreeNode<ID>> nodes) {
         Map<ID, List<TreeNode<ID>>> childrenMap = nodes.stream()
                 .filter(n -> n.getSuperiorId() != null)
                 .collect(Collectors.groupingBy(TreeNode::getSuperiorId));
@@ -76,25 +79,27 @@ public abstract class TreeAndDomainConverter<N, ID> extends DomainConverter {
     }
 
     /**
-     * Get value.
+     * Get value, if not found, find from it's super class.
      *
      * @param obj          object.
      * @param clazz        object class.
      * @param propertyName property name.
-     * @param <V>          type of the value.
+     * @param <T>          the source type
+     * @param <V>          the value type.
      * @return value.
      */
     @SuppressWarnings("unchecked")
-    private <V> V getValue(N obj, Class<?> clazz, String propertyName) {
-        while (clazz != null) {
-            try {
-                PropertyDescriptor descriptor = new PropertyDescriptor(propertyName, clazz);
-                return (V) descriptor.getReadMethod().invoke(obj);
-            } catch (IntrospectionException e) {
-                clazz = clazz.getSuperclass(); // 向上找
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                return null;
+    private static <T, V> V getValue(T obj, Class<?> clazz, String propertyName) {
+        try {
+            PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(clazz, propertyName);
+            if (descriptor == null) {
+                BeanUtils.getPropertyDescriptor(clazz.getSuperclass(), propertyName);
             }
+            if (descriptor != null) {
+                return (V) descriptor.getReadMethod().invoke(obj);
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to get field value: " + propertyName, e);
         }
         return null;
     }
@@ -105,9 +110,10 @@ public abstract class TreeAndDomainConverter<N, ID> extends DomainConverter {
      * @param clazz  type.
      * @param obj    object.
      * @param expand data.
+     * @param <T>    the source type
      * @return value.
      */
-    private Map<String, Object> extractMeta(Class<?> clazz, N obj, Set<String> expand) {
+    private static <T> Map<String, Object> extractMeta(Class<?> clazz, T obj, Set<String> expand) {
         Map<String, Object> meta = new HashMap<>();
         if (expand != null) {
             for (String field : expand) {

@@ -1,18 +1,16 @@
 /*
- *  Copyright 2018-2025 little3201.
+ * Copyright (c) 2025.  little3201.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package top.leafage.common.poi;
@@ -21,31 +19,31 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for reading and mapping Excel files from an InputStream to the specified type.
  * Supports reading from password-protected files and from specific sheets.
  *
  * @param <T> The type to map the Excel rows to
+ * @author wq li
  * @since 0.3.0
  */
-public final class ExcelReader<T> {
+public class ExcelReader<T> {
 
-    private static final Logger log = StatusLogger.getLogger();
-    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new ConcurrentHashMap<>();
+    private static final Logger logger = StatusLogger.getLogger();
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private ExcelReader() {
+    protected ExcelReader() {
         // Prevent instantiation
     }
 
@@ -58,7 +56,20 @@ public final class ExcelReader<T> {
      * @return List of mapped objects.
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz) {
-        return read(inputStream, clazz, null, null);
+        return read(inputStream, clazz, null);
+    }
+
+    /**
+     * Reads and maps data from the default sheet "sheet1".
+     *
+     * @param inputStream The input stream of the Excel file.
+     * @param clazz       The class to map rows to.
+     * @param sheetName   (Optional) The name of the sheet to read.
+     * @param <T>         The type of objects to map the Excel data to.
+     * @return List of mapped objects.
+     */
+    public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName) {
+        return read(inputStream, clazz, sheetName, null);
     }
 
     /**
@@ -77,7 +88,7 @@ public final class ExcelReader<T> {
             if (sheet == null) return Collections.emptyList();
             return readSheet(sheet, clazz);
         } catch (IOException e) {
-            log.error("Failed to read from input stream.", e);
+            logger.error("Failed to read from input stream.", e);
             return Collections.emptyList();
         }
     }
@@ -128,12 +139,12 @@ public final class ExcelReader<T> {
             Row row = sheet.getRow(i);
             if (isRowEmpty(row)) continue;
 
-            Map<String, Object> rowData = mapRowToHeaders(row, headers);
+            Map<String, Object> rowData = mapRowToHeaders(clazz, row, headers);
             T obj = convert(rowData, clazz);
             if (obj != null) {
                 dataList.add(obj);
             } else {
-                log.warn("Skipping row {} due to conversion failure", i + 1);
+                logger.warn("Skipping row {} due to conversion failure", i + 1);
             }
         }
         return dataList;
@@ -163,10 +174,14 @@ public final class ExcelReader<T> {
      * @param headers The list of header names.
      * @return A map of column names to cell values.
      */
-    private static Map<String, Object> mapRowToHeaders(Row row, List<String> headers) {
+    private static <T> Map<String, Object> mapRowToHeaders(Class<T> clazz, Row row, List<String> headers) {
         Map<String, Object> rowData = new HashMap<>();
         for (int i = 0; i < headers.size(); i++) {
-            rowData.put(headers.get(i), readCell(row.getCell(i)));
+            String headerKey = getHeaderKey(clazz, headers.get(i));
+            if (headerKey != null) {
+                Object cellValue = readCell(row.getCell(i));
+                rowData.put(headerKey, cellValue);
+            }
         }
         return rowData;
     }
@@ -182,21 +197,20 @@ public final class ExcelReader<T> {
     private static <T> T convert(Map<String, Object> dataMap, Class<T> clazz) {
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
-            Map<String, PropertyDescriptor> descriptorMap = getPropertyDescriptors(clazz);
 
             for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
-                String header = entry.getKey();
+                String field = entry.getKey();
                 Object value = entry.getValue();
 
-                PropertyDescriptor descriptor = descriptorMap.get(header);
+                PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(clazz, field);
                 if (descriptor != null && descriptor.getWriteMethod() != null) {
-                    Object convertedValue = convertType(value, descriptor.getPropertyType());
+                    Object convertedValue = DefaultConversionService.getSharedInstance().convert(value, descriptor.getPropertyType());
                     descriptor.getWriteMethod().invoke(instance, convertedValue);
                 }
             }
             return instance;
         } catch (Exception e) {
-            log.error("Failed to convert row to object", e);
+            logger.error("Failed to convert row to object", e);
             return null; // 避免抛出异常，中断读取流程
         }
     }
@@ -231,49 +245,50 @@ public final class ExcelReader<T> {
         return cell == null ? "" : cell.toString();
     }
 
-    private static Object convertType(Object value, Class<?> targetType) {
-        if (value == null) return null;
-        if (targetType.isInstance(value)) return value;
+    private static <T> String getHeaderKey(Class<T> clazz, String header) {
+        if (clazz == null || header == null) {
+            return null;
+        }
+        try {
+            List<Field> allFields = new ArrayList<>();
+            Class<?> currentClass = clazz;
 
-        String str = value.toString().trim();
-        if (targetType == String.class) return str;
-        if (targetType == Integer.class || targetType == int.class) return (int) Double.parseDouble(str);
-        if (targetType == Long.class || targetType == long.class) return (long) Double.parseDouble(str);
-        if (targetType == Double.class || targetType == double.class) return Double.parseDouble(str);
-        if (targetType == Boolean.class || targetType == boolean.class) return Boolean.parseBoolean(str);
-        if (targetType == LocalDate.class) return LocalDate.parse(str);
-        // 可拓展更多类型
-        return str;
-    }
-
-    private static <T> Map<String, PropertyDescriptor> getPropertyDescriptors(Class<T> clazz) {
-        return descriptorCache.computeIfAbsent(clazz, key -> {
-            Map<String, PropertyDescriptor> map = new HashMap<>();
-            try {
-                for (Field field : clazz.getDeclaredFields()) {
-                    String name = field.getName();
-                    if (field.isAnnotationPresent(ExcelColumn.class)) {
-                        name = field.getAnnotation(ExcelColumn.class).value();
-                    }
-                    map.put(normalize(name), new PropertyDescriptor(field.getName(), clazz));
-                }
-            } catch (Exception e) {
-                log.error("Failed to introspect class: {}", clazz, e);
+            while (currentClass != null && currentClass != Object.class) {
+                allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+                currentClass = currentClass.getSuperclass();
             }
-            return map;
-        });
-    }
 
-    private static String normalize(String name) {
-        return name.trim().replaceAll("[_\\s]+", "").toLowerCase();
+            for (Field field : allFields) {
+                String fieldName = field.getName();
+
+                // 如果header直接匹配字段名，直接返回字段名
+                if (header.equals(fieldName)) {
+                    return fieldName;
+                }
+
+                // 检查ExcelColumn注解
+                ExcelColumn excelColumn = field.getAnnotation(ExcelColumn.class);
+                if (excelColumn != null) {
+                    String displayName = excelColumn.value();
+                    // 如果header匹配注解的显示名称，返回对应的字段名
+                    if (header.equals(displayName)) {
+                        return fieldName;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to introspect class: {}", clazz, e);
+        }
+        return null;
     }
 
     private static boolean isRowEmpty(Row row) {
         if (row == null) return true;
         for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
+            // 有一个非空单元格，行就不是空的
             if (cell != null && cell.getCellType() != CellType.BLANK && !cell.toString().trim().isEmpty()) {
-                return false; // 有一个非空单元格，行就不是空的
+                return false;
             }
         }
         return true;
