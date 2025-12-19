@@ -31,6 +31,9 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractTreeNodeConverter {
 
+    private AbstractTreeNodeConverter() {
+    }
+
     /**
      * Create tree node.
      *
@@ -75,7 +78,7 @@ public abstract class AbstractTreeNodeConverter {
                 .peek(node ->
                         node.setChildren(childrenMap.getOrDefault(node.getId(), Collections.emptyList())))
                 .filter(node -> node.getSuperiorId() == null)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
