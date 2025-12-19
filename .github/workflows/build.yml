@@ -13,7 +13,9 @@ on:
     branches: [ $default-branch ]
   pull_request:
     branches: [ $default-branch ]
-    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
 
 jobs:
   build:
