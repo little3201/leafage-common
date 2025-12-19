@@ -29,7 +29,7 @@
 name: SonarQube
 on:
   push:
-    branches: [ main ]
+    branches: [ $default-branch ]
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -60,4 +60,4 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=llittle3201_leafage-common
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=little3201_leafage-common
