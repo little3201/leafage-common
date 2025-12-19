@@ -31,6 +31,12 @@ jobs:
           java-version: 21
           distribution: 'temurin'
           cache: maven
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Verify and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
