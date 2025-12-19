@@ -29,7 +29,7 @@
 name: SonarQube
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
