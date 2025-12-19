@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractTreeNodeConverter {
 
-    private AbstractTreeNodeConverter() {
-    }
-
     /**
      * Create tree node.
      *
