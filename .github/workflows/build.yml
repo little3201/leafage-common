@@ -33,6 +33,11 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+      - name: Analyze with SonarQube
+        # You can pin the exact commit or the version.
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on SonarQube, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
 #      - name: Verify and analyze
 #        env:
 #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
