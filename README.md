@@ -4,21 +4,36 @@
  <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=alert_status" alt="Quality Gate Status">
  <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=code_smells" alt="code_smells"/>
  <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=bugs" alt="bugs">
- <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=ncloc" alt="lines of code"/>
+ <img src="https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-common&metric=security_rating" alt="security rating"/>
 </p>
 
 ### 介绍：
 
-leafage 开源项目的公共模块，提供通用工具和抽象接口；
+公共模块，提供通用接口，分页处理，条件查询的条件组合，poi接口；
 
-公共依赖模块，包括业务基础操作（CRUD）接口、树结构构造抽象接口（AbstractBasicService），提供随机代码生成逻辑方法，poi导入、导出处理（ExcelReader），下分两个package：
+## 项目结构
 
-- reactive: 以 web flux 方式构建
+```
+leafage-common/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── top.leafge.common/
+│   │   │   │   ├── data/
+│   │   │   │   ├── poi/
+│   ├── test/
+└── pom.xml
+└── README.md
+```
 
-    - ServletBasicService: 基础业务接口；
-    - ServletAbstractTreeNodeService: 树结构操作接口；
+## 贡献指南
 
-- servlet: 以 web servlet 方式构建
+欢迎各位开发者参与贡献！
 
-    - ReactiveBasicService: 基础业务接口；
-    - ReactiveAbstractTreeNodeService: 树结构操作接口；
+1. Fork 本仓库
+2. 新建分支 `feature/xxx`
+3. 提交代码并发起 Pull Request
+
+## License
+
+[Apache License 2.0](LICENSE)
