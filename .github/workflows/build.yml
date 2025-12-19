@@ -12,7 +12,7 @@ on:
   push:
     branches: [ $default-branch ]
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    branches: [ $default-branch ]
 
 permissions:
   contents: write
@@ -31,8 +31,10 @@ jobs:
           java-version: 21
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Verify and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify -P sonar -Dsonar.projectKey=little3201_leafage-common
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
