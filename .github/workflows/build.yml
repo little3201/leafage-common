@@ -45,7 +45,7 @@ jobs:
           fetch-depth: 0
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v7
-        env:
+        with:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           projectName: leafage-common
           projectKey: little3201_leafage-common
