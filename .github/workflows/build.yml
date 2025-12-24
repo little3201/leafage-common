@@ -35,7 +35,7 @@ jobs:
       - name: Verify and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify -P sonar org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: mvn -B verify -P sonar org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./pom.xml
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
