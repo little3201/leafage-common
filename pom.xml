@@ -34,6 +34,8 @@
         <sonar.projectKey>little3201_leafage-common</sonar.projectKey>
         <sonar.organization>little3201</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.lang.patterns.xml>**/*.xsd,**/*.xsl,**/*.config,**/*-config.xml,**/*Context.xml</sonar.lang.patterns.xml>
+        <sonar.lang.patterns.java>**/*.java,**/*.jav,**/*.xml</sonar.lang.patterns.java>
     </properties>
 
     <dependencies>
