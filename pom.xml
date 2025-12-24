@@ -25,11 +25,10 @@
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.4.0</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
-    <description>common for leafage</description>
+    <description>common module</description>
 
     <properties>
         <sonar.projectKey>little3201_leafage-common</sonar.projectKey>
