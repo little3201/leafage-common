@@ -15,10 +15,11 @@
 
 package top.leafage.common.poi;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.status.StatusLogger;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
 
@@ -38,7 +39,7 @@ import java.util.*;
  */
 public class ExcelReader<T> {
 
-    private static final Logger logger = StatusLogger.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ExcelReader.class);
 
     /**
      * Private constructor to prevent instantiation.
