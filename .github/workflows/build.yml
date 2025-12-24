@@ -33,7 +33,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Cache SonarCloud packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
@@ -41,7 +41,7 @@ jobs:
       - name: Verify and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify -P sonar org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=little3201 -Dsonar.projectKey=little3201_leafage-common
+        run: mvn -B verify -P sonar org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
