@@ -25,17 +25,10 @@
     </parent>
 
     <artifactId>leafage-common</artifactId>
-    <version>0.4.0</version>
     <packaging>jar</packaging>
 
     <name>leafage-common</name>
-    <description>common for leafage</description>
-
-    <properties>
-        <sonar.projectKey>little3201_leafage-common</sonar.projectKey>
-        <sonar.organization>little3201</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    </properties>
+    <description>common module</description>
 
     <dependencies>
         <dependency>
