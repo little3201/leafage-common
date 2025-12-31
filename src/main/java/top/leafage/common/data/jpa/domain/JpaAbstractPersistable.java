@@ -40,7 +40,7 @@ public abstract class JpaAbstractPersistable<PK extends Serializable> implements
     private PK id;
 
     @Override
-    public @Nullable PK getId() {
+    public PK getId() {
         return id;
     }
 

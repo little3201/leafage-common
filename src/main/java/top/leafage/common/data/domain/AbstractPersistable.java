@@ -16,7 +16,6 @@
 package top.leafage.common.data.domain;
 
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -31,14 +30,14 @@ import java.io.Serializable;
  *
  * @param <PK> the type of the identifier.
  */
-public abstract class AbstractPersistable<PK extends Serializable> implements Persistable<@NonNull PK> {
+public abstract class AbstractPersistable<PK extends Serializable> implements Persistable<PK> {
 
     @Nullable
     @Id
     private PK id;
 
     @Override
-    public @Nullable PK getId() {
+    public PK getId() {
         return id;
     }
 
