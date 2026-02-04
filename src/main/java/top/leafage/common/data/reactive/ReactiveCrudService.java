@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2025.  little3201.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
 
 package top.leafage.common.data.reactive;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,7 @@ public interface ReactiveCrudService<D, V> extends Service {
      * @param ids the given records id .
      * @return a Flux stream of all records.
      */
-    default Flux<V> retrieve(List<Long> ids) {
+    default Flux<V> retrieve(@Nullable List<Long> ids) {
         return Flux.empty();
     }
 

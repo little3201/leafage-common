@@ -15,6 +15,7 @@
 
 package top.leafage.common.data;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -51,7 +52,7 @@ public interface CrudService<D, V> extends Service {
      * @param ids the given records id .
      * @return a list of all records
      */
-    default List<V> retrieve(List<Long> ids) {
+    default List<V> retrieve(@Nullable List<Long> ids) {
         return Collections.emptyList();
     }
 
