@@ -14,15 +14,20 @@
 ## 项目结构
 
 ```
-leafage-common/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   ├── top.leafge.common/
-│   │   │   │   ├── data/
-│   │   │   │   ├── poi/
-│   ├── test/
-└── pom.xml
+leafage-common
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   ├── top.leafge.common
+│   │   │   │   ├── data                # jdbc, jpa, r2dbc
+│   │   │   │   │   ├── converter       # tree convert
+│   │   │   │   │   ├── domain          # domain for jdbc
+│   │   │   │   │   ├── jpa             # jpa 
+│   │   │   │   │   └── reactive        # r2dbc
+│   │   │   │   ├── file                # file
+│   │   │   │   └── poi                 # poi
+│   └── test
+├── pom.xml
 └── README.md
 ```
 
