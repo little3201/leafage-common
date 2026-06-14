@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025.  little3201.
+ * Copyright (c) 2026.  little3201.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,5 +13,7 @@
  * limitations under the License.
  */
 
-@org.jspecify.annotations.NullMarked
-package top.leafage.common.data.domain;
+package top.leafage.common.poi.excel;
+
+public class ExcelWriter {
+}

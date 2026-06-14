@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * Servlet service interface.
  *
- * @param <D> The dto type.
+ * @param <D> The event type.
  * @param <V> the vo type.
  * @author wq li
  * @since 0.3.7

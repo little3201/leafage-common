@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025.  little3201.
+ * Copyright (c) 2026.  little3201.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,17 @@
  * limitations under the License.
  */
 
-package top.leafage.common.poi;
+package top.leafage.common.poi.word.element;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
- * excel column
+ * doc element
  *
  * @author wq li
- * @since 0.3.2
+ * @since 0.4.2
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ExcelColumn {
+public interface WordElement {
 
-    /**
-     * Excel 列名
-     *
-     * @return alias
-     */
-    String value();
+    void render(XWPFDocument doc);
 }

@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Reactive service interface.
  *
- * @param <D> The dto type.
+ * @param <D> The event type.
  * @param <V> the vo type.
  * @author wq li
  * @since 0.3.7
@@ -75,19 +75,29 @@ public interface ReactiveCrudService<D, V> extends Service {
     }
 
     /**
-     * Enable or Disable a record by pk.
+     * Enable a record by pk.
      *
      * @param id the pk.
-     * @return a Mono emitting true if the record enabled/disabled, false otherwise
+     * @return a Mono emitting true if the record enabled, false otherwise
      */
     default Mono<Boolean> enable(Long id) {
         return Mono.just(false);
     }
 
     /**
+     * Disable a record by pk.
+     *
+     * @param id the pk.
+     * @return a Mono emitting true if the record disabled, false otherwise
+     */
+    default Mono<Boolean> disable(Long id) {
+        return Mono.just(false);
+    }
+
+    /**
      * Creates a new record.
      *
-     * @param dto the dto.
+     * @param dto the event.
      * @return a Mono containing the created record.
      */
     default Mono<V> create(D dto) {
@@ -97,7 +107,7 @@ public interface ReactiveCrudService<D, V> extends Service {
     /**
      * Creates all given records.
      *
-     * @param iterable the dto iterable.
+     * @param iterable the event iterable.
      * @return the created records.
      */
     default Flux<V> createAll(Iterable<D> iterable) {
@@ -108,7 +118,7 @@ public interface ReactiveCrudService<D, V> extends Service {
      * Updates an existing record by pk.
      *
      * @param id  the pk.
-     * @param dto the dto.
+     * @param dto the event.
      * @return a Mono containing the updated record.
      */
     default Mono<V> modify(Long id, D dto) {

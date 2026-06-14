@@ -20,7 +20,7 @@
     <parent>
         <groupId>top.leafage</groupId>
         <artifactId>leafage-starter-parent</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -29,6 +29,7 @@
 
     <name>leafage-common</name>
     <description>common module</description>
+    <version>0.4.2</version>
 
     <properties>
         <sonar.projectKey>little3201_leafage-common</sonar.projectKey>
@@ -59,6 +60,16 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- test -->

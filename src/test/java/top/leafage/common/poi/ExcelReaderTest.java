@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import top.leafage.common.poi.excel.ExcelColumn;
+import top.leafage.common.poi.excel.ExcelReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,7 +69,7 @@ class ExcelReaderTest {
         assertNotNull(users);
         assertEquals(2, users.size());
 
-        User user1 = users.get(0);
+        User user1 = users.getFirst();
         assertEquals("张三", user1.getName());
         assertEquals(28, user1.getAge());
         assertEquals("zhangsan@example.com", user1.getEmail());
@@ -78,15 +80,15 @@ class ExcelReaderTest {
         assertEquals("lisi@example.com", user2.getEmail());
     }
 
-    static class User {
+    public static class User {
 
-        @ExcelColumn("姓名")
+        @ExcelColumn(value = "姓名")
         private String name;
 
-        @ExcelColumn("年龄")
+        @ExcelColumn(value = "年龄")
         private int age;
 
-        @ExcelColumn("邮箱")
+        @ExcelColumn(value = "邮箱")
         private String email;
 
         // Getters & Setters

@@ -23,6 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static top.leafage.common.data.Service.ID_MUST_NOT_BE_NULL;
+
 /**
  * Methods for constructing tree structures from objects.
  *
@@ -44,7 +46,7 @@ public abstract class AbstractTreeNodeConverter {
     public static <T, ID> TreeNode<ID> createNode(T t, Set<String> expand) {
         Class<?> clazz = t.getClass();
         ID id = getValue(t, clazz, "id");
-        if (id == null) throw new IllegalArgumentException("ID must not be null");
+        if (id == null) throw new IllegalArgumentException(ID_MUST_NOT_BE_NULL);
 
         String name = getValue(t, clazz, "name");
         ID superiorId = getValue(t, clazz, "superiorId");

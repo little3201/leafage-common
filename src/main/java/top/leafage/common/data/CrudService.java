@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Servlet service interface.
  *
- * @param <D> The dto type.
+ * @param <D> The event type.
  * @param <V> the vo type.
  * @author wq li
  * @since 0.3.7
@@ -67,7 +67,7 @@ public interface CrudService<D, V> extends Service {
     }
 
     /**
-     * Enable or Disable a record by pk.
+     * Enable a record by pk.
      *
      * @param id the pk.
      * @return true if the record enabled/disabled, false otherwise
@@ -77,9 +77,19 @@ public interface CrudService<D, V> extends Service {
     }
 
     /**
+     * Disable a record by pk.
+     *
+     * @param id the pk.
+     * @return true if the record enabled/disabled, false otherwise
+     */
+    default boolean disable(Long id) {
+        return false;
+    }
+
+    /**
      * Creates a new record.
      *
-     * @param dto the dto.
+     * @param dto the event.
      * @return the created record
      */
     default V create(D dto) {
@@ -89,7 +99,7 @@ public interface CrudService<D, V> extends Service {
     /**
      * Creates all given records.
      *
-     * @param iterable the dto iterable.
+     * @param iterable the event iterable.
      * @return the created records.
      */
     default List<V> createAll(Iterable<D> iterable) {
@@ -100,7 +110,7 @@ public interface CrudService<D, V> extends Service {
      * Updates an existing record by pk.
      *
      * @param id  the pk.
-     * @param dto the dto.
+     * @param dto the event.
      * @return the updated record
      */
     default V modify(Long id, D dto) {
