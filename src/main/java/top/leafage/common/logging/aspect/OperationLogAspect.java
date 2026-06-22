@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +27,11 @@ import top.leafage.common.logging.annotation.OperationLog;
 import top.leafage.common.logging.event.OperationLogEvent;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Operation log aspect
@@ -38,6 +42,8 @@ import java.util.List;
 @Component
 public class OperationLogAspect {
 
+    private static final Set<String> QUERY_ACTIONS = Set.of("retrieve", "tree", "subset", "fetch");
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final ApplicationEventPublisher eventPublisher;
@@ -46,48 +52,127 @@ public class OperationLogAspect {
         this.eventPublisher = eventPublisher;
     }
 
-    @Around("@annotation(operationLog)")
+    @Around("@within(operationLog)")
     public Object around(ProceedingJoinPoint pjp, OperationLog operationLog) throws Throwable {
         long start = System.currentTimeMillis();
 
-        Object result = null;
+        Object response = null;
         Throwable error = null;
 
         try {
-            result = pjp.proceed();
-            return result;
+            response = pjp.proceed();
+            return response;
         } catch (Throwable e) {
             error = e;
             throw e;
         } finally {
             long duration = System.currentTimeMillis() - start;
 
-            OperationLogEvent event = buildEvent(pjp, operationLog, result, error, duration);
+            OperationLogEvent event = buildEvent(pjp, operationLog, response, error, duration);
             eventPublisher.publishEvent(event);
         }
     }
 
     private OperationLogEvent buildEvent(ProceedingJoinPoint pjp, OperationLog operationLog,
-                                         Object result, Throwable error, long duration) {
+                                         Object response, Throwable error, long duration) {
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        String[] parameterNames = signature.getParameterNames();
+        String action = signature.getMethod().getName();
+        boolean isQuery = isQueryAction(action);
+
         Object[] args = pjp.getArgs();
-        List<Object> serializableArgs = new ArrayList<>();
-        for (Object arg : args) {
-            if (arg instanceof File ||
-                    arg instanceof MultipartFile) {
-                continue; // 跳过不可序列化的对象
+        Map<String, Object> params = new LinkedHashMap<>();
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+
+            if (shouldIgnore(arg)) {
+                continue;
             }
-            serializableArgs.add(arg);
+
+            String parameterName = parameterNames != null && parameterNames.length > i
+                            ? parameterNames[i]
+                            : "arg" + i;
+            params.put(parameterName, arg);
         }
 
         return OperationLogEvent.builder()
-                .module(operationLog.module())
-                .action(operationLog.action())
-                .params(toJsonSafe(serializableArgs))
-                .result(toJsonSafe(result))
-                .status(error == null ? 1 : 0)
+                .module(operationLog.value())
+                .action(action)
+                .targetId(targetId(parameterNames, args))
+                .params(params)
+                .response(isQuery ? null : toJsonSafe(response))
+                .status(error == null ? OperationLogEvent.Status.SUCCEED : OperationLogEvent.Status.FAILED)
                 .message(error != null ? error.getMessage() : null)
                 .duration(duration)
                 .build();
+    }
+
+    private boolean isQueryAction(String action) {
+        if (action == null) return false;
+        return QUERY_ACTIONS.contains(action.toLowerCase());
+    }
+
+    private boolean shouldIgnore(Object arg) {
+        if (arg == null) {
+            return false;
+        }
+
+        return arg instanceof File
+                || arg instanceof MultipartFile;
+    }
+
+    public Long targetId(String[] names, Object[] args) {
+        if (names == null || args == null) {
+            return null;
+        }
+
+        for (int i = 0; i < names.length; i++) {
+            String name = names[i];
+
+            if (isTargetId(name)) {
+                Object val = args[i];
+
+                return toLong(val);
+            }
+        }
+        return null;
+    }
+
+    private boolean isTargetId(String name) {
+        if (name == null) return false;
+
+        return "id".equals(name)
+                || name.endsWith("Id");
+    }
+
+    private Long toLong(Object val) {
+        switch (val) {
+            case null -> {
+                return null;
+            }
+            case Long l -> {
+                return l;
+            }
+            case Number n -> {
+                return n.longValue();
+            }
+            default -> {
+            }
+        }
+
+        try {
+            return Long.parseLong(val.toString());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isSkip(Object arg) {
+
+        if (arg == null) return true;
+
+        return arg instanceof File
+                || arg instanceof MultipartFile;
     }
 
     private String toJsonSafe(Object obj) {

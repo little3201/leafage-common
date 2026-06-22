@@ -15,6 +15,8 @@
 
 package top.leafage.common.logging.event;
 
+import java.util.Map;
+
 /**
  * Operation log
  *
@@ -26,11 +28,13 @@ public class OperationLogEvent {
 
     private String action;
 
-    private String params;
+    private Long targetId;
 
-    private String result;
+    private Map<String, Object> params;
 
-    private int status;
+    private String response;
+
+    private Status status;
 
     private long duration;
 
@@ -38,6 +42,15 @@ public class OperationLogEvent {
 
 
     public OperationLogEvent() {
+    }
+
+    public enum Status {
+        SUCCEED,
+        FAILED;
+
+        public static Status of(String value) {
+            return valueOf(value.toUpperCase());
+        }
     }
 
     public String getModule() {
@@ -56,28 +69,36 @@ public class OperationLogEvent {
         this.action = action;
     }
 
-    public String getParams() {
+    public Long getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
+    }
+
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public void setParams(String params) {
+    public void setParams(Map<String, Object> params) {
         this.params = params;
     }
 
-    public String getResult() {
-        return result;
+    public String getResponse() {
+        return response;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setResponse(String response) {
+        this.response = response;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
+    public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public long getDuration() {
@@ -114,17 +135,22 @@ public class OperationLogEvent {
             return this;
         }
 
-        public Builder params(String params) {
+        public Builder targetId(Long targetId) {
+            event.targetId = targetId;
+            return this;
+        }
+
+        public Builder params(Map<String, Object> params) {
             event.params = params;
             return this;
         }
 
-        public Builder result(String result) {
-            event.result = result;
+        public Builder response(String response) {
+            event.response = response;
             return this;
         }
 
-        public Builder status(int status) {
+        public Builder status(Status status) {
             event.status = status;
             return this;
         }

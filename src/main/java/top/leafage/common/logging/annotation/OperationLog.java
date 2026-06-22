@@ -22,14 +22,10 @@ import java.lang.annotation.*;
  *
  * @author wq li
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface OperationLog {
 
-    String module();
-
-    String action();
-
-    String pk() default "";
+    String value();
 }
