@@ -23,7 +23,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
  * doc heading
  *
  * @author wq li
- * @since 0.4.2
+ * @since 0.4.3
  */
 public class Heading implements WordElement {
 

@@ -26,7 +26,7 @@ import java.util.List;
  * word writer
  *
  * @author wq li
- * @since 0.4.2
+ * @since 0.4.3
  */
 public class WordWriter {
 

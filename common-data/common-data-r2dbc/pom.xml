@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>common-data-r2dbc</artifactId>
+    <name>common-data-r2dbc</name>
+    <description>leafage common data r2dbc</description>
 
     <dependencies>
         <dependency>

@@ -31,7 +31,7 @@ import java.io.IOException;
  * doc image paragraph
  *
  * @author wq li
- * @since 0.4.2
+ * @since 0.4.3
  */
 public class Image implements WordElement {
 
