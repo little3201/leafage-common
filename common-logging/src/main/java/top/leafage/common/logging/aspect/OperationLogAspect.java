@@ -21,10 +21,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import top.leafage.common.logging.event.OperationLogEvent;
 import top.leafage.common.logging.annotation.OperationLog;
+import top.leafage.common.logging.event.OperationLogEvent;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -37,7 +36,6 @@ import java.util.Set;
  * @author wq li
  */
 @Aspect
-@Component
 public class OperationLogAspect {
 
     private static final Set<String> QUERY_ACTIONS = Set.of("retrieve", "tree", "subset", "fetch");
@@ -58,7 +56,7 @@ public class OperationLogAspect {
     /**
      * around.
      *
-     * @param pjp a {@link ProceedingJoinPoint} object
+     * @param pjp          a {@link ProceedingJoinPoint} object
      * @param operationLog a {@link OperationLog} object
      * @return a {@link Object} object
      * @throws Throwable if any.
@@ -136,7 +134,7 @@ public class OperationLogAspect {
      * targetId.
      *
      * @param names an array of {@link java.lang.String} objects
-     * @param args an array of {@link java.lang.Object} objects
+     * @param args  an array of {@link java.lang.Object} objects
      * @return a {@link java.lang.Long} object
      */
     public Long targetId(String[] names, Object[] args) {
