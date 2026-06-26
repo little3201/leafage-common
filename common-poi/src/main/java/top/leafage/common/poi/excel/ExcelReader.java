@@ -18,8 +18,6 @@ package top.leafage.common.poi.excel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
 
@@ -37,8 +35,6 @@ import java.util.*;
  * @author wq li
  */
 public class ExcelReader<T> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExcelReader.class);
 
     /**
      * Private constructor to prevent instantiation.
@@ -88,8 +84,7 @@ public class ExcelReader<T> {
             if (sheet == null) return Collections.emptyList();
             return readSheet(sheet, clazz);
         } catch (IOException e) {
-            logger.error("Failed to read from input stream.", e);
-            return Collections.emptyList();
+            throw new RuntimeException("Failed to read from input stream.", e);
         }
     }
 
@@ -141,11 +136,7 @@ public class ExcelReader<T> {
 
             Map<String, Object> rowData = mapRowToHeaders(clazz, row, headers);
             T obj = convert(rowData, clazz);
-            if (obj != null) {
-                dataList.add(obj);
-            } else {
-                logger.warn("Skipping row {} due to conversion failure", i + 1);
-            }
+            dataList.add(obj);
         }
         return dataList;
     }
@@ -210,8 +201,7 @@ public class ExcelReader<T> {
             }
             return instance;
         } catch (Exception e) {
-            logger.error("Failed to convert row to object", e);
-            return null; // 避免抛出异常，中断读取流程
+            throw new RuntimeException("Failed to convert row to object", e);
         }
     }
 
@@ -277,7 +267,7 @@ public class ExcelReader<T> {
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to introspect class: {}", clazz, e);
+            throw new RuntimeException("Failed to introspect class:", e);
         }
         return null;
     }

@@ -15,9 +15,6 @@
 
 package top.leafage.common.core.file;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,12 +28,10 @@ import java.util.zip.ZipOutputStream;
  * File service.
  *
  * @author wq li
- * @since 0.4.0
  * @version $Id: $Id
+ * @since 0.4.0
  */
 public abstract class AbstractFileService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AbstractFileService.class);
 
     /**
      * Construct
@@ -63,7 +58,6 @@ public abstract class AbstractFileService {
                 }
             });
 
-            logger.info("Created zip file: {}", zipFile);
         } catch (IOException e) {
             throw new RuntimeException("Failed to create zip file", e);
         }
@@ -100,11 +94,11 @@ public abstract class AbstractFileService {
                 try {
                     Files.delete(file);
                 } catch (IOException e) {
-                    logger.error("File: {} delete failure.", file, e);
+                    throw new RuntimeException("Clear history error.", e);
                 }
             });
         } catch (IOException e) {
-            logger.error("File: {} delete failure.", path, e);
+            throw new RuntimeException("File delete failure.", e);
         }
     }
 
