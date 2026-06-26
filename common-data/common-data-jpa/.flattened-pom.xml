@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>top.leafage</groupId>
+    <artifactId>common-data</artifactId>
+    <version>0.4.3</version>
+  </parent>
+  <groupId>top.leafage</groupId>
+  <artifactId>common-data-jpa</artifactId>
+  <version>0.4.3</version>
+  <name>common-data-jpa</name>
+  <description>leafage common data jpa</description>
+  <url>https://www.leafage.top/leafage-common/common-data/common-data-jpa</url>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <comments>Copyright 2026 the original author or authors.
+
+                Licensed under the Apache License, Version 2.0 (the "License");
+                you may not use this file except in compliance with the License.
+                You may obtain a copy of the License at
+
+                https://www.apache.org/licenses/LICENSE-2.0
+
+                Unless required by applicable law or agreed to in writing, software
+                distributed under the License is distributed on an "AS IS" BASIS,
+                WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+                implied.
+
+                See the License for the specific language governing permissions and
+                limitations under the License.</comments>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>wq</id>
+      <name>WQ Li</name>
+      <email>little3201@163.com</email>
+      <organization>leafage</organization>
+      <organizationUrl>https://www.leafage.top</organizationUrl>
+      <roles>
+        <role>lead</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/little3201/leafage-starter-parent.git/leafage-common/common-data/common-data-jpa</connection>
+    <developerConnection>scm:git:ssh://github.com/little3201/leafage-starter-parent.git/leafage-common/common-data/common-data-jpa</developerConnection>
+    <url>https://github.com/little3201/leafage-starter-parent/leafage-common/common-data/common-data-jpa</url>
+  </scm>
+  <issueManagement />
+  <dependencies>
+    <dependency>
+      <groupId>top.leafage</groupId>
+      <artifactId>common-data-core</artifactId>
+      <version>0.4.3</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.2.0</version>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>
