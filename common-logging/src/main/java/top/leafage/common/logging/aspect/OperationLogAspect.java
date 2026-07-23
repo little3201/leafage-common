@@ -21,6 +21,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import top.leafage.common.logging.annotation.OperationLog;
 import top.leafage.common.logging.event.OperationLogEvent;
@@ -111,8 +114,9 @@ public class OperationLogAspect {
                 .params(params)
                 .response(isQuery ? null : toJsonSafe(response))
                 .status(error == null ? OperationLogEvent.Status.SUCCEED : OperationLogEvent.Status.FAILED)
-                .message(error != null ? error.getMessage() : null)
                 .duration(duration)
+                .message(error != null ? error.getMessage() : null)
+                .operator(currentUsername())
                 .build();
     }
 
@@ -183,14 +187,6 @@ public class OperationLogAspect {
         }
     }
 
-    private boolean isSkip(Object arg) {
-
-        if (arg == null) return true;
-
-        return arg instanceof File
-                || arg instanceof MultipartFile;
-    }
-
     private String toJsonSafe(Object obj) {
         if (obj == null) {
             return null;
@@ -208,5 +204,18 @@ public class OperationLogAspect {
         } catch (Exception e) {
             return "\"[unserializable: " + e.getClass().getSimpleName() + "]\"";
         }
+    }
+
+    private String currentUsername() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+
+        return authentication.getName();
     }
 }

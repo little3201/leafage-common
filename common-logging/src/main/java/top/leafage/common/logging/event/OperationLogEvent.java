@@ -1,11 +1,11 @@
 /*
  * Copyright(c) 2019-present the original author or authors.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,8 @@ public class OperationLogEvent {
     private long duration;
 
     private String message;
+
+    private String operator;
 
 
     /**
@@ -217,6 +219,24 @@ public class OperationLogEvent {
     }
 
     /**
+     * Getter for the field <code>operator</code>.
+     *
+     * @return a {@link java.lang.String} object
+     */
+    public String getOperator() {
+        return operator;
+    }
+
+    /**
+     * Setter for the field <code>operator</code>.
+     *
+     * @param operator a {@link java.lang.String} object
+     */
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    /**
      * builder.
      *
      * @return a {@link top.leafage.common.logging.event.OperationLogEvent.Builder} object
@@ -317,6 +337,17 @@ public class OperationLogEvent {
          */
         public Builder message(String message) {
             event.message = message;
+            return this;
+        }
+
+        /**
+         * Set operator
+         *
+         * @param operator a {@link String} object
+         * @return the builder
+         */
+        public Builder operator(String operator) {
+            event.operator = operator;
             return this;
         }
 
