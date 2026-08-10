@@ -19,6 +19,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import java.util.Objects;
+
 /**
  * doc heading
  *
@@ -37,8 +39,11 @@ public class Heading implements WordElement {
      * @param text  a {@link String} object
      */
     public Heading(int level, String text) {
+        if (level < 1 || level > 9) {
+            throw new IllegalArgumentException("level must be between 1 and 9");
+        }
         this.level = level;
-        this.text = text;
+        this.text = Objects.requireNonNull(text, "text must not be null");
     }
 
     /**

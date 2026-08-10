@@ -75,7 +75,7 @@ public interface JdbcCrudService<D, V> extends CrudService<D, V>, PagingAndSortS
 
             Object convertedValue = convertValue(field, value, entityClass);
             if (convertedValue == null) {
-                return criteria.and(Criteria.where(field).isNull());
+                continue;
             }
             Criteria condition = switch (op) {
                 case "eq" -> Criteria.where(field).is(convertedValue);

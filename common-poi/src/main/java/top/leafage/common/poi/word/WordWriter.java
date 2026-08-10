@@ -21,6 +21,7 @@ import top.leafage.common.poi.word.element.WordElement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * word writer
@@ -37,11 +38,12 @@ public class WordWriter {
      * @return an array of bytes
      */
     public static byte[] write(List<WordElement> elements) {
+        Objects.requireNonNull(elements, "elements must not be null");
         try (XWPFDocument document = new XWPFDocument();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             for (WordElement element : elements) {
-                element.render(document);
+                Objects.requireNonNull(element, "elements must not contain null").render(document);
             }
 
             document.write(out);

@@ -177,7 +177,7 @@ public interface ReactiveCrudService<D, V> extends PagingAndSortService {
 
             Object convertedValue = convertValue(field, value, entityClass);
             if (convertedValue == null) {
-                return criteria.and(Criteria.where(field).isNull());
+                continue;
             }
             Criteria condition = switch (op) {
                 case "eq" -> Criteria.where(field).is(convertedValue);

@@ -17,10 +17,10 @@ package top.leafage.common.poi.word.element;
 
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * doc table
@@ -41,14 +41,22 @@ public class Table implements WordElement {
      * @param rows a {@link List} object
      */
     public Table(List<String> headers, List<List<String>> rows) {
-        this.headers = headers;
-        this.rows = rows;
+        this.headers = List.copyOf(Objects.requireNonNull(headers, "headers must not be null"));
+        this.rows = List.copyOf(Objects.requireNonNull(rows, "rows must not be null"));
+        if (this.headers.isEmpty() && !this.rows.isEmpty()) {
+            throw new IllegalArgumentException("headers must not be empty when rows are present");
+        }
+        for (List<String> row : this.rows) {
+            if (row == null || row.size() > this.headers.size()) {
+                throw new IllegalArgumentException("each row must not contain more cells than headers");
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void render(XWPFDocument doc) {
-        if (CollectionUtils.isEmpty(headers) && CollectionUtils.isEmpty(rows)) return;
+        if (headers.isEmpty()) return;
 
         XWPFTable table = doc.createTable(1, headers.size());
 
@@ -78,7 +86,7 @@ public class Table implements WordElement {
     }
 
     private void setCellText(XWPFTableCell cell, String text, boolean isHeader) {
-        cell.setText(text);
+        cell.setText(text == null ? "" : text);
 
         CTTcPr tcPr = cell.getCTTc().addNewTcPr();
         CTVerticalJc vAlign = tcPr.addNewVAlign();

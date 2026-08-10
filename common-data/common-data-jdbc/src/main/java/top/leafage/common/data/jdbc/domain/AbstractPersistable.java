@@ -39,6 +39,14 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Pe
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    public PK getId() {
+        return id;
+    }
+
+    /**
+     * {@inheritDoc}
      * <p>
      * Must be {@link Transient} in order to ensure that no provider complains because of a missing setter.
      *

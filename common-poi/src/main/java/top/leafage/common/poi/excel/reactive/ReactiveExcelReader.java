@@ -18,25 +18,25 @@ package top.leafage.common.poi.excel.reactive;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import top.leafage.common.poi.excel.ExcelReader;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Utility class for reading and mapping Excel files from an InputStream to the specified type.
  * Supports reading from password-protected files and from specific sheets.
  *
- * @param <T> The type to map the Excel rows to
  * @author wq li
  */
-public class ReactiveExcelReader<T> extends ExcelReader<T> {
+public final class ReactiveExcelReader {
 
     /**
      * Private constructor to prevent instantiation.
      */
     private ReactiveExcelReader() {
-        super();
     }
 
     /**
@@ -78,12 +78,15 @@ public class ReactiveExcelReader<T> extends ExcelReader<T> {
      * @return a type of {@link Mono}
      */
     public static <T> Mono<List<T>> read(FilePart filePart, Class<T> clazz, String sheetName, String password) {
+        Objects.requireNonNull(filePart, "filePart must not be null");
+        Objects.requireNonNull(clazz, "clazz must not be null");
         return DataBufferUtils.join(filePart.content())
+                .publishOn(Schedulers.boundedElastic())
                 .map(dataBuffer -> {
                     try {
                         byte[] bytes = new byte[dataBuffer.readableByteCount()];
                         dataBuffer.read(bytes);
-                        return read(new ByteArrayInputStream(bytes), clazz, sheetName, password);
+                        return ExcelReader.read(new ByteArrayInputStream(bytes), clazz, sheetName, password);
                     } finally {
                         DataBufferUtils.release(dataBuffer);
                     }

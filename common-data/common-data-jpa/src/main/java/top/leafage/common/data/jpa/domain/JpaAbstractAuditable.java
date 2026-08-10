@@ -67,7 +67,7 @@ public abstract class JpaAbstractAuditable<U, PK extends Serializable> extends J
     /** {@inheritDoc} */
     @Override
     public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate.atZone(ZoneId.systemDefault()).toInstant();
+        this.createdDate = createdDate == null ? null : createdDate.atZone(ZoneId.systemDefault()).toInstant();
     }
 
     /** {@inheritDoc} */
@@ -92,6 +92,7 @@ public abstract class JpaAbstractAuditable<U, PK extends Serializable> extends J
     /** {@inheritDoc} */
     @Override
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate.atZone(ZoneId.systemDefault()).toInstant();
+        this.lastModifiedDate = lastModifiedDate == null ? null
+                : lastModifiedDate.atZone(ZoneId.systemDefault()).toInstant();
     }
 }

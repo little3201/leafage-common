@@ -26,6 +26,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * doc image paragraph
@@ -49,8 +50,11 @@ public class Image implements WordElement {
      * @param height   a int
      */
     public Image(byte[] bytes, String fileName, int width, int height) {
-        this.bytes = bytes;
-        this.fileName = fileName;
+        this.bytes = Objects.requireNonNull(bytes, "bytes must not be null").clone();
+        this.fileName = Objects.requireNonNull(fileName, "fileName must not be null");
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("width and height must be positive");
+        }
         this.width = width;
         this.height = height;
     }

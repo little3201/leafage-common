@@ -31,6 +31,7 @@ import top.leafage.common.logging.event.OperationLogEvent;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -53,7 +54,7 @@ public class OperationLogAspect {
      * @param eventPublisher a {@link ApplicationEventPublisher} object
      */
     public OperationLogAspect(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
+        this.eventPublisher = Objects.requireNonNull(eventPublisher, "eventPublisher must not be null");
     }
 
     /**
@@ -146,7 +147,7 @@ public class OperationLogAspect {
             return null;
         }
 
-        for (int i = 0; i < names.length; i++) {
+        for (int i = 0; i < names.length && i < args.length; i++) {
             String name = names[i];
 
             if (isTargetId(name)) {
@@ -161,8 +162,9 @@ public class OperationLogAspect {
     private boolean isTargetId(String name) {
         if (name == null) return false;
 
-        return "id".equals(name)
-                || name.endsWith("Id");
+        return "id".equalsIgnoreCase(name)
+                || name.endsWith("Id")
+                || name.endsWith("ID");
     }
 
     private Long toLong(Object val) {

@@ -33,6 +33,7 @@
     <modules>
         <module>common-data-core</module>
         <module>common-data-jdbc</module>
+        <module>common-data-permission</module>
         <module>common-data-jpa</module>
         <module>common-data-r2dbc</module>
     </modules>

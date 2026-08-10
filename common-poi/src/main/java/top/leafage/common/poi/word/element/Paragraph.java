@@ -20,6 +20,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import java.util.Objects;
+
 /**
  * doc paragraph
  *
@@ -38,7 +40,7 @@ public class Paragraph implements WordElement {
      * @param style a {@link Paragraph.ParagraphStyle} object
      */
     public Paragraph(String text, ParagraphStyle style) {
-        this.text = text;
+        this.text = Objects.requireNonNull(text, "text must not be null");
         this.style = style;
     }
 

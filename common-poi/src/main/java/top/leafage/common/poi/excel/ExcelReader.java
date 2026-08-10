@@ -79,6 +79,8 @@ public class ExcelReader<T> {
      * @return List of mapped objects.
      */
     public static <T> List<T> read(InputStream inputStream, Class<T> clazz, String sheetName, String password) {
+        Objects.requireNonNull(inputStream, "inputStream must not be null");
+        Objects.requireNonNull(clazz, "clazz must not be null");
         try (Workbook workbook = createWorkbook(inputStream, password)) {
             Sheet sheet = getSheet(workbook, sheetName);
             if (sheet == null) return Collections.emptyList();
@@ -110,6 +112,9 @@ public class ExcelReader<T> {
      * @return The corresponding Sheet object.
      */
     private static Sheet getSheet(Workbook workbook, String sheetName) {
+        if (workbook.getNumberOfSheets() == 0) {
+            return null;
+        }
         return StringUtil.isBlank(sheetName) ? workbook.getSheetAt(0) : workbook.getSheet(sheetName);
     }
 
@@ -171,7 +176,9 @@ public class ExcelReader<T> {
             String headerKey = getHeaderKey(clazz, headers.get(i));
             if (headerKey != null) {
                 Object cellValue = readCell(row.getCell(i));
-                rowData.put(headerKey, cellValue);
+                if (cellValue != null) {
+                    rowData.put(headerKey, cellValue);
+                }
             }
         }
         return rowData;

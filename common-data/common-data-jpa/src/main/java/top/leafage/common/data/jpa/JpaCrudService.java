@@ -1,11 +1,11 @@
 /*
  * Copyright(c) 2019-present the original author or authors.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,7 @@
 
 package top.leafage.common.data.jpa;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
 import top.leafage.common.data.core.CrudService;
@@ -39,11 +36,11 @@ public interface JpaCrudService<D, V> extends CrudService<D, V>, PagingAndSortSe
 
     /**
      * 解析过滤条件字符串并构建查询的Predicate。
-     * 
+     * <p>
      * 过滤条件格式示例： "age:gt:18,status:eq:active,name:like:john"
      * 每个条件由字段名、操作符和对应值组成，三者之间用冒号分隔，
      * 多个条件之间用逗号分隔。
-     * 
+     * <p>
      * 支持的操作符包括：
      * - eq: 等于
      * - ne: 不等于
@@ -66,41 +63,58 @@ public interface JpaCrudService<D, V> extends CrudService<D, V>, PagingAndSortSe
 
         for (String part : parts) {
             String[] tokens = part.trim().split(":", 3);
-            if (tokens.length != 3) continue;
+            if (tokens.length < 2) continue;
 
             String field = tokens[0];
             String op = tokens[1].toLowerCase();
-            String value = tokens[2];
+            String value = tokens.length == 3 ? tokens[2] : null;
 
-            if (!StringUtils.hasText(field) || !StringUtils.hasText(op) || !StringUtils.hasText(value)) {
+            if (!StringUtils.hasText(field) || !StringUtils.hasText(op)) {
                 continue;
             }
 
             try {
-                Path<?> path = root.get(field);
-                Object typedValue = DefaultConversionService.getSharedInstance().convert(value, path.getJavaType());
+                Path<?> path = getPath(root, field);
 
                 Predicate predicate = null;
                 switch (op) {
-                    case "eq" -> predicate = cb.equal(path, typedValue);
-                    case "ne" -> predicate = cb.notEqual(path, typedValue);
-                    case "like" -> predicate = cb.like(path.as(String.class), "%" + value + "%");
-                    case "gt", "gte", "lt", "lte" -> {
-                        // 类型转换：保证类型安全
-                        if (typedValue instanceof Comparable) {
-                            @SuppressWarnings("unchecked")
-                            Path<Comparable<Object>> cmpPath = (Path<Comparable<Object>>) path;
-                            @SuppressWarnings("unchecked")
-                            Comparable<Object> cmpValue = (Comparable<Object>) typedValue;
-
-                            predicate = switch (op) {
-                                case "gt" -> cb.greaterThan(cmpPath, cmpValue);
-                                case "gte" -> cb.greaterThanOrEqualTo(cmpPath, cmpValue);
-                                case "lt" -> cb.lessThan(cmpPath, cmpValue);
-                                case "lte" -> cb.lessThanOrEqualTo(cmpPath, cmpValue);
-                                default -> null;
-                            };
+                    case "null" -> predicate = cb.isNull(path);
+                    case "nonnull" -> predicate = cb.isNotNull(path);
+                    case "eq", "ne", "like", "gt", "gte", "lt", "lte" -> {
+                        if (!StringUtils.hasText(value)) {
+                            continue;
                         }
+
+                        Object typedValue = DefaultConversionService
+                                .getSharedInstance()
+                                .convert(value, path.getJavaType());
+
+                        predicate = switch (op) {
+                            case "eq" -> cb.equal(path, typedValue);
+                            case "ne" -> cb.notEqual(path, typedValue);
+                            case "like" -> cb.like(
+                                    path.as(String.class),
+                                    "%" + value + "%"
+                            );
+                            case "gt", "gte", "lt", "lte" -> {
+                                if (typedValue instanceof Comparable) {
+                                    @SuppressWarnings("unchecked")
+                                    Path<Comparable<Object>> cmpPath = (Path<Comparable<Object>>) path;
+                                    @SuppressWarnings("unchecked")
+                                    Comparable<Object> cmpValue = (Comparable<Object>) typedValue;
+
+                                    yield switch (op) {
+                                        case "gt" -> cb.greaterThan(cmpPath, cmpValue);
+                                        case "gte" -> cb.greaterThanOrEqualTo(cmpPath, cmpValue);
+                                        case "lt" -> cb.lessThan(cmpPath, cmpValue);
+                                        case "lte" -> cb.lessThanOrEqualTo(cmpPath, cmpValue);
+                                        default -> null;
+                                    };
+                                }
+                                yield null;
+                            }
+                            default -> null;
+                        };
                     }
                 }
 
@@ -114,6 +128,32 @@ public interface JpaCrudService<D, V> extends CrudService<D, V>, PagingAndSortSe
 
         return predicates.isEmpty() ? Optional.empty()
                 : Optional.of(cb.and(predicates.toArray(new Predicate[0])));
+    }
+
+    /**
+     * 解析嵌套属性
+     *
+     * @param root  The root object.
+     * @param field The filed name..
+     * @param <T>   Type.
+     * @return The path.
+     */
+    private <T> Path<?> getPath(Root<T> root, String field) {
+        String[] fields = field.split("\\.");
+
+        Path<?> path = root;
+        for (int i = 0; i < fields.length; i++) {
+            String part = fields[i];
+
+            if (i < fields.length - 1
+                    && path instanceof From<?, ?> from) {
+                path = from.join(part, JoinType.LEFT);
+            } else {
+                path = path.get(part);
+            }
+        }
+
+        return path;
     }
 
 }

@@ -47,6 +47,7 @@ public abstract class AbstractTreeNodeConverter {
      * @throws java.lang.RuntimeException if the conversion fails.
      */
     public static <T, ID> TreeNode<ID> createNode(T t, Set<String> expand) {
+        Objects.requireNonNull(t, "source must not be null");
         Class<?> clazz = t.getClass();
         ID id = getValue(t, clazz, "id");
         if (id == null) throw new IllegalArgumentException("The given id must not be null");
@@ -72,6 +73,7 @@ public abstract class AbstractTreeNodeConverter {
      * @throws java.lang.RuntimeException if the conversion fails.
      */
     public static <ID> List<TreeNode<ID>> buildTree(List<TreeNode<ID>> nodes) {
+        Objects.requireNonNull(nodes, "nodes must not be null");
         Map<ID, List<TreeNode<ID>>> childrenMap = nodes.stream()
                 .filter(n -> n.getSuperiorId() != null)
                 .collect(Collectors.groupingBy(TreeNode::getSuperiorId));
@@ -127,7 +129,7 @@ public abstract class AbstractTreeNodeConverter {
      * @since 0.3.5
      */
     public static Object convertValue(String field, String value, Class<?> entityClass) {
-        if (!StringUtils.hasText(value)) return null;
+        if (!StringUtils.hasText(field) || !StringUtils.hasText(value) || entityClass == null) return null;
         PropertyDescriptor descriptor = getDescriptor(entityClass, field);
         if (descriptor == null) return null;
 

@@ -72,7 +72,7 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
      */
     @Override
     public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate.atZone(ZoneId.systemDefault()).toInstant();
+        this.createdDate = createdDate == null ? null : createdDate.atZone(ZoneId.systemDefault()).toInstant();
     }
 
     /**
@@ -105,7 +105,8 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
      */
     @Override
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate.atZone(ZoneId.systemDefault()).toInstant();
+        this.lastModifiedDate = lastModifiedDate == null ? null
+                : lastModifiedDate.atZone(ZoneId.systemDefault()).toInstant();
     }
 }
 
