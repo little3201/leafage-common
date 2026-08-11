@@ -5,11 +5,10 @@ import top.leafage.common.data.core.converter.ModelToTreeNodeConverter;
 import top.leafage.common.data.core.domain.TreeNode;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TreeAndPagingTest {
 
@@ -32,9 +31,10 @@ class TreeAndPagingTest {
 
     @Test
     void createsPageableWithDefaultSortAndBounds() {
-        PagingAndSortService service = new PagingAndSortService() { };
+        PagingAndSortService service = new PagingAndSortService() {
+        };
 
-        assertEquals("id", service.pageable(0, 10, null, false).getSort().getOrderFor("id").getProperty());
+        assertEquals("id", Objects.requireNonNull(service.pageable(0, 10, null, false).getSort().getOrderFor("id")).getProperty());
         assertThrows(IllegalArgumentException.class, () -> service.pageable(0, 101, "name", false));
     }
 
@@ -51,9 +51,20 @@ class TreeAndPagingTest {
             this.code = code;
         }
 
-        public Long getId() { return id; }
-        public String getName() { return name; }
-        public Long getSuperiorId() { return superiorId; }
-        public String getCode() { return code; }
+        public Long getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Long getSuperiorId() {
+            return superiorId;
+        }
+
+        public String getCode() {
+            return code;
+        }
     }
 }
