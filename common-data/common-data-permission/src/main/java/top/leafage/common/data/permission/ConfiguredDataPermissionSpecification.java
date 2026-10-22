@@ -39,7 +39,7 @@ public class ConfiguredDataPermissionSpecification implements DataPermissionSpec
      * {@inheritDoc}
      */
     @Override
-    public <T> Specification<T> forCurrentOperation() {
+    public <T> Specification<T> forEntity(Class<T> entityType) {
         var policies = policyProvider.currentPolicies().stream()
                 .filter(candidate -> candidate.policy().appliesTo(candidate.action()))
                 .toList();
@@ -52,11 +52,13 @@ public class ConfiguredDataPermissionSpecification implements DataPermissionSpec
         }
         List<Specification<T>> specifications = new ArrayList<>();
         for (ResolvedDataPermissionPolicy candidate : policies) {
-                    DataScopeType scope = candidate.policy().dataScope().scopeFor(candidate.action());
+            DataScopeType scope = candidate.policy().dataScope().scopeFor(candidate.action());
             if (scope != DataScopeType.NONE) {
                 specifications.add(scope == DataScopeType.CUSTOM
-                        ? predicateResolver.resolve(candidate.resource(), scope, candidate.policy().dataScope().customSubjects())
-                        : predicateResolver.resolve(candidate.resource(), scope, subjectResolver.resolveSubjects(scope)));
+                        ? predicateResolver.resolve(entityType, candidate.resource(), scope,
+                                candidate.policy().dataScope().customSubjects())
+                        : predicateResolver.resolve(entityType, candidate.resource(), scope,
+                                subjectResolver.resolveSubjects(scope)));
             }
         }
         return specifications.stream().reduce(Specification::or)

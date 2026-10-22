@@ -1,11 +1,11 @@
 /*
  * Copyright(c) 2019-present the original author or authors.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -117,7 +117,7 @@ public class OperationLogAspect {
                 .status(error == null ? OperationLogEvent.Status.SUCCEED : OperationLogEvent.Status.FAILED)
                 .duration(duration)
                 .message(error != null ? error.getMessage() : null)
-                .operator(currentUsername())
+                .operator(operatorUsername())
                 .build();
     }
 
@@ -149,10 +149,8 @@ public class OperationLogAspect {
 
         for (int i = 0; i < names.length && i < args.length; i++) {
             String name = names[i];
-
             if (isTargetId(name)) {
                 Object val = args[i];
-
                 return toLong(val);
             }
         }
@@ -167,6 +165,12 @@ public class OperationLogAspect {
                 || name.endsWith("ID");
     }
 
+    /**
+     * 转 Long
+     *
+     * @param val 数据
+     * @return Long数据
+     */
     private Long toLong(Object val) {
         switch (val) {
             case null -> {
@@ -189,6 +193,12 @@ public class OperationLogAspect {
         }
     }
 
+    /**
+     * 转json
+     *
+     * @param obj 数据对象
+     * @return json字符
+     */
     private String toJsonSafe(Object obj) {
         if (obj == null) {
             return null;
@@ -208,7 +218,12 @@ public class OperationLogAspect {
         }
     }
 
-    private String currentUsername() {
+    /**
+     * 操作员账号
+     *
+     * @return 账号
+     */
+    private String operatorUsername() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 

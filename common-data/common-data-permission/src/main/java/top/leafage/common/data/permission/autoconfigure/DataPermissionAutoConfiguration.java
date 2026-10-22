@@ -1,19 +1,14 @@
 package top.leafage.common.data.permission.autoconfigure;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import top.leafage.common.data.permission.*;
-import top.leafage.common.data.permission.jpa.JpaDataPermissionPredicateResolver;
-import top.leafage.common.data.permission.jpa.DataPermission;
-import top.leafage.common.data.permission.jpa.DataPermissionStore;
-import top.leafage.common.data.permission.jpa.JpaDataPermissionStore;
-import top.leafage.common.data.permission.jpa.ResourceSubject;
-import top.leafage.common.data.permission.jpa.JpaResourceSubjectService;
-import top.leafage.common.data.permission.jpa.ResourceSubjectService;
+import top.leafage.common.data.permission.jpa.*;
 
 /**
  * Spring Boot auto-configuration for data permission specifications.
@@ -43,7 +38,7 @@ public class DataPermissionAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public ResourceSubjectService resourceSubjectService(jakarta.persistence.EntityManager entityManager) {
+    public ResourceSubjectService resourceSubjectService(EntityManager entityManager) {
         return new JpaResourceSubjectService(entityManager);
     }
 
@@ -55,12 +50,12 @@ public class DataPermissionAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public DataPermissionStore dataPermissionStore(jakarta.persistence.EntityManager entityManager) {
+    public DataPermissionStore dataPermissionStore(EntityManager entityManager) {
         return new JpaDataPermissionStore(entityManager);
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DataPermissionSpecification.class)
     public DataPermissionSpecification dataPermissionSpecification(DataPermissionPolicyProvider policyProvider,
                                                                    DataScopeSubjectResolver subjectResolver,
                                                                    DataPermissionPredicateResolver predicateResolver) {

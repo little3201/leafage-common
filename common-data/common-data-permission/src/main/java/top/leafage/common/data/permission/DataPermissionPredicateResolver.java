@@ -13,12 +13,13 @@ public interface DataPermissionPredicateResolver {
     /**
      * Builds a predicate without hardcoding entity fields in the common module.
      *
-     * @param resource  the database-resolved resource or table code
-     * @param scopeType the effective limited scope
-     * @param subjects  resolved user or group subjects
-     * @param <T>       the entity type
-     * @return the data-permission predicate
+     * @param entityType the entity type the specification will be applied to
+     * @param resource   the database-resolved resource or table code
+     * @param scopeType  the effective limited scope
+     * @param subjects   resolved user or group subjects
+     * @param <T>        the entity type
+     * @return the data-permission predicate for {@code entityType}
      */
-    <T> Specification<T> resolve(String resource, DataScopeType scopeType,
+    <T> Specification<T> resolve(Class<T> entityType, String resource, DataScopeType scopeType,
                                  Set<DataPermissionSubject> subjects);
 }

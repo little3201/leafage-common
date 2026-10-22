@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.domain.Specification;
 import top.leafage.common.data.permission.enums.DataScopeType;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -16,14 +16,16 @@ class DataPermissionSpecificationTest {
 
     @Test
     void appliesActionOverrideAndConfiguredCustomSubjects() {
+        AtomicReference<Class<?>> capturedEntityType = new AtomicReference<>();
         AtomicReference<String> capturedResource = new AtomicReference<>();
         AtomicReference<DataScopeType> capturedScope = new AtomicReference<>();
         AtomicReference<Set<DataPermissionSubject>> capturedSubjects = new AtomicReference<>();
         Specification<Post> expected = (root, query, criteriaBuilder) -> null;
         DataPermissionPredicateResolver predicateResolver = new DataPermissionPredicateResolver() {
             @Override
-            public <T> Specification<T> resolve(String resource, DataScopeType scope,
+            public <T> Specification<T> resolve(Class<T> entityType, String resource, DataScopeType scope,
                                                 Set<DataPermissionSubject> subjects) {
+                capturedEntityType.set(entityType);
                 capturedResource.set(resource);
                 capturedScope.set(scope);
                 capturedSubjects.set(subjects);
@@ -42,9 +44,10 @@ class DataPermissionSpecificationTest {
                 () -> List.of(new ResolvedDataPermissionPolicy("posts", "remove", policy)),
                 scope -> Set.of(), predicateResolver);
 
-        Specification<Post> actual = specifications.forCurrentOperation();
+        Specification<Post> actual = specifications.forEntity(Post.class);
 
         assertSame(expected, actual);
+        assertEquals(Post.class, capturedEntityType.get());
         assertEquals("posts", capturedResource.get());
         assertEquals(DataScopeType.CUSTOM, capturedScope.get());
         assertEquals(customSubjects, capturedSubjects.get());
@@ -63,13 +66,13 @@ class DataPermissionSpecificationTest {
                 },
                 new DataPermissionPredicateResolver() {
                     @Override
-                    public <T> Specification<T> resolve(String resource, DataScopeType scope,
+                    public <T> Specification<T> resolve(Class<T> entityType, String resource, DataScopeType scope,
                                                         Set<DataPermissionSubject> subjects) {
                         return (root, query, criteriaBuilder) -> null;
                     }
                 });
 
-        specifications.forCurrentOperation();
+        specifications.forEntity(Post.class);
 
         assertEquals(DataScopeType.GROUP, resolvedScope.get());
     }

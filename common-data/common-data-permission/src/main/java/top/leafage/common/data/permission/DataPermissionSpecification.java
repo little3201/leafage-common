@@ -10,8 +10,10 @@ public interface DataPermissionSpecification {
     /**
      * Builds the visibility predicate for one entity type.
      *
-     * @param <T> the entity type
-     * @return a specification that restricts visible rows
+     * @param entityType the entity type the specification will be applied to;
+     *                   only policies of this entity are considered
+     * @param <T>        the entity type
+     * @return a specification that restricts visible rows of {@code entityType}
      */
-    <T> Specification<T> forCurrentOperation();
+    <T> Specification<T> forEntity(Class<T> entityType);
 }
