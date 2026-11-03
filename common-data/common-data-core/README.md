@@ -4,21 +4,9 @@
 
 ## 数据范围（data scope）
 
-核心层不依赖 JPA、不携带任何实体，只产出存储无关的权限决策；JPA 适配位于
-`common-data-jpa` 的 `top.leafage.common.data.jpa.scope` 包。后续 JDBC / R2DBC 适配复用同一套模型。
-
-core **不注册自动配置**：`DataScopeCoreConfiguration` 只是普通 `@Configuration`，由 JPA（以及后续
-JDBC/R2DBC）适配层的自动配置通过 `@Import` 引入。这样开关、条件装配和适配器依赖都留在各自的
-适配模块里，core 仅提供核心配置和公共代码。
-
-core 也不依赖 `spring-boot-autoconfigure`：Bean 覆盖使用 core 自带的 `MissingBeanCondition`
-（基于 Spring Framework 的 `Condition`）。AOP 由适配层作为必需依赖提供：`common-data-jpa` 直接依赖
-`aspectjweaver`，并直接 `@Import(DataScopeAspectConfiguration.class)`，因此不需要类存在性判断。
-Boot 应用会自动启用 AOP 代理；非 Boot 应用需自行开启 `@EnableAspectJAutoProxy`。
-
 ### 设计要点
 
-- **显式开启**：默认不生效，需配置 `leafage.data-scope.enabled=true`。
+- **显式开启**：默认不生效，需配置 `data.scope.enabled=true`。
 - **显式声明才过滤**：服务类或方法标注 `@DataScope` 后才启用过滤。
 - **action = 方法名**：默认取被拦截的服务方法名（`retrieve`、`fetch`、`create`、`modify`、`remove`），
   可用 `@DataScope(action = "...")` 覆盖。
@@ -54,7 +42,6 @@ public interface DataSubjectResolver {
 | 任一授权为 `ALL`            | `Unrestricted`         |
 | 有受限授权且主体非空        | `Restricted(主体并集)` |
 | 只有 `NONE` / 主体为空      | `Denied`               |
-| 方法标注 `@DataScopeIgnore` | 不过滤                 |
 
 ### JPA 接入
 
@@ -129,17 +116,3 @@ JPA 基类会为以下方法自动叠加权限条件：
 - `@Modifying` 的批量 update/delete 不经过 Repository 基类；
 - fluent `findBy(...)` 与 `findAll(Example)` 不经过 `getQuery`；
 - 复合主键暂不支持（启用过滤时会明确抛错）。
-
-### 从旧版本迁移
-
-| 旧 API                                            | 新 API                                                |
-|---------------------------------------------------|-------------------------------------------------------|
-| `DataPermissionSpecification.forEntity(Class)`    | 无需调用，Repository 基类自动叠加                     |
-| `DataPermissionPolicyProvider.currentPolicies()`  | `DataScopePolicyProvider.grantsFor(resource, action)` |
-| `DataScopeSubjectResolver.resolveSubjects(scope)` | `DataSubjectResolver.resolve(scope)`                  |
-| `DataPermissionSubject`                           | `DataSubject`（去掉 `@Embeddable`）                   |
-| `DataPermission` / `ResourceSubject` 实体         | 删除；由应用定义并通过 `ResourceSubjectMapping` 配置  |
-| `DataPermissionStore` / `JpaDataPermissionStore`  | 删除；由应用的 `DataScopePolicyProvider` 实现         |
-| `ResourceSubjectService.bind(entity)`             | `bind(resource, new DataSubject(type, id))`           |
-| `@DataPermission` / `@DataPermissionCheck`        | `@DataScope` / `@DataScopeCheck`                      |
-| `leafage.data-permission.enabled`                 | `leafage.data-scope.enabled`                          |

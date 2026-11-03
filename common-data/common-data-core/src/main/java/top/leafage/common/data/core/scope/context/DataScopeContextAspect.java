@@ -22,7 +22,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import top.leafage.common.data.core.scope.annotation.DataScope;
-import top.leafage.common.data.core.scope.annotation.DataScopeIgnore;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -58,9 +57,8 @@ public class DataScopeContextAspect {
         DataScope classAnnotation =
                 AnnotatedElementUtils.findMergedAnnotation(targetClass, DataScope.class);
 
-        DataScopeContext context = ignored(method, targetClass)
-                ? DataScopeContext.ignoredContext()
-                : DataScopeContext.of(action(method, methodAnnotation, classAnnotation),
+        DataScopeContext context = DataScopeContext.of(
+                action(method, methodAnnotation, classAnnotation),
                 resource(methodAnnotation, classAnnotation));
         DataScopeContextHolder.push(Objects.requireNonNull(context));
         try {
@@ -68,11 +66,6 @@ public class DataScopeContextAspect {
         } finally {
             DataScopeContextHolder.pop();
         }
-    }
-
-    private boolean ignored(Method method, Class<?> targetClass) {
-        return AnnotatedElementUtils.hasAnnotation(method, DataScopeIgnore.class)
-                || AnnotatedElementUtils.hasAnnotation(targetClass, DataScopeIgnore.class);
     }
 
     private String action(Method method, DataScope methodAnnotation,

@@ -16,22 +16,19 @@
 package top.leafage.common.data.core.scope.context;
 
 /**
- * The data scope scope of the currently executing operation.
+ * The data scope of the currently executing operation.
  *
  * @param action   the operation, by default the service method name
  * @param resource an optional resource restriction; blank means every queried entity
- * @param ignored  whether filtering is explicitly bypassed
  * @author wq li
  */
-public record DataScopeContext(String action, String resource, boolean ignored) {
-
-    private static final DataScopeContext IGNORED = new DataScopeContext("", "", true);
+public record DataScopeContext(String action, String resource) {
 
     /**
-     * Validates an active context.
+     * Validates a context.
      */
     public DataScopeContext {
-        if (!ignored && (action == null || action.isBlank())) {
+        if (action == null || action.isBlank()) {
             throw new IllegalArgumentException("action must not be blank");
         }
         if (resource == null) {
@@ -40,32 +37,23 @@ public record DataScopeContext(String action, String resource, boolean ignored) 
     }
 
     /**
-     * Creates an active context without a resource restriction.
+     * Creates a context without a resource restriction.
      *
      * @param action the operation
      * @return the context
      */
     public static DataScopeContext of(String action) {
-        return new DataScopeContext(action, "", false);
+        return new DataScopeContext(action, "");
     }
 
     /**
-     * Creates an active context restricted to one resource.
+     * Creates a context restricted to one resource.
      *
      * @param action   the operation
      * @param resource the resource code, or blank for every queried entity
      * @return the context
      */
     public static DataScopeContext of(String action, String resource) {
-        return new DataScopeContext(action, resource, false);
-    }
-
-    /**
-     * Returns the bypass context.
-     *
-     * @return the ignored context
-     */
-    public static DataScopeContext ignoredContext() {
-        return IGNORED;
+        return new DataScopeContext(action, resource);
     }
 }

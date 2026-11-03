@@ -63,14 +63,6 @@ class DataScopeContextHolderTest {
     }
 
     @Test
-    void ignoredContextBypassesFiltering() {
-        DataScopeContextHolder.push(DataScopeContext.ignoredContext());
-
-        assertFalse(DataScopeContextHolder.isActive());
-        assertNull(DataScopeContextHolder.currentAction());
-    }
-
-    @Test
     void propagatesContextToAnotherThread() throws Exception {
         DataScopeContextHolder.push(DataScopeContext.of("retrieve"));
         AtomicReference<String> action = new AtomicReference<>();

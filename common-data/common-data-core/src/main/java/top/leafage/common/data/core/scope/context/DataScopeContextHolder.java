@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Holds the current data scope context.
  *
  * <p>The holder is a thread-local stack so nested service calls keep their own
- * action and so an ignored inner call can temporarily bypass filtering.</p>
+ * action and resource scope.</p>
  *
  * @author wq li
  */
@@ -80,8 +80,7 @@ public final class DataScopeContextHolder {
      * @return {@code true} when an active context exists
      */
     public static boolean isActive() {
-        Deque<DataScopeContext> stack = STACK.get();
-        return !stack.isEmpty() && !stack.peek().ignored();
+        return !STACK.get().isEmpty();
     }
 
     /**
@@ -91,7 +90,7 @@ public final class DataScopeContextHolder {
      */
     public static String currentAction() {
         Deque<DataScopeContext> stack = STACK.get();
-        return stack.isEmpty() || stack.peek().ignored() ? null : stack.peek().action();
+        return stack.isEmpty() ? null : stack.peek().action();
     }
 
     /**
@@ -102,7 +101,7 @@ public final class DataScopeContextHolder {
      */
     public static String currentResource() {
         Deque<DataScopeContext> stack = STACK.get();
-        if (stack.isEmpty() || stack.peek().ignored()) {
+        if (stack.isEmpty()) {
             return null;
         }
         String resource = stack.peek().resource();

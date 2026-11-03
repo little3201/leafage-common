@@ -19,7 +19,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import top.leafage.common.data.core.scope.annotation.DataScope;
-import top.leafage.common.data.core.scope.annotation.DataScopeIgnore;
 import top.leafage.common.data.core.scope.context.DataScopeContext;
 import top.leafage.common.data.core.scope.context.DataScopeContextAspect;
 import top.leafage.common.data.core.scope.context.DataScopeContextHolder;
@@ -53,13 +52,6 @@ class DataScopeContextAspectTest {
         Reports reports = proxy(new Reports());
 
         assertEquals("reports", reports.scoped());
-    }
-
-    @Test
-    void ignoresAnnotatedMethods() {
-        Reports reports = proxy(new Reports());
-
-        assertFalse(reports.internal());
     }
 
     @Test
@@ -98,11 +90,6 @@ class DataScopeContextAspectTest {
         @DataScope("reports")
         String scoped() {
             return DataScopeContextHolder.currentResource();
-        }
-
-        @DataScopeIgnore
-        boolean internal() {
-            return DataScopeContextHolder.isActive();
         }
 
         String outer() {
