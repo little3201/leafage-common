@@ -41,7 +41,7 @@ import top.leafage.common.data.jpa.scope.*;
  * @author wq li
  */
 @AutoConfiguration
-@ConditionalOnProperty(prefix = "leafage.data-scope", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "data.scope", name = "enabled", havingValue = "true")
 @ConditionalOnClass({EntityManager.class, JpaRepository.class})
 @Import({DataScopeCoreConfiguration.class, DataScopeAspectConfiguration.class})
 public class DataScopeJpaAutoConfiguration {
