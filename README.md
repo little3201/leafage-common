@@ -15,18 +15,15 @@
 
 ```
 leafage-common
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   ├── top.leafge.common
-│   │   │   │   ├── data                # jdbc, jpa, r2dbc
-│   │   │   │   │   ├── converter       # tree convert
-│   │   │   │   │   ├── domain          # domain for jdbc
-│   │   │   │   │   ├── jpa             # jpa 
-│   │   │   │   │   └── reactive        # r2dbc
-│   │   │   │   ├── file                # file
-│   │   │   │   └── poi                 # poi
-│   └── test
+├── common-core
+├── common-data
+│   ├── common-data-core
+│   ├── common-data-jdbc
+│   ├── common-data-jpa
+│   └── common-data-r2dbc
+├── common-dependencies
+├── common-logging
+├── common-poi
 ├── pom.xml
 └── README.md
 ```
