@@ -98,7 +98,7 @@ public final class DataScopeContextHolder {
      * Returns the optional resource restriction.
      *
      * @return the resource code, or {@code null} when no active context exists or
-     *         the context does not restrict a resource
+     * the context does not restrict a resource
      */
     public static String currentResource() {
         Deque<DataScopeContext> stack = STACK.get();

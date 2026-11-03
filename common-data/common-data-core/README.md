@@ -47,14 +47,14 @@ public interface DataSubjectResolver {
 
 ### 决策规则
 
-| 情形 | 结果 |
-|---|---|
-| 未标注 `@DataScope` | 不过滤 |
-| 标注了，但没有授权 | `Denied` |
-| 任一授权为 `ALL` | `Unrestricted` |
-| 有受限授权且主体非空 | `Restricted(主体并集)` |
-| 只有 `NONE` / 主体为空 | `Denied` |
-| 方法标注 `@DataScopeIgnore` | 不过滤 |
+| 情形                        | 结果                   |
+|-----------------------------|------------------------|
+| 未标注 `@DataScope`         | 不过滤                 |
+| 标注了，但没有授权          | `Denied`               |
+| 任一授权为 `ALL`            | `Unrestricted`         |
+| 有受限授权且主体非空        | `Restricted(主体并集)` |
+| 只有 `NONE` / 主体为空      | `Denied`               |
+| 方法标注 `@DataScopeIgnore` | 不过滤                 |
 
 ### JPA 接入
 
@@ -69,18 +69,20 @@ public interface DataSubjectResolver {
 库不提供实体，应用自己定义映射实体（例如 `resource_subjects` 表），然后声明字段映射：
 
 ```java
+
 @Bean
 ResourceSubjectMapping resourceSubjectMapping() {
     return ResourceSubjectMapping.of(ResourceSubject.class);
 }
 ```
 
-如字段名不同，可用完整构造器指定（属性名是**实体属性名**，不是数据库列名）；也可以直接实现
+如字段名不同，可用完整构造器指定（属性名是 **实体属性名**，不是数据库列名）；也可以直接实现
 `DataScopePredicateResolver` 来完全接管查询条件生成。
 
 服务侧只需标注注解，查询代码保持原样：
 
 ```java
+
 @DataScope("reports")
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -130,14 +132,14 @@ JPA 基类会为以下方法自动叠加权限条件：
 
 ### 从旧版本迁移
 
-| 旧 API | 新 API |
-|---|---|
-| `DataPermissionSpecification.forEntity(Class)` | 无需调用，Repository 基类自动叠加 |
-| `DataPermissionPolicyProvider.currentPolicies()` | `DataScopePolicyProvider.grantsFor(resource, action)` |
-| `DataScopeSubjectResolver.resolveSubjects(scope)` | `DataSubjectResolver.resolve(scope)` |
-| `DataPermissionSubject` | `DataSubject`（去掉 `@Embeddable`） |
-| `DataPermission` / `ResourceSubject` 实体 | 删除；由应用定义并通过 `ResourceSubjectMapping` 配置 |
-| `DataPermissionStore` / `JpaDataPermissionStore` | 删除；由应用的 `DataScopePolicyProvider` 实现 |
-| `ResourceSubjectService.bind(entity)` | `bind(resource, new DataSubject(type, id))` |
-| `@DataPermission` / `@DataPermissionCheck` | `@DataScope` / `@DataScopeCheck` |
-| `leafage.data-permission.enabled` | `leafage.data-scope.enabled` |
+| 旧 API                                            | 新 API                                                |
+|---------------------------------------------------|-------------------------------------------------------|
+| `DataPermissionSpecification.forEntity(Class)`    | 无需调用，Repository 基类自动叠加                     |
+| `DataPermissionPolicyProvider.currentPolicies()`  | `DataScopePolicyProvider.grantsFor(resource, action)` |
+| `DataScopeSubjectResolver.resolveSubjects(scope)` | `DataSubjectResolver.resolve(scope)`                  |
+| `DataPermissionSubject`                           | `DataSubject`（去掉 `@Embeddable`）                   |
+| `DataPermission` / `ResourceSubject` 实体         | 删除；由应用定义并通过 `ResourceSubjectMapping` 配置  |
+| `DataPermissionStore` / `JpaDataPermissionStore`  | 删除；由应用的 `DataScopePolicyProvider` 实现         |
+| `ResourceSubjectService.bind(entity)`             | `bind(resource, new DataSubject(type, id))`           |
+| `@DataPermission` / `@DataPermissionCheck`        | `@DataScope` / `@DataScopeCheck`                      |
+| `leafage.data-permission.enabled`                 | `leafage.data-scope.enabled`                          |

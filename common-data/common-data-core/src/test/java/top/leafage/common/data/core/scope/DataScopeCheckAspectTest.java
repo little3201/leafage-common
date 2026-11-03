@@ -28,9 +28,7 @@ import top.leafage.common.data.core.scope.guard.DataScopeGuard;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DataScopeCheckAspectTest {
 
@@ -58,7 +56,7 @@ class DataScopeCheckAspectTest {
     void rejectsAnOutOfBoundsParameterIndex() {
         ReportService service = proxy();
 
-        assertThrows(IllegalArgumentException.class, () -> service.removeWithoutId());
+        assertThrows(IllegalArgumentException.class, service::removeWithoutId);
     }
 
     private ReportService proxy() {

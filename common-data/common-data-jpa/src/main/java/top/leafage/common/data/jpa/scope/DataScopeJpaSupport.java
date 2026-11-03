@@ -50,6 +50,14 @@ public final class DataScopeJpaSupport {
                 "resourceResolver must not be null");
     }
 
+    private static <T> Specification<T> denied() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.disjunction();
+    }
+
+    private static <T> Specification<T> and(Specification<T> left, Specification<T> right) {
+        return left == null ? right : left.and(right);
+    }
+
     /**
      * Checks whether filtering is currently active.
      *
@@ -87,13 +95,5 @@ public final class DataScopeJpaSupport {
             case DataScopeDecision.Restricted restricted -> and(specification,
                     predicateResolver.resolve(domainClass, resource, restricted.owners()));
         };
-    }
-
-    private static <T> Specification<T> denied() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.disjunction();
-    }
-
-    private static <T> Specification<T> and(Specification<T> left, Specification<T> right) {
-        return left == null ? right : left.and(right);
     }
 }

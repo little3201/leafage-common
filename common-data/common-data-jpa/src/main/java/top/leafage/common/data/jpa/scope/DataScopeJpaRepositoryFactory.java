@@ -47,7 +47,7 @@ public class DataScopeJpaRepositoryFactory extends JpaRepositoryFactory {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected JpaRepositoryImplementation<?, ?> getTargetRepository(RepositoryInformation information,
-                                                                   EntityManager entityManager) {
+                                                                    EntityManager entityManager) {
         JpaEntityInformation<?, ?> entityInformation = getEntityInformation(information.getDomainType());
         return new DataScopeJpaRepository(entityInformation, entityManager, support);
     }

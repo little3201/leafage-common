@@ -29,14 +29,7 @@ import top.leafage.common.data.core.scope.ResourceSubjectService;
 import top.leafage.common.data.core.scope.config.DataScopeAspectConfiguration;
 import top.leafage.common.data.core.scope.config.DataScopeCoreConfiguration;
 import top.leafage.common.data.core.scope.guard.DataScopeAccessChecker;
-import top.leafage.common.data.jpa.scope.DataScopeJpaSupport;
-import top.leafage.common.data.jpa.scope.DataScopePredicateResolver;
-import top.leafage.common.data.jpa.scope.JpaDataScopeAccessChecker;
-import top.leafage.common.data.jpa.scope.JpaDataScopePredicateResolver;
-import top.leafage.common.data.jpa.scope.JpaResourceSubjectService;
-import top.leafage.common.data.jpa.scope.ResourceResolver;
-import top.leafage.common.data.jpa.scope.ResourceSubjectMapping;
-import top.leafage.common.data.jpa.scope.TableNameResourceResolver;
+import top.leafage.common.data.jpa.scope.*;
 
 /**
  * JPA adapter auto-configuration.
@@ -106,7 +99,7 @@ public class DataScopeJpaAutoConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnBean(ResourceSubjectMapping.class)
     public DataScopeAccessChecker dataScopeAccessChecker(EntityManager entityManager,
-                                                              ResourceSubjectMapping mapping) {
+                                                         ResourceSubjectMapping mapping) {
         return new JpaDataScopeAccessChecker(entityManager, mapping);
     }
 

@@ -18,12 +18,7 @@ package top.leafage.common.data.core.scope;
 import top.leafage.common.data.core.scope.context.DataScopeContextHolder;
 import top.leafage.common.data.core.scope.enums.DataScopeType;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Evaluates grants into a storage-neutral decision.
@@ -42,7 +37,7 @@ public final class DataScopeEngine {
     /**
      * Creates the engine.
      *
-     * @param policyProvider loads grants for the current caller
+     * @param policyProvider  loads grants for the current caller
      * @param subjectResolver resolves owners for limited scopes
      */
     public DataScopeEngine(DataScopePolicyProvider policyProvider,
@@ -122,7 +117,7 @@ public final class DataScopeEngine {
     }
 
     private static final class Cache {
-        private long generation = -1;
         private final Map<DecisionKey, DataScopeDecision> decisions = new HashMap<>();
+        private long generation = -1;
     }
 }

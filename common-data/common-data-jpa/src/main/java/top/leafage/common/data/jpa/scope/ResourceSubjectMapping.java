@@ -24,12 +24,12 @@ import java.util.Objects;
  * entity name stay under the application's control. Only the entity class and
  * property names are configured.</p>
  *
- * @param entityType         the application mapping entity
- * @param resourceProperty   property holding the resource code
- * @param resourceIdProperty property holding the resource primary key
+ * @param entityType          the application mapping entity
+ * @param resourceProperty    property holding the resource code
+ * @param resourceIdProperty  property holding the resource primary key
  * @param subjectTypeProperty property holding the subject type
- * @param subjectIdProperty  property holding the subject identifier
- * @param rootIdProperty     primary key property of the filtered entity
+ * @param subjectIdProperty   property holding the subject identifier
+ * @param rootIdProperty      primary key property of the filtered entity
  * @author wq li
  */
 public record ResourceSubjectMapping(Class<?> entityType,

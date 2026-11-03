@@ -61,7 +61,7 @@ public class DataScopeContextAspect {
         DataScopeContext context = ignored(method, targetClass)
                 ? DataScopeContext.ignoredContext()
                 : DataScopeContext.of(action(method, methodAnnotation, classAnnotation),
-                        resource(methodAnnotation, classAnnotation));
+                resource(methodAnnotation, classAnnotation));
         DataScopeContextHolder.push(Objects.requireNonNull(context));
         try {
             return joinPoint.proceed();

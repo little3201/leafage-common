@@ -24,9 +24,7 @@ import top.leafage.common.data.core.scope.context.DataScopeContext;
 import top.leafage.common.data.core.scope.context.DataScopeContextAspect;
 import top.leafage.common.data.core.scope.context.DataScopeContextHolder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DataScopeContextAspectTest {
 

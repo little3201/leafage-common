@@ -65,8 +65,7 @@ public final class DataScopeGuard {
             case DataScopeDecision.Unrestricted unrestricted -> {
                 // every row is visible
             }
-            case DataScopeDecision.Denied deniedDecision ->
-                    throw denied(resource, resourceId);
+            case DataScopeDecision.Denied deniedDecision -> throw denied(resource, resourceId);
             case DataScopeDecision.Restricted restricted -> checkOwners(resource, resourceId, restricted);
         }
     }

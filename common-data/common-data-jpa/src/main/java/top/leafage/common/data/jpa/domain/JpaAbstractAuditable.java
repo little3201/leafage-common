@@ -1,11 +1,11 @@
 /*
  * Copyright(c) 2019-present the original author or authors.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *       https://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,51 +45,67 @@ public abstract class JpaAbstractAuditable<U, PK extends Serializable> extends J
     private Instant lastModifiedDate;
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<U> getCreatedBy() {
         return Optional.ofNullable(createdBy);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreatedBy(@Nullable U createdBy) {
         this.createdBy = createdBy;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<LocalDateTime> getCreatedDate() {
         return null == createdDate ? Optional.empty()
                 : Optional.of(LocalDateTime.ofInstant(createdDate, ZoneId.systemDefault()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate == null ? null : createdDate.atZone(ZoneId.systemDefault()).toInstant();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<U> getLastModifiedBy() {
         return Optional.ofNullable(lastModifiedBy);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLastModifiedBy(@Nullable U lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<LocalDateTime> getLastModifiedDate() {
         return null == lastModifiedDate ? Optional.empty()
                 : Optional.of(LocalDateTime.ofInstant(lastModifiedDate, ZoneId.systemDefault()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate == null ? null
