@@ -7,6 +7,15 @@
 核心层不依赖 JPA、不携带任何实体，只产出存储无关的权限决策；JPA 适配位于
 `common-data-jpa` 的 `top.leafage.common.data.jpa.scope` 包。后续 JDBC / R2DBC 适配复用同一套模型。
 
+core **不注册自动配置**：`DataScopeCoreConfiguration` 只是普通 `@Configuration`，由 JPA（以及后续
+JDBC/R2DBC）适配层的自动配置通过 `@Import` 引入。这样开关、条件装配和适配器依赖都留在各自的
+适配模块里，core 仅提供核心配置和公共代码。
+
+core 也不依赖 `spring-boot-autoconfigure`：Bean 覆盖使用 core 自带的 `MissingBeanCondition`
+（基于 Spring Framework 的 `Condition`）。AOP 由适配层作为必需依赖提供：`common-data-jpa` 直接依赖
+`aspectjweaver`，并直接 `@Import(DataScopeAspectConfiguration.class)`，因此不需要类存在性判断。
+Boot 应用会自动启用 AOP 代理；非 Boot 应用需自行开启 `@EnableAspectJAutoProxy`。
+
 ### 设计要点
 
 - **显式开启**：默认不生效，需配置 `leafage.data-scope.enabled=true`。
@@ -98,8 +107,8 @@ resourceSubjectService.bind(report, new DataSubject("USER", userId));
 
 `bind/unbind` 要求调用方已开启事务（`Propagation.MANDATORY`），这样归属关系不会脱离业务事务提交。
 
-注解依赖 Spring AOP/AspectJ，请确保应用 classpath 上有 `spring-boot-starter-aop`，否则注解不会生效。
-同类内部方法自调用不经过代理；外层已标注方法的上下文会继续生效。
+`common-data-jpa` 已把 `aspectjweaver` 作为必需依赖；Boot 应用会自动启用 AOP 代理，非 Boot 应用需
+自行开启 `@EnableAspectJAutoProxy`。同类内部方法自调用不经过代理；外层已标注方法的上下文会继续生效。
 
 ### 覆盖范围
 

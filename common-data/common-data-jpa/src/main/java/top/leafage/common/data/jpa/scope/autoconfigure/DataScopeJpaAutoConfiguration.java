@@ -22,9 +22,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.JpaRepository;
 import top.leafage.common.data.core.scope.DataScopeEngine;
 import top.leafage.common.data.core.scope.ResourceSubjectService;
+import top.leafage.common.data.core.scope.config.DataScopeAspectConfiguration;
+import top.leafage.common.data.core.scope.config.DataScopeCoreConfiguration;
 import top.leafage.common.data.core.scope.guard.DataScopeAccessChecker;
 import top.leafage.common.data.jpa.scope.DataScopeJpaSupport;
 import top.leafage.common.data.jpa.scope.DataScopePredicateResolver;
@@ -45,8 +48,9 @@ import top.leafage.common.data.jpa.scope.TableNameResourceResolver;
  * @author wq li
  */
 @AutoConfiguration
-@ConditionalOnProperty(prefix = "leafage.data-scope", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "data.scope", name = "enabled", havingValue = "true")
 @ConditionalOnClass({EntityManager.class, JpaRepository.class})
+@Import({DataScopeCoreConfiguration.class, DataScopeAspectConfiguration.class})
 public class DataScopeJpaAutoConfiguration {
 
     /**
