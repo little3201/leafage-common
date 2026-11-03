@@ -10,7 +10,7 @@
 - **显式声明才过滤**：服务类或方法标注 `@DataScope` 后才启用过滤。
 - **action = 方法名**：默认取被拦截的服务方法名（`retrieve`、`fetch`、`create`、`modify`、`remove`），
   可用 `@DataScope(action = "...")` 覆盖。
-- **resource 默认 = 被查询实体**：由持久化适配器解析（JPA 默认取 `@Table(name)`）。若只想过滤主实体，
+- **resource 默认 = 被查询实体**：由持久化适配器解析（JPA/JDBC 默认取 `@Table`）。若只想过滤主实体，
   用 `@DataScope("reports")` 限定资源，其他实体的查询不受影响。
 - **无策略即拒绝**：标注了 `@DataScope` 但 `grantsFor` 返回空列表时，查询返回空、写校验拒绝。
 - **单线程作用域缓存**：同一请求内相同 `(resource, action)` 的决策只计算一次。
@@ -96,8 +96,43 @@ resourceSubjectService.bind(report, new DataSubject("USER", userId));
 
 `bind/unbind` 要求调用方已开启事务（`Propagation.MANDATORY`），这样归属关系不会脱离业务事务提交。
 
-`common-data-jpa` 已把 `aspectjweaver` 作为必需依赖；Boot 应用会自动启用 AOP 代理，非 Boot 应用需
-自行开启 `@EnableAspectJAutoProxy`。同类内部方法自调用不经过代理；外层已标注方法的上下文会继续生效。
+`common-data-jpa`/`common-data-jdbc` 都已把 `aspectjweaver` 作为必需依赖；Boot 应用会自动启用 AOP 代理，
+非 Boot 应用需自行开启 `@EnableAspectJAutoProxy`。同类内部方法自调用不经过代理；外层已标注方法的上下文
+会继续生效。
+
+### JDBC 接入
+
+`common-data-jdbc` 提供 `top.leafage.common.data.jdbc.scope` 适配层。让应用的 Repository 使用权限基类：
+
+```java
+@EnableJdbcRepositories(
+        repositoryBaseClass = DataScopeJdbcRepository.class,
+        repositoryFactoryBeanClass = DataScopeJdbcRepositoryFactoryBean.class)
+```
+
+映射实体的声明方式与 JPA 相同：
+
+```java
+
+@Bean
+ResourceSubjectMapping resourceSubjectMapping() {
+    return ResourceSubjectMapping.of(ResourceSubject.class);
+}
+```
+
+表名和列名由 Spring Data relational 的映射上下文解析，配置的是 **实体属性名**。默认的
+`JdbcDataScopePredicateResolver` 会先查询映射表得到可见资源 id，再叠加 `id in (...)`：
+Spring Data relational 的 `Criteria` 无法表达关联子查询。可见 id 规模较大时，建议实现
+`DataScopePredicateResolver` 来接管条件生成。
+
+JDBC 没有 JPA `getQuery` 那样的统一入口，因此只有使用权限基类的 CRUD 方法会自动过滤。自行构造
+`Query` 或使用 derived query、`@Query` 时，需要显式合并条件：
+
+```java
+Query query = Query.query(dataScopeJdbcSupport.combine(criteria, Report.class))
+        .with(pageable);
+jdbcAggregateOperations.findAll(query, Report.class);
+```
 
 ### 覆盖范围
 
@@ -108,11 +143,14 @@ JPA 基类会为以下方法自动叠加权限条件：
 `findById`、`existsById`、`findAllById`、`deleteById`、`deleteAll`、`deleteAllInBatch()`、
 `deleteAllByIdInBatch`。
 
+JDBC 基类覆盖：`findAll()`、`findAll(Sort)`、`findAll(Pageable)`、`count()`、`findById`、
+`existsById`、`findAllById`、`deleteById`、`deleteAll`、`deleteAllById`。
+
 已知盲区：
 
-- derived query 方法（如 `findByTitle`）和 `@Query` 不经过 `getQuery`；
-- `getReferenceById` / `getById` / `getOne` 不加载数据，无法过滤；
+- derived query 方法（如 `findByTitle`）和 `@Query` 不经过基类；
+- JPA `getReferenceById` / `getById` / `getOne` 不加载数据，无法过滤；
 - `save`、`delete(entity)` 等直接写入不经过读过滤，需配合 `@DataScopeCheck` 或 Guard；
-- `@Modifying` 的批量 update/delete 不经过 Repository 基类；
-- fluent `findBy(...)` 与 `findAll(Example)` 不经过 `getQuery`；
+- `@Modifying` 的批量 update/delete 不经过 JPA Repository 基类；
+- fluent `findBy(...)` 与 `findAll(Example)` 不经过 JPA `getQuery`；
 - 复合主键暂不支持（启用过滤时会明确抛错）。
