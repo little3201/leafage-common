@@ -16,7 +16,8 @@
 ```
 leafage-common
 ├── common-core
-├── common-data
+├─
+─ common-data
 │   ├── common-data-core
 │   ├── common-data-jdbc
 │   ├── common-data-jpa

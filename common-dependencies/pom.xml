@@ -59,11 +59,6 @@
             </dependency>
             <dependency>
                 <groupId>top.leafage</groupId>
-                <artifactId>common-data-permission</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>top.leafage</groupId>
                 <artifactId>common-data-r2dbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
