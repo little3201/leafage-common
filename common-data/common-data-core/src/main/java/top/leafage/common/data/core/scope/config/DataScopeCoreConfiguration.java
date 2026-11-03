@@ -31,7 +31,7 @@ import top.leafage.common.data.core.scope.guard.DataScopeGuard;
  * <p>This is a plain configuration, not an auto-configuration: the core module is
  * never used on its own. Persistence adapters such as the JPA, JDBC and R2DBC
  * modules import it from their own auto-configuration, so service activation
- * (for example {@code leafage.data-scope.enabled}) stays in the adapter.</p>
+ * (for example {@code data.scope.enabled}) stays in the adapter.</p>
  *
  * @author wq li
  */

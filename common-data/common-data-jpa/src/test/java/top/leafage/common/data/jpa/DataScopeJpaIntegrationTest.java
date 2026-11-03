@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.jpa.open-in-view=false",
         "spring.data.jpa.repositories.enabled=false",
-        "leafage.data-scope.enabled=true"
+        "data.scope.enabled=true"
 })
 @Transactional
 class DataScopeJpaIntegrationTest {

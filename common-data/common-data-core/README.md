@@ -30,7 +30,7 @@ public interface DataSubjectResolver {
 `grantsFor` 返回空列表表示拒绝；只要有一个 `ALL` 授权就整体放行；其余授权的主体集合取并集。
 `CUSTOM` 使用授权里配置的主体，其他受限范围交给 `DataSubjectResolver` 解析。
 
-启用 `leafage.data-scope.enabled=true` 后，应用必须提供这两个 Bean；缺失会在启动阶段直接失败，
+启用 `data.scope.enabled=true` 后，应用必须提供这两个 Bean；缺失会在启动阶段直接失败，
 避免权限静默失效。
 
 ### 决策规则
